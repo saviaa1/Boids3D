@@ -9,8 +9,8 @@
 `cmake ..`  
 `make`
 
-For the app to run, _ColorFragmentShader.fragmentshader_ and _TransformVertexShader.vertexshader_ need to be moved to /build.  
-This can be done by the `mv` command.
+For the app to run, _ColorFragmentShader.fragmentshader_ and _TransformVertexShader.vertexshader_ need to be moved  
+from /src to /build.
 
 After this, run the application with: `./boid_app`
 
