@@ -7,8 +7,12 @@
 `mkdir build`  
 `cd build`  
 `cmake ..`  
-`make`  
-`./boid_app`
+`make`
+
+For the app to run, _ColorFragmentShader.fragmentshader_ and _TransformVertexShader.vertexshader_ need to be moved to /build.  
+This can be done by the `mv` command.
+
+After this, run the application with: `./boid_app`
 
 ### Possible errors and fixes:
 
