@@ -1,21 +1,16 @@
-# Sample README file for C++ programming project
+# C++ 3D Boids
 
-This is an initial git repository for your programming project.
-It contains an initial directory structure that we wish you could
-use as follows:
+## Build instructions
 
-  * `plan/` -- Your project plan should be put here. You may use different sources,
-    but we hope to get the plan **also as a pdf file**.
+### Run these commands in the root of the project:
 
-  * `doc/` -- The documentation sources related to your project should be put here.
-    You may use different tools for documentation (e.g. latex),
-    but we hope to get the final version of the document
-    **also as pdf file**.
+`mkdir build`
+`cd build`
+`cmake ..`
+`make`
+`./boid_app`
 
-  * `src/` -- Here are the C++ source files. You can have subfolders as needed.
+### Possible errors and fixes:
 
-  * `README.md` -- This file. You should modify it to represent
-    your project.
-
-You may also add other new directories as needed, for example
-for testing tools.
+OpenGL Error: Install a newer version of OpenGL.
+"The RandR library and headers were not found": `sudo apt-get install xorg-dev libglu1-mesa-dev`
