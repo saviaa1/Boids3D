@@ -10,6 +10,6 @@ class Behavior {
 public:
     Behavior() {};
     virtual ~Behavior() = 0;
-    virtual compute() = 0;
+    virtual vector3d<T> compute() = 0;
 private:
 };
