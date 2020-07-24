@@ -1,12 +1,29 @@
 #pragma once
+#include "vector3d.hpp"
 
+template <typename T>
 class Boid
 {
 public:
     Boid();
     ~Boid();
+    const vector3d<T>& GetVelocity() const { return velocity; }
+    const vector3d<T>& GetPosition() const { return positio; }
+    vector3d<T>& SetNextVelocity(vector3d<T> val) { nextVelocity = val; }
+    //vector3d<T>& SetNextPosition(vector3d<T> val) { nextPositio = val; }
+
+    bool operator==(const Boid& b) const {
+        if (positio == b.positio) return true;
+        return false;
+    }
 
 private:
+    vector3d<T> velocity;
+    vector3d<T> positio;
+    vector3d<T> nextVelocity;
+    //vector3d<T> nextPositio;
+
+    /*
     float mass;
     //vector3D position;
     int positionIndex;
@@ -16,4 +33,5 @@ private:
     float maxForce;
     float maxSpeed;
     //vector3D orientation;
+    */
 };
