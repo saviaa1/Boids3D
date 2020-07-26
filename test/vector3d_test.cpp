@@ -1,5 +1,9 @@
 #include "gtest/gtest.h"
 
-TEST(Footest, setup) {
-    EXPEXT_EQ(true, true);
+TEST(Footest, fails_demo) {
+    EXPECT_EQ(true, false);
+}
+
+TEST(Footest, success_demo) {
+    EXPECT_EQ(true, true);
 }
