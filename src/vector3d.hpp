@@ -78,6 +78,23 @@ class vector3d {
             os << "vector3d(" << v.x << ", " << v.y << ", " << v.z << ")"  << std::endl;
             return os;
         }
+        T& x() {
+            return x;
+        }
+        T& y() {
+            return y;
+        }
+        T& z() {
+            return z;
+        }
+        vector3d angle() const {
+            T mag = magnitude();
+            T x_ang = acos(x / mag);
+            T y_ang = acos(y / mag);
+            T z_ang = acos(z / mag);
+            return vector3d(x_ang, y_ang, z_ang);
+        }
+
     private:
         T x, y, z;
 };

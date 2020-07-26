@@ -9,8 +9,23 @@ class Boid {
         ~Boid() { std::cout << "GOODBYE_FROM_BOID" << std::endl; }
         const vector3d<T>& GetVelocity() const { return velocity; }
         const vector3d<T>& GetPosition() const { return positio; }
-        vector3d<T>& SetNextVelocity(vector3d<T> val) { nextVelocity = val; }
-        vector3d<T>& SetNextPosition(vector3d<T> val) { nextPositio = val; }
+        void SetNextVelAndPos(vector3d<T>& speedV, T areaSize) { this->SetNextVelocity(speedV); this->SetNextPosition(speedV, areaSize); }
+        void SetNextVelocity(vector3d<T>& speedV) { nextVelocity = speedV; }
+        void SetNextPosition(vector3d<T>& speedV, T areaSize) {
+            nextPositio += speedV;
+            //Calc borders
+            if (nextPositio.x() < 0) { nextPositio.x() *= -1; nextVelocity.x() *= -1; }
+            if (nextPositio.y() < 0) { nextPositio.y() *= -1; nextVelocity.y() *= -1; }
+            if (nextPositio.z() < 0) { nextPositio.z() *= -1; nextVelocity.z() *= -1; }
+
+            if (nextPositio.x() > areaSize) { nextPositio.x() = areaSize - (nextPositio.x() - areaSize); nextVelocity.x() *= -1; }
+            if (nextPositio.y() > areaSize) { nextPositio.y() = areaSize - (nextPositio.y() - areaSize); nextVelocity.y() *= -1; }
+            if (nextPositio.z() > areaSize) { nextPositio.z() = areaSize - (nextPositio.z() - areaSize); nextVelocity.z() *= -1; }
+        }
+        void SetNextToCurrent() {
+            velocity = nextVelocity;
+            positio = nextPositio;
+        }
 
         bool operator==(const Boid& b) const {
             if (positio == b.positio) return true;
@@ -18,10 +33,10 @@ class Boid {
         }
 
     private:
-        vector3d<T> velocity;
-        vector3d<T> positio;
-        vector3d<T> nextVelocity;
-        vector3d<T> nextPositio;
+        vector3d<T>& velocity;
+        vector3d<T>& positio;
+        vector3d<T>& nextVelocity;
+        vector3d<T>& nextPositio;
 
         /*
         float mass;

@@ -22,10 +22,13 @@ class World {
             CohesionBehavior<T> coh;
             AlignmentBehavior<T> ali;
             vector3d<T> velocity;
-            for (auto boid : boids) {
-                velocity = (sep.compute(boids, boid) * GetSeperationWeight()) + (coh.compute(boids, boid) * GetCohesionWeight()) + (ali.compute(boids, boid) * GetAligmentWeight());
+            for (auto boid : boids_) {
+                velocity = (sep.compute(boids_, boid) * GetSeperationWeight()) + (coh.compute(boids_, boid) * GetCohesionWeight()) + (ali.compute(boids_, boid) * GetAligmentWeight());
                 velocity.normalize();
-                boid->SetNextVelocity(velocity * GetSpeed());
+                boid->SetNextVelAndPos(velocity * GetSpeed());
+            }
+            for (auto boid :  boids_) {
+                boid->SetNextToCurrent();
             }
         }
         const T GetAligmentWeight() const { return alignmentWeight; }
@@ -45,7 +48,7 @@ class World {
         T separationWeight;
         T viewDistance;
         T speed;
-        std::vector<Boid<T>> boids;
+        std::vector<Boid<T>*> boids_;
 
         int numberOfBoids;
         float viewAngle;
