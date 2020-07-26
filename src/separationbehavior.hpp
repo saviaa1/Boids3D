@@ -5,7 +5,7 @@
 template <typename T>
 class SeparationBehavior : public Behavior<T> {
 public:
-    SeparationBehavior() : Behavior<T>() {}
+    SeparationBehavior() {}
     virtual ~SeparationBehavior() {}
 
     vector3d<T> compute(std::vector<Boid<T>> boids, Boid<T> myBoid, T visibility) {
@@ -20,7 +20,7 @@ public:
                 }
             }
         }
-        if (neighborCount == 0) { return position; }
+        if (neighborCount == 0) { return position.normalize(); }
         position /= neighborCount;
         position *= -1;
         return position.normalize();

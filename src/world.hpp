@@ -12,8 +12,14 @@ class World {
     public:
         World(T aWeight, T cWeight, T sWeight, T distance, T s, T size)
             : alignmentWeight(aWeight), cohesionWeight(cWeight), separationWeight(sWeight), viewDistance(distance), speed(s), areaSize(size) {}
-        ~World() {}
-
+        ~World() {
+            for (auto boid : boids_) {
+                delete boid;
+            }
+        }
+        void AddBoid(Boid b) {
+            boids_.push_back(b);
+        }
         void moveBoids() {
             //TODO: chainge behaviours to use behaviours list.
             SeparationBehavior<T> sep;
@@ -48,8 +54,8 @@ class World {
         T speed;
         T areaSize;
         std::vector<Boid<T>*> boids_;
-        int numberOfBoids;
-        float viewAngle;
 
+        //int numberOfBoids;
+        //float viewAngle;
         //std::list<Behavior<T>> behaviors;
 };

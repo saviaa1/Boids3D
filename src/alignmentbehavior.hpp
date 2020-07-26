@@ -5,7 +5,7 @@
 template <typename T>
 class AlignmentBehavior : public Behavior<T> {
 public:
-    AlignmentBehavior() : Behavior<T>() {}
+    AlignmentBehavior() {}
     virtual ~AlignmentBehavior() {}
 
     vector3d<T> compute(std::vector<Boid<T>> boids, Boid<T> myBoid, T visibility) {
@@ -20,7 +20,7 @@ public:
                 }
             }
         }
-        if (neighborCount == 0) { return velocity; }
+        if (neighborCount == 0) { return velocity.normalize(); }
         velocity /= neighborCount;
         return velocity.normalize();
     }

@@ -12,4 +12,5 @@ public:
     virtual ~Behavior() = 0;
     virtual vector3d<T> compute() = 0;
 private:
+    //T weight;
 };
