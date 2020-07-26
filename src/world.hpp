@@ -8,13 +8,11 @@
 #include "alignmentbehavior.hpp"
 
 template <typename T>
-class Boid;
-
-template <typename T>
 class World {
     public:
-        World() { }
-        ~World() { }
+        World(T aWeight, T cWeight, T sWeight, T distance, T s, T size)
+            : alignmentWeight(aWeight), cohesionWeight(cWeight), separationWeight(sWeight), viewDistance(distance), speed(s), areaSize(size) {}
+        ~World() {}
 
         void moveBoids() {
             //TODO: chainge behaviours to use behaviours list.
@@ -48,10 +46,10 @@ class World {
         T separationWeight;
         T viewDistance;
         T speed;
+        T areaSize;
         std::vector<Boid<T>*> boids_;
-
         int numberOfBoids;
         float viewAngle;
-        
+
         //std::list<Behavior<T>> behaviors;
 };

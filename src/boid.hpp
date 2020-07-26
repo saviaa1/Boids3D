@@ -5,7 +5,8 @@
 template <typename T>
 class Boid {
     public:
-        Boid() { std::cout << "HELLO_FROM_BOID" << std::endl; }
+        Boid(vector3d<T> vel, vector3d<T> pos)
+            : velocity(vel), positio(pos) { std::cout << "HELLO_FROM_BOID" << std::endl; }
         ~Boid() { std::cout << "GOODBYE_FROM_BOID" << std::endl; }
         const vector3d<T>& GetVelocity() const { return velocity; }
         const vector3d<T>& GetPosition() const { return positio; }
@@ -27,10 +28,12 @@ class Boid {
             positio = nextPositio;
         }
 
-        bool operator==(const Boid& b) const {
-            if (positio == b.positio) return true;
-            return false;
-        }
+    bool operator==(const Boid &b) const
+    {
+        if (positio == b.positio)
+            return true;
+        return false;
+    }
 
     private:
         vector3d<T>& velocity;
@@ -38,7 +41,7 @@ class Boid {
         vector3d<T>& nextVelocity;
         vector3d<T>& nextPositio;
 
-        /*
+    /*
         float mass;
         //vector3D position;
         int positionIndex;
