@@ -11,44 +11,49 @@ template <typename T>
 class Boid;
 
 template <typename T>
-class World {
-    public:
-        World() { }
-        ~World() { }
+class World
+{
+public:
+    World(T aWeight, T cWeight, T sWeight, T distance, T s, T size)
+        : alignmentWeight(aWeight), cohesionWeight(cWeight), separationWeight(sWeight), viewDistance(distance), speed(s), areaSize(size) {}
+    ~World() {}
 
-        void moveBoids() {
-            //TODO: chainge behaviours to use behaviours list.
-            SeparationBehavior<T> sep;
-            CohesionBehavior<T> coh;
-            AlignmentBehavior<T> ali;
-            vector3d<T> velocity;
-            for (auto boid : boids) {
-                velocity = (sep.compute(boids, boid) * GetSeperationWeight()) + (coh.compute(boids, boid) * GetCohesionWeight()) + (ali.compute(boids, boid) * GetAligmentWeight());
-                velocity.normalize();
-                boid->SetNextVelocity(velocity * GetSpeed());
-            }
+    void moveBoids()
+    {
+        //TODO: chainge behaviours to use behaviours list.
+        SeparationBehavior<T> sep;
+        CohesionBehavior<T> coh;
+        AlignmentBehavior<T> ali;
+        vector3d<T> velocity;
+        for (auto boid : boids)
+        {
+            velocity = (sep.compute(boids, boid) * GetSeperationWeight()) + (coh.compute(boids, boid) * GetCohesionWeight()) + (ali.compute(boids, boid) * GetAligmentWeight());
+            velocity.normalize();
+            boid->SetNextVelocity(velocity * GetSpeed());
         }
-        const T GetAligmentWeight() const { return alignmentWeight; }
-        void SetAligmentWeight(T val) { alignmentWeight = val; }
-        const T GetCohesionWeight() const { return cohesionWeight; }
-        void SetCohesionWeight(T val) { cohesionWeight = val; }
-        const T GetSeperationWeight() const { return separationWeight; }
-        void SetSeperationWeight(T val) { separationWeight = val; }
-        const T GetSpeed() const { return speed; }
-        void SetSpeed(T val) { speed = val; }
-        const T GetViewDistance() const { return viewDistance; }
-        void SetViewDistance(T val) { viewDistance = val; }
+    }
+    const T GetAligmentWeight() const { return alignmentWeight; }
+    void SetAligmentWeight(T val) { alignmentWeight = val; }
+    const T GetCohesionWeight() const { return cohesionWeight; }
+    void SetCohesionWeight(T val) { cohesionWeight = val; }
+    const T GetSeperationWeight() const { return separationWeight; }
+    void SetSeperationWeight(T val) { separationWeight = val; }
+    const T GetSpeed() const { return speed; }
+    void SetSpeed(T val) { speed = val; }
+    const T GetViewDistance() const { return viewDistance; }
+    void SetViewDistance(T val) { viewDistance = val; }
 
-    private:
-        T alignmentWeight;
-        T cohesionWeight;
-        T separationWeight;
-        T viewDistance;
-        T speed;
-        std::vector<Boid<T>> boids;
+private:
+    T alignmentWeight;
+    T cohesionWeight;
+    T separationWeight;
+    T viewDistance;
+    T speed;
+    T areaSize;
+    std::vector<Boid<T>> boids;
 
-        int numberOfBoids;
-        float viewAngle;
-        
-        //std::list<Behavior<T>> behaviors;
+    int numberOfBoids;
+    float viewAngle;
+
+    //std::list<Behavior<T>> behaviors;
 };
