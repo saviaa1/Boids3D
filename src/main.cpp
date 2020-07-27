@@ -1,200 +1,95 @@
-// Include standard headers
-#include <stdio.h>
-#include <stdlib.h>
+// Standard libraries
+#include <list>
+#include <iostream>
 
-// Include GLEW
-#include <GL/glew.h>
+// NOTE: To run, it is recommended not to be in Compiz or Beryl, they have shown some instability.
+#include <wx/wx.h>
+#include <wx/glcanvas.h>
+#include <GL/gl.h>
 
-// Include GLFW
-#include <GLFW/glfw3.h>
-GLFWwindow* window;
+#ifndef WIN32
+#include <unistd.h> // FIXME: ¿This work/necessary in Windows?
+                    //Not necessary, but if it was, it needs to be replaced by process.h AND io.h
+#endif
 
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
+class wxGLCanvasSubClass: public wxGLCanvas {
+	void Render();
+public:
+    wxGLCanvasSubClass(wxFrame* parent);
+    void Paintit(wxPaintEvent& event);
+protected:
+    DECLARE_EVENT_TABLE()
+};
 
-#include <common/shader.hpp>
-#include <common/controls.hpp>
+BEGIN_EVENT_TABLE(wxGLCanvasSubClass, wxGLCanvas)
+    EVT_PAINT    (wxGLCanvasSubClass::Paintit)
+END_EVENT_TABLE()
 
-int main( void )
+wxGLCanvasSubClass::wxGLCanvasSubClass(wxFrame *parent)
+:wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas")){
+    int argc = 1;
+    char* argv[1] = { wxString((wxTheApp->argv)[0]).char_str() };
+}
+
+void wxGLCanvasSubClass::Paintit(wxPaintEvent& WXUNUSED(event)){
+    Render();
+}
+
+void wxGLCanvasSubClass::Render()
 {
-	// Initialise GLFW
-	if( !glfwInit() )
-	{
-		fprintf( stderr, "Failed to initialize GLFW\n" );
-		getchar();
-		return -1;
-	}
-
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( 1024, 768, "Tutorial 04 - Colored Cube", NULL, NULL);
-	if( window == NULL ){
-		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
-
-	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
-	// Hide the mouse and enable unlimited mouvement
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	// Set the mouse at the center of the screen
-    glfwPollEvents();
-    glfwSetCursorPos(window, 1024/2, 768/2);
-
-	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS); 
-
-	GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders( "TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader" );
-
-	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-
-	// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	// Camera matrix
-	glm::mat4 View       = glm::lookAt(
-								glm::vec3(0,0,10), // Camera is at (4,3,-3), in World Space
-								glm::vec3(0,0,0), // and looks at the origin
-								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-						   );
-	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model      = glm::mat4(1.0f);
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
-
-	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f,-1.0f,1.0f,
-		1.0f,-1.0f,1.0f,
-		0.0f,2.0f,0.886f,
-		1.0f,-1.0f,1.0f,
-		0.0f,-1.0f,-0.732f,
-		0.0f,2.0f,0.886f,
-		0.0f,-1.0f,-0.732f,
-		-1.0f,-1.0f,1.0f,
-		0.0f,2.0f,0.886f,
-	};
-
-	// One color for each vertex. They were generated randomly.
-	static const GLfloat g_color_buffer_data[] = { 
-		0.583f,  0.771f,  0.014f,
-		0.609f,  0.115f,  0.436f,
-		0.327f,  0.483f,  0.844f,
-		0.822f,  0.569f,  0.201f,
-		0.435f,  0.602f,  0.223f,
-		0.310f,  0.747f,  0.185f,
-		0.597f,  0.770f,  0.761f,
-		0.559f,  0.436f,  0.730f,
-		0.359f,  0.583f,  0.152f
-	};
-
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-	GLuint colorbuffer;
-	glGenBuffers(1, &colorbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-
-	do{
-
-		// Clear the screen
+	do {
+		//std::cout << "loop" << std::endl;
+		SetCurrent();
+		wxPaintDC(this);
+		glClearColor(0.0, 0.0, 0.4f, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
+		glMatrixMode(GL_MODELVIEW);
+		glRotatef(1, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_TRIANGLES);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(-1.0f,-1.0f,1.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(1.0f,-1.0f,1.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(0.0f,2.0f,0.886f);
 
-		// Use our shader
-		glUseProgram(programID);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(1.0f,-1.0f,1.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(0.0f,-1.0f,-0.732f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(0.0f,2.0f,0.886f);
 
-		computeMatricesFromInputs();
-		glm::mat4 ProjectionMatrix = getProjectionMatrix();
-		glm::mat4 ViewMatrix = getViewMatrix();
-		glm::mat4 ModelMatrix = glm::mat4(1.0);
-		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f,-1.0f,-0.732f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(-1.0f,-1.0f,1.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(0.0f,2.0f,0.886f);
+		glEnd();
+		glPushMatrix();
+		
 
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		glFlush();
+		SwapBuffers();
+	} while (true);
+}
 
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
+class MyApp: public wxApp
+{
+    virtual bool OnInit();
+    wxGLCanvas * MyGLCanvas;
+};
 
-		// 2nd attribute buffer : colors
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-		glVertexAttribPointer(
-			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// Draw the triangle !
-
-		glDrawArrays(GL_TRIANGLES, 0, 3*3); // 12*3 indices starting at 0 -> 12 triangles
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
-
-	// Cleanup VBO and shader
-	glDeleteBuffers(1, &vertexbuffer);
-	glDeleteBuffers(1, &colorbuffer);
-	glDeleteProgram(programID);
-	glDeleteVertexArrays(1, &VertexArrayID);
-
-	// Close OpenGL window and terminate GLFW
-	glfwTerminate();
-
-	return 0;
+ 
+IMPLEMENT_APP(MyApp)
+  
+bool MyApp::OnInit()
+{
+    wxFrame *frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello GL World"), wxPoint(50,50), wxSize(600,600));
+    new wxGLCanvasSubClass(frame);
+ 
+    frame->Show(TRUE);
+    return TRUE;
 }
