@@ -4,12 +4,14 @@ project (Boids)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 find_package(wxWidgets COMPONENTS net core base gl REQUIRED)
 
 
 include(${wxWidgets_USE_FILE})
 
-include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS})
 
 add_executable(
     boid_app
@@ -17,5 +19,5 @@ add_executable(
 )
 
 target_link_libraries(boid_app
-	${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${wxWidgets_LIBRARIES}
+	${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} ${wxWidgets_LIBRARIES}
 )
