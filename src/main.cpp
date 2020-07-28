@@ -1,6 +1,8 @@
 // Standard libraries
 #include <list>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include <GL/glew.h>
 
@@ -16,6 +18,75 @@
 #include <unistd.h> // FIXME: ¿This work/necessary in Windows?
                     //Not necessary, but if it was, it needs to be replaced by process.h AND io.h
 #endif
+
+struct ShaderSources {
+	std::string VertexSource;
+	std::string FragmentSource;
+};
+
+static ShaderSources shaderParser(const std::string& filepath) {
+	std::ifstream stream(filepath);
+
+	enum class ShaderType
+	{
+		NONE = -1, VERTEX = 0, FRAGMENT = 1
+	};
+
+	std::string line;
+	std::stringstream ss[2];
+	ShaderType type = ShaderType::NONE;
+	while (getline(stream, line)) {
+		if (line.find("#shader") != std::string::npos) {
+			if (line.find("vertex") != std::string::npos) {
+				type = ShaderType::VERTEX;
+			}
+			else if (line.find("fragment") != std::string::npos) {
+				type = ShaderType::FRAGMENT;
+			}
+		} else {
+			ss[(int)type] << line << '\n';
+		}
+	}
+	return { ss[0].str(), ss[1].str() };
+}
+
+static unsigned int CompileShader(unsigned int type, const std::string& source)
+{
+	unsigned int id = glCreateShader(type);
+	const char* src = source.c_str();
+	glShaderSource(id, 1, &src, nullptr);
+	glCompileShader(id);
+
+	int result;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE) {
+		int length;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)alloca(length * sizeof(char));
+		glGetShaderInfoLog(id, length, &length, message);
+		std::cout << "Failed to complie " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << std::endl;
+		std::cout << message << std:: endl;
+		glDeleteShader(id);
+		return 0;
+	}
+
+	return id;
+}
+
+static int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+{
+	unsigned int program = glCreateProgram();
+	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+	glValidateProgram(program);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+}
 
 class MyApp: public wxApp
 {
@@ -83,11 +154,11 @@ public:
 
 		positions_[0 + i] = (-0.5f + x);
 		positions_[1 + i] = (-1.0f + y);
-		positions_[2 + i] = (1.288f + z);
+		positions_[2 + i] = (0.433f + z);
 
 		positions_[3 + i] = (0.5f + x);
 		positions_[4 + i] = (-1.0f + y);
-		positions_[5 + i] = (1.288f + z);
+		positions_[5 + i] = (0.433f + z);
 
 		positions_[6 + i] = (0.0f + x);
 		positions_[7 + i] = (1.0f + y);
@@ -95,7 +166,7 @@ public:
 
 		positions_[9 + i] = (0.0f + x);
 		positions_[10 + i] = (-1.0f + y);
-		positions_[11 + i] = (0.423f + z);
+		positions_[11 + i] = (-0.433f + z);
 
 		indices_[0 + i] = (0 + j);
 		indices_[1 + i] = (1 + j);
@@ -106,7 +177,7 @@ public:
 		indices_[5 + i] = (2 + j);
 
 		indices_[6 + i] = (3 + j);
-		indices_[7 + i] = (1 + j);
+		indices_[7 + i] = (0 + j);
 		indices_[8 + i] = (2 + j);
 
 		indices_[9 + i] = (0 + j);
@@ -130,28 +201,43 @@ void wxGLCanvasSubClass::Render()
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, 12 * d.GetBoidCount() * sizeof(float), d.GetPositions(), GL_STATIC_DRAW);
+
+	gluPerspective(45, 1, 1.0f, 100.0f);
+	gluLookAt(0, 0, 10, 0, 0,-1, 0, 1, 0);
+
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 	unsigned int ibo;
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * d.GetBoidCount() * sizeof(unsigned int), d.GetIndices(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * d.GetBoidCount() * sizeof(unsigned int), d.GetIndices(), GL_STATIC_DRAW);
+
+	ShaderSources source = shaderParser("boid.shader");
+
+	// std::cout << "Vertex" << std::endl;
+	// std::cout << source.VertexSource << std::endl;
+	// std::cout << "Fragment" << std::endl;
+	// std::cout << source.FragmentSource << std::endl;
+
+	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+	glUseProgram(shader);
+
 	do {
 		//std::cout << "loop" << std::endl;
-		
+		glClearColor(0.0, 0.0, 0.4f, 0.0);
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
 		glDepthRange(0.0f, 100.0f);
-		glClearColor(0.0, 0.0, 0.4f, 0.0);
 		glClearDepth(1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 		glMatrixMode(GL_MODELVIEW);
-		glRotatef(1, 0.0f, 0.5f, 1.0f);
+
+		glRotatef(1, 0.2f, 0.2f, 0.0f);
 		
-		glDrawElements(GL_TRIANGLES, (4 * 3 * d.GetBoidCount()), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, (12 * d.GetBoidCount()), GL_UNSIGNED_INT, nullptr);
 
 		glPushMatrix();
         glPopMatrix();
