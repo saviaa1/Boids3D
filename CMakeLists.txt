@@ -45,9 +45,12 @@ endif()
 
 # Now simply link against gtest or gtest_main as needed. Eg
 enable_testing()
-add_executable(boid_test test/vector3d_test.cpp)
+add_executable(
+	boid_test
+	test/vector3d_test.cpp
+)
 target_link_libraries(boid_test gtest_main)
-add_test(NAME example_test COMMAND boid_test)
+#add_test(NAME example_test COMMAND boid_test)
 
 
 add_executable(

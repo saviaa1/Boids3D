@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "src/vector3d.hpp"
+#include "../src/vector3d.hpp"
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
