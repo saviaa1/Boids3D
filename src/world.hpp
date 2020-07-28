@@ -17,7 +17,7 @@ class World {
                 delete boid;
             }
         }
-        void AddBoid(Boid b) {
+        void AddBoid(Boid<T> b) {
             boids_.push_back(b);
         }
         void moveBoids() {

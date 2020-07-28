@@ -13,6 +13,7 @@
 #endif
 
 #include "Boids3DFrame.h"
+#include "world.hpp"
 
 class wxGLCanvasSubClass: public wxGLCanvas {
 	void Render();
