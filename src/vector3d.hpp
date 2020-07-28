@@ -62,15 +62,15 @@ class vector3d {
         T dot_product(const vector3d& v) {
             return x*v.x+y*v.y+z*v.z;
         }
-        T magnitude() {
+        T magnitude() const {
             return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
         }
         T distance(const vector3d& v) {
-            vector3d diff = *this-v;
+            vector3d diff = *this - v;
             return diff.magnitude();
         }
         vector3d normalize() {
-            T len = *this->magnitude();
+            T len = this->magnitude();
             if (len == 0) std::runtime_error("Div by 0 in vector3d.normalize()");
             return *this/=len;
         }
@@ -78,15 +78,16 @@ class vector3d {
             os << "vector3d(" << v.x << ", " << v.y << ", " << v.z << ")"  << std::endl;
             return os;
         }
-        T& x() {
+        T& X() {
             return x;
         }
-        T& y() {
+        T& Y() {
             return y;
         }
-        T& z() {
+        T& Z() {
             return z;
         }
+        //Return new vector3d where angles are in radians.
         vector3d angle() const {
             T mag = magnitude();
             T x_ang = acos(x / mag);

@@ -31,7 +31,7 @@ endif(INCLUDE_DISTRIB)
 
 
 
-# GOOGLE TEST:
+# START GOOGLE TEST:
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -65,10 +65,12 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
 endif()
 
 # Now simply link against gtest or gtest_main as needed. Eg
+enable_testing()
 add_executable(boid_test test/vector3d_test.cpp)
 target_link_libraries(boid_test gtest_main)
 add_test(NAME example_test COMMAND boid_test)
 
+#END GOOGLE TEST!
 
 include_directories(
 	external/AntTweakBar-1.16/include/
