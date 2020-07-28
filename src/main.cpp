@@ -12,6 +12,8 @@
                     //Not necessary, but if it was, it needs to be replaced by process.h AND io.h
 #endif
 
+#include "Boids3DFrame.h"
+
 class wxGLCanvasSubClass: public wxGLCanvas {
 	void Render();
 public:
@@ -87,9 +89,14 @@ IMPLEMENT_APP(MyApp)
   
 bool MyApp::OnInit()
 {
-    wxFrame *frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello GL World"), wxPoint(50,50), wxSize(600,600));
-    new wxGLCanvasSubClass(frame);
- 
+    wxFrame *frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello GL World"), wxPoint(50,50), wxSize(800,60));
     frame->Show(TRUE);
-    return TRUE;
+	Boids3DFrame *boidsFrame = new Boids3DFrame(frame);
+	boidsFrame->Show(true);
+    wxGLCanvasSubClass *glCanvas = new wxGLCanvasSubClass(boidsFrame);
+	glCanvas->Reparent(boidsFrame->Get3DPanel());
+    glCanvas->SetSize(-1, -1, 560, 558, wxSIZE_USE_EXISTING);
+	glCanvas->SetCurrent();
+
+	return TRUE;
 }

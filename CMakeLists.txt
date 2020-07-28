@@ -54,8 +54,10 @@ target_link_libraries(boid_test gtest_main)
 
 
 add_executable(
-    boid_app
+  boid_app
 	src/main.cpp
+  src/Boids3DFrame.cpp
+  src/BoidsUI.cpp
 )
 
 target_link_libraries(boid_app
