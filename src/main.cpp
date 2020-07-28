@@ -76,7 +76,7 @@ static unsigned int CompileShader(unsigned int type, const std::string& source)
 	return id;
 }
 
-static int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
 	unsigned int program = glCreateProgram();
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
@@ -89,6 +89,8 @@ static int CreateShader(const std::string& vertexShader, const std::string& frag
 
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+
+	return program;
 }
 
 class MyApp: public wxApp
