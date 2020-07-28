@@ -18,3 +18,7 @@ After this, run the application with: `./boid_app`
 
 OpenGL Error: Install a newer version of OpenGL.  
 "The RandR library and headers were not found": `sudo apt-get install xorg-dev libglu1-mesa-dev`
+
+
+### 3D libs added
+'sudo apt install libglew-dev'
