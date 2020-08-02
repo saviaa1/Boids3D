@@ -14,6 +14,11 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp>
+
 #ifndef WIN32
 #include <unistd.h> // FIXME: ¿This work/necessary in Windows?
                     //Not necessary, but if it was, it needs to be replaced by process.h AND io.h
@@ -226,8 +231,17 @@ void wxGLCanvasSubClass::Render()
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, 12 * d.GetBoidCount() * sizeof(float), d.GetPositions(), GL_STATIC_DRAW);
 
-	gluPerspective(45, 1, 1.0f, 100.0f);
-	gluLookAt(0, 0, 10, 0, 0,-1, 0, 1, 0);
+	// gluPerspective(45, 1, 1.0f, 100.0f);
+	// gluLookAt(0, 0, 10, 0, 0,-1, 0, 1, 0);
+
+	glm::mat4 proj = glm::perspective(45.0f, 1.0f, 1.0f, 100.0f);
+	glm::mat4 view = glm::lookAt(
+		glm::vec3(0,0,10), // Camera is at (4,3,3), in World Space
+		glm::vec3(0,0,0), // and looks at the origin
+		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+	);
+
+	glm::mat4 mvp = proj * view;
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
@@ -250,7 +264,12 @@ void wxGLCanvasSubClass::Render()
 	// std::cout << source.FragmentSource << std::endl;
 
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+
 	glUseProgram(shader);
+
+	int MatrixID = glGetUniformLocation(shader, "u_MVP");
+
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
 	glBindVertexArray(0);
 
@@ -262,8 +281,6 @@ void wxGLCanvasSubClass::Render()
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-		glRotatef(1, 0.2f, 0.2f, 0.0f);
 		
 		glDrawElements(GL_TRIANGLES, (12 * d.GetBoidCount()), GL_UNSIGNED_INT, nullptr);
 

@@ -5,6 +5,7 @@ project (Boids)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
 find_package(wxWidgets COMPONENTS net core base gl REQUIRED)
 
 
@@ -55,7 +56,10 @@ add_executable(
 target_link_libraries(boid_test gtest_main)
 add_test(NAME boid_test COMMAND boid_test)
 
-include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS})
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS}, ${GLM_INCLUDE_DIRS})
+
+link_directories(${GLM_LIBRARY_DIRS})
+add_definitions(${GLM_DEFINITIONS})
 
 add_executable(
   boid_app
