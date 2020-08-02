@@ -1,9 +1,6 @@
 # CMake entry point
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.0)
 project (Boids)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
