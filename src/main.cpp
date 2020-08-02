@@ -183,6 +183,13 @@ void wxGLCanvasSubClass::Render()
 			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
 		}
 		
+
+		glPushMatrix();
+        glPopMatrix();
+		
+
+		glFlush();
+		SwapBuffers();
 	} while (true);
 }
   

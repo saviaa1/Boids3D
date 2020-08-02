@@ -23,7 +23,6 @@ ShaderFactory::ShaderFactory(const std::string& filepath) {
             ss[(int)type] << line << '\n';
         }
     }
-    std::cout << "******" << ss[0].str() << std::endl;
     VertexSource_ = ss[0].str();
     FragmentSource_ = ss[1].str();
 };
