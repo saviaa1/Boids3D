@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 
 #include <GL/glew.h>
 
@@ -26,6 +27,8 @@
 
 #include "Boids3DFrame.h"
 #include "world.hpp"
+#include "vector3d.hpp"
+#include "boid.hpp"
 
 struct ShaderSources {
 	std::string VertexSource;
@@ -141,10 +144,20 @@ void wxGLCanvasSubClass::Paintit(wxPaintEvent& WXUNUSED(event)){
 
 class Drawing {
 public:
-	Drawing(unsigned numBoids = 20) {
-		positions_ = new float[4 * 3 * numBoids]; // 4 triangles 3 vertices
-		indices_ = new unsigned int[4 * 3 * numBoids];
-		boidCount_ = 0;
+	Drawing() {
+		positions_ = new float[12] {
+			-0.5f, -1.0f, 0.433f,
+			0.5f, -1.0f, 0.433f,
+			0.0f, 1.0f, 0.0f,
+			0.0f, -1.0f, -0.433f
+		};
+
+		indices_ = new unsigned int[12] {
+			0, 1, 2,
+			1, 3, 2,
+			3, 0, 2,
+			0, 1, 3
+		};
 	}
 
 	float* GetPositions() const {
@@ -155,52 +168,9 @@ public:
 		return indices_;
 	}
 
-	unsigned int GetBoidCount() const {
-		return boidCount_;
-	}
-
-	void addBoid(float x, float y, float z) {
-		unsigned int i = boidCount_ * 12;
-		unsigned int j = boidCount_ * 4;
-
-		positions_[0 + i] = (-0.5f + x);
-		positions_[1 + i] = (-1.0f + y);
-		positions_[2 + i] = (0.433f + z);
-
-		positions_[3 + i] = (0.5f + x);
-		positions_[4 + i] = (-1.0f + y);
-		positions_[5 + i] = (0.433f + z);
-
-		positions_[6 + i] = (0.0f + x);
-		positions_[7 + i] = (1.0f + y);
-		positions_[8 + i] = (0.0f + z);
-
-		positions_[9 + i] = (0.0f + x);
-		positions_[10 + i] = (-1.0f + y);
-		positions_[11 + i] = (-0.433f + z);
-
-		indices_[0 + i] = (0 + j);
-		indices_[1 + i] = (1 + j);
-		indices_[2 + i] = (2 + j);
-
-		indices_[3 + i] = (1 + j);
-		indices_[4 + i] = (3 + j);
-		indices_[5 + i] = (2 + j);
-
-		indices_[6 + i] = (3 + j);
-		indices_[7 + i] = (0 + j);
-		indices_[8 + i] = (2 + j);
-
-		indices_[9 + i] = (0 + j);
-		indices_[10 + i] = (1 + j);
-		indices_[11 + i] = (3 + j);
-		boidCount_++;
-	}
-
 private:
 	float *positions_;
 	unsigned int *indices_;
-	unsigned int boidCount_;
 };
 
 void wxGLCanvasSubClass::Render()
@@ -219,8 +189,7 @@ void wxGLCanvasSubClass::Render()
 		0.0f,  0.0f,  1.0f
 	};
 
-	static Drawing d(20);
-	d.addBoid(0.0f, 0.0f, -1.0f);
+	static Drawing d;
 
 	unsigned int vao;
 	glGenVertexArrays(1, &vao);
@@ -229,19 +198,17 @@ void wxGLCanvasSubClass::Render()
 	unsigned int buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, 12 * d.GetBoidCount() * sizeof(float), d.GetPositions(), GL_STATIC_DRAW);
-
-	// gluPerspective(45, 1, 1.0f, 100.0f);
-	// gluLookAt(0, 0, 10, 0, 0,-1, 0, 1, 0);
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), d.GetPositions(), GL_STATIC_DRAW);
 
 	glm::mat4 proj = glm::perspective(45.0f, 1.0f, 1.0f, 100.0f);
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(0,0,10), // Camera is at (4,3,3), in World Space
+		glm::vec3(0,0,10), // Camera is at (0, 0, 10), in World Space
 		glm::vec3(0,0,0), // and looks at the origin
 		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-	glm::mat4 mvp = proj * view;
+	glm::mat4 mvp = proj * view * model;
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
@@ -249,7 +216,7 @@ void wxGLCanvasSubClass::Render()
 	unsigned int ibo;
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * d.GetBoidCount() * sizeof(unsigned int), d.GetIndices(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(unsigned int), d.GetIndices(), GL_STATIC_DRAW);
 
 	unsigned int colorbuffer;
 	glGenBuffers(1, &colorbuffer);
@@ -272,6 +239,7 @@ void wxGLCanvasSubClass::Render()
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
 	glBindVertexArray(0);
+	float r = 0.0f;
 
 	do {
 		//std::cout << "loop" << std::endl;
@@ -279,10 +247,28 @@ void wxGLCanvasSubClass::Render()
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		r += 0.02;
+
+		for (unsigned int i = 0; i < 10; i += 1) {
+			float x = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+			float y = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+			float z = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+			model = model * glm::rotate(glm::mat4(1.0f), r, glm::vec3(0.0f, 0.0f, 1.0f));
+
+			glm::mat4 mvp = proj * view * model;
+			
+			glUseProgram(shader);
+
+			int MatrixID = glGetUniformLocation(shader, "u_MVP");
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
+
+			glBindVertexArray(vao);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			
+			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+		}
 		
-		glDrawElements(GL_TRIANGLES, (12 * d.GetBoidCount()), GL_UNSIGNED_INT, nullptr);
 
 		glPushMatrix();
         glPopMatrix();

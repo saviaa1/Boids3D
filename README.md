@@ -9,7 +9,7 @@
 `cmake ..`  
 `make`
 
-For the app to run, _ColorFragmentShader.fragmentshader_ and _TransformVertexShader.vertexshader_ need to be moved  
+For the app to run, boid.shader need to be moved  
 from /src to /build.
 
 After this, run the application with: `./boid_app`
@@ -22,3 +22,4 @@ OpenGL Error: Install a newer version of OpenGL.
 
 ### 3D libs added
 'sudo apt install libglew-dev'
+'sudo apt install libglm-dev' // opengl Math library
