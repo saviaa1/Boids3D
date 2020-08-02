@@ -67,6 +67,7 @@ add_executable(
   src/Boids3DFrame.cpp
   src/BoidsUI.cpp
   src/shader.cpp
+  src/boidcanvas.cpp
 )
 
 target_link_libraries(boid_app
