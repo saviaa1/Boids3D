@@ -7,22 +7,22 @@ class SeparationBehavior : public Behavior<T> {
 public:
     SeparationBehavior() {}
     virtual ~SeparationBehavior() {}
-
-    vector3d<T> compute(std::vector<Boid<T>> boids, Boid<T> myBoid, T visibility) {
+    
+    virtual vector3d<T> compute(std::vector<Boid<T>*> boids, Boid<T>* myBoid, T viewDistance) {
         unsigned int neighborCount = 0;
         vector3d<T> position;
-
         for (auto boid : boids) {
             if (boid != myBoid) {
-                if (boid.GetPosition().distance(myBoid.GetPosition()) < visibility) {
+                if (boid->GetPosition().distance(myBoid->GetPosition()) < viewDistance) {
                     position += boid->GetPosition() - myBoid->GetPosition();
                     neighborCount++;
                 }
             }
         }
-        if (neighborCount == 0) { return position.normalize(); }
+        if (neighborCount == 0) { return position; }
         position /= neighborCount;
         position *= -1;
+        if (position.isZero()) { return position; }
         return position.normalize();
     }
 };

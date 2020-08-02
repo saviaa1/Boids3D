@@ -1,11 +1,13 @@
 # CMake entry point
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.1)
 project (Boids)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(glfw3 3.3 REQUIRED)
 find_package(wxWidgets COMPONENTS net core base gl REQUIRED)
 
 
@@ -50,9 +52,11 @@ enable_testing()
 add_executable(
 	boid_test
 	test/vector3d_test.cpp
+  test/boid_test.cpp
+  test/world_test.cpp
 )
 target_link_libraries(boid_test gtest_main)
-#add_test(NAME example_test COMMAND boid_test)
+add_test(NAME boid_test COMMAND boid_test)
 
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS})
 

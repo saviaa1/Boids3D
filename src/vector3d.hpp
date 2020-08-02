@@ -20,7 +20,7 @@ class vector3d {
             z+=v.z;
             return *this;
         }
-        vector3d operator-(const vector3d& v) {
+        vector3d operator-(const vector3d& v) const {
             return vector3d(x-v.x, y-v.y, z-v.z);
         }
         vector3d& operator-=(const vector3d& v) {
@@ -38,7 +38,7 @@ class vector3d {
             z*=val;
             return *this;
         }
-        vector3d operator/(T val) {
+        vector3d operator/(const T val) const {
             if (val == 0) throw std::runtime_error("Attempted division by 0.");
             return vector3d(x/val, y/val, z/val);
         }
@@ -65,14 +65,14 @@ class vector3d {
         T magnitude() const {
             return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
         }
-        T distance(const vector3d& v) {
+        T distance(const vector3d& v) const {
             vector3d diff = *this - v;
             return diff.magnitude();
         }
-        vector3d normalize() {
+        vector3d normalize() const {
             T len = this->magnitude();
             if (len == 0) std::runtime_error("Div by 0 in vector3d.normalize()");
-            return *this/=len;
+            return *this/len;
         }
         friend std::ostream& operator<<(std::ostream& os, const vector3d& v)  {
             os << "vector3d(" << v.x << ", " << v.y << ", " << v.z << ")"  << std::endl;
@@ -86,6 +86,10 @@ class vector3d {
         }
         T& Z() {
             return z;
+        }
+        bool isZero() {
+            if (x==0 && y==0 && z==0 ) return true;
+            return false;
         }
         //Return new vector3d where angles are in radians.
         vector3d angle() const {

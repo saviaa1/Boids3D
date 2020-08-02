@@ -9,8 +9,8 @@ template <typename T>
 class Behavior {
 public:
     Behavior() {};
-    virtual ~Behavior() = 0;
-    virtual vector3d<T> compute() = 0;
+    virtual ~Behavior() {};
+    virtual vector3d<T> compute(std::vector<Boid<T>*>, Boid<T>*, T) = 0;
 private:
     //T weight;
 };

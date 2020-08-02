@@ -8,21 +8,21 @@ public:
     CohesionBehavior() {}
     virtual ~CohesionBehavior() {}
 
-    vector3d<T> compute(std::vector<Boid<T>> boids, Boid<T> myBoid, T visibility) {
+    virtual vector3d<T> compute(std::vector<Boid<T>*> boids, Boid<T>* myBoid, T viewDistance) {
         unsigned int neighborCount = 0;
         vector3d<T> position;
-
         for (auto boid : boids) {
             if (boid != myBoid) {
-                if (boid.GetPosition().distance(myBoid.GetPosition()) < visibility) {
+                if (boid->GetPosition().distance(myBoid->GetPosition()) < viewDistance) {
                     position += boid->GetPosition();
                     neighborCount++;
                 }
             }
         }
-        if (neighborCount == 0) { return position.normalize(); }
+        if (neighborCount == 0) { return position; }
         position /= neighborCount;
-        position -= myBoid.GetPosition();
+        position -= myBoid->GetPosition();
+        if (position.isZero()) { return position; }
         return position.normalize();
     }
 };
