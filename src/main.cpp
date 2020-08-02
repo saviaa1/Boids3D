@@ -112,12 +112,6 @@ void wxGLCanvasSubClass::Render()
 	glClearDepth(1.0f);
 	glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 	glMatrixMode(GL_MODELVIEW);
-	
-	static const float g_color_buffer_data[] = {
-		1.0f,  0.0f,  0.0f,
-		0.0f,  1.0f,  0.0f,
-		0.0f,  0.0f,  1.0f
-	};
 
 	static Drawing d;
 
@@ -147,11 +141,6 @@ void wxGLCanvasSubClass::Render()
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(unsigned int), d.GetIndices(), GL_STATIC_DRAW);
-
-	unsigned int colorbuffer;
-	glGenBuffers(1, &colorbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
 	static auto sf = ShaderFactory("boid.shader");
 
