@@ -144,11 +144,6 @@ void wxGLCanvasSubClass::Render()
 
 	static auto sf = ShaderFactory("boid.shader");
 
-	// std::cout << "Vertex" << std::endl;
-	// std::cout << sf.GetVertexShader() << std::endl;
-	// std::cout << "Fragment" << std::endl;
-	// std::cout << sf.GetFragmentShader() << std::endl;
-
 	unsigned int shader = sf.CreateShader();
 
 	glUseProgram(shader);
@@ -188,13 +183,6 @@ void wxGLCanvasSubClass::Render()
 			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
 		}
 		
-
-		glPushMatrix();
-        glPopMatrix();
-		
-
-		glFlush();
-		SwapBuffers();
 	} while (true);
 }
   
