@@ -106,6 +106,7 @@ class wxGLCanvasSubClass: public wxGLCanvas {
 public:
     wxGLCanvasSubClass(wxFrame* parent);
     void Paintit(wxPaintEvent& event);
+	wxGLContext *glContext;
 protected:
     DECLARE_EVENT_TABLE()
 };
@@ -115,13 +116,13 @@ BEGIN_EVENT_TABLE(wxGLCanvasSubClass, wxGLCanvas)
 END_EVENT_TABLE()
 
 wxGLCanvasSubClass::wxGLCanvasSubClass(wxFrame *parent)
-:wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas")){
+:wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
     int argc = 1;
     char* argv[1] = { wxString((wxTheApp->argv)[0]).char_str() };
 }
 
 void wxGLCanvasSubClass::Paintit(wxPaintEvent& WXUNUSED(event)){
-	SetCurrent();
+	SetCurrent(*glContext);
 	wxPaintDC(this);
 	glutInit(&wxGetApp().argc, wxGetApp().argv);
 	GLenum err = glewInit();
@@ -277,14 +278,12 @@ void wxGLCanvasSubClass::Render()
   
 bool MyApp::OnInit()
 {
-    wxFrame *frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello GL World"), wxPoint(50,50), wxSize(800,600));
-    frame->Show(TRUE);
-	Boids3DFrame *boidsFrame = new Boids3DFrame(frame);
-	boidsFrame->Show(true);
+	Boids3DFrame *boidsFrame = new Boids3DFrame(nullptr);
     wxGLCanvasSubClass *glCanvas = new wxGLCanvasSubClass(boidsFrame);
+	glCanvas->glContext = new wxGLContext(glCanvas);
 	glCanvas->Reparent(boidsFrame->Get3DPanel());
     glCanvas->SetSize(-1, -1, 560, 558, wxSIZE_USE_EXISTING);
-	glCanvas->SetCurrent();
+	boidsFrame->Show(true);
 
 	return TRUE;
 }
