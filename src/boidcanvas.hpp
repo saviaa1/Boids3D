@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GL/glew.h>
 
 #include <wx/wx.h>
@@ -14,13 +16,17 @@
 
 #include "drawing.hpp"
 #include "shader.hpp"
+#include "rendertimer.hpp"
 
 class BoidCanvas: public wxGLCanvas {
 	void Render();
+    bool initialized_ = false;
+    RenderTimer* timer;
 public:
     BoidCanvas(wxFrame* parent);
+    ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
-	wxGLContext *glContext;
+	wxGLContext* glContext;
 protected:
     DECLARE_EVENT_TABLE()
 };

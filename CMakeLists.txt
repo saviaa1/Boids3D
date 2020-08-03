@@ -68,6 +68,7 @@ add_executable(
   src/BoidsUI.cpp
   src/shader.cpp
   src/boidcanvas.cpp
+  src/rendertimer.cpp
 )
 
 target_link_libraries(boid_app

@@ -8,17 +8,26 @@ BoidCanvas::BoidCanvas(wxFrame *parent)
 :wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
     int argc = 1;
     char* argv[1] = { wxString((wxTheApp->argv)[0]).char_str() };
+	timer = new RenderTimer(this);
+	timer->start();
 }
 
-void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)){
+BoidCanvas::~BoidCanvas() {
+	delete timer;
+}
+
+void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 	SetCurrent(*glContext);
 	wxPaintDC(this);
-	glutInit(&wxTheApp->argc, wxTheApp->argv);
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		/* Problem: glewInit failed, something is seriously wrong. */
-		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+	if (!initialized_) {
+		glutInit(&wxTheApp->argc, wxTheApp->argv);
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+		{
+			/* Problem: glewInit failed, something is seriously wrong. */
+			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		}
+		initialized_ = true;
 	}
     Render();
 }
@@ -75,35 +84,33 @@ void BoidCanvas::Render()
 	glBindVertexArray(0);
 	float r = 0.0f;
 
-	do {
-		//std::cout << "loop" << std::endl;
-		glClearColor(0.0, 0.0, 0.4f, 0.0);
+	//std::cout << "loop" << std::endl;
+	glClearColor(0.0, 0.0, 0.4f, 0.0);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	r += 0.02;
+
+	for (unsigned int i = 0; i < 10; i += 1) {
+		float x = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+		float y = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+		float z = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+		model = model * glm::rotate(glm::mat4(1.0f), r, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		glm::mat4 mvp = proj * view * model;
 		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(shader);
 
-		r += 0.02;
+		int MatrixID = glGetUniformLocation(shader, "u_MVP");
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
-		for (unsigned int i = 0; i < 10; i += 1) {
-			float x = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
-			float y = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
-			float z = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-			model = model * glm::rotate(glm::mat4(1.0f), r, glm::vec3(0.0f, 0.0f, 1.0f));
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+	}
 
-			glm::mat4 mvp = proj * view * model;
-			
-			glUseProgram(shader);
-
-			int MatrixID = glGetUniformLocation(shader, "u_MVP");
-			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
-
-			glBindVertexArray(vao);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-			
-			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
-		}
-
-		glFlush();
-		SwapBuffers();
-	} while (true);
+	glFlush();
+	SwapBuffers();
 }

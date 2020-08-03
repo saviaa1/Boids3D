@@ -38,14 +38,16 @@ class MyApp: public wxApp
 };
 
 IMPLEMENT_APP(MyApp)
-  
+
 bool MyApp::OnInit()
 {
 	Boids3DFrame *boidsFrame = new Boids3DFrame(nullptr);
     BoidCanvas *glCanvas = new BoidCanvas(boidsFrame);
 	glCanvas->glContext = new wxGLContext(glCanvas);
 	glCanvas->Reparent(boidsFrame->Get3DPanel());
-    glCanvas->SetSize(-1, -1, 560, 558, wxSIZE_USE_EXISTING);
+    int x, y;
+    glCanvas->GetParent()->GetSize(&x, &y);
+    glCanvas->SetSize(-1, -1, x, y, wxSIZE_USE_EXISTING);
 	boidsFrame->Show(true);
 
 	return TRUE;
