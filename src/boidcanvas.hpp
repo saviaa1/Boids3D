@@ -21,6 +21,8 @@
 class BoidCanvas: public wxGLCanvas {
 	void Render();
     bool initialized_ = false;
+    int width_ = -1;
+    int height_ = -1;
     RenderTimer* timer;
 public:
     BoidCanvas(wxFrame* parent);

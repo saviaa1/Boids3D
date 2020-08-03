@@ -13,8 +13,12 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer* BoidsHorizontalSizer;
-	BoidsHorizontalSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxFlexGridSizer* BoidsHorizontalSizer;
+	BoidsHorizontalSizer = new wxFlexGridSizer( 1, 2, 0, 0 );
+	BoidsHorizontalSizer->AddGrowableCol( 1 );
+	BoidsHorizontalSizer->AddGrowableRow( 0 );
+	BoidsHorizontalSizer->SetFlexibleDirection( wxBOTH );
+	BoidsHorizontalSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	wxFlexGridSizer* BoidsControlGrid;
 	BoidsControlGrid = new wxFlexGridSizer( 0, 2, 0, 0 );
@@ -50,10 +54,10 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	BoidsControlGrid->Add( m_m_simulationSpeedText, 0, wxALL, 5 );
 
 
-	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, wxEXPAND, 5 );
+	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 5 );
 
 	m_boidsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 600,600 ), wxTAB_TRAVERSAL );
-	BoidsHorizontalSizer->Add( m_boidsPanel, 1, wxEXPAND | wxALL, 5 );
+	BoidsHorizontalSizer->Add( m_boidsPanel, 1, wxEXPAND, 5 );
 
 
 	this->SetSizer( BoidsHorizontalSizer );

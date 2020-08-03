@@ -17,6 +17,13 @@ BoidCanvas::~BoidCanvas() {
 }
 
 void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
+	int x, y;
+    GetParent()->GetSize(&x, &y);
+	if (x != width_ || y != height_) {
+    	SetSize(-1, -1, x, y, wxSIZE_USE_EXISTING);
+		width_ = x;
+		height_ = y;
+	}
 	SetCurrent(*glContext);
 	wxPaintDC(this);
 	if (!initialized_) {
