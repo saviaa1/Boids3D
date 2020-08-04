@@ -46,12 +46,33 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_viewAngleText = new wxTextCtrl( this, wxID_ANY, wxT("220"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_viewAngleText, 0, wxALL, 5 );
 
+	m_alignmentLabel = new wxStaticText( this, wxID_ANY, wxT("Alignment"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_alignmentLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_alignmentLabel, 0, wxALL, 5 );
+
+	m_alignmentText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_alignmentText, 0, wxALL, 5 );
+
+	m_cohesionLabel = new wxStaticText( this, wxID_ANY, wxT("Cohesion"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cohesionLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_cohesionLabel, 0, wxALL, 5 );
+
+	m_cohesionText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_cohesionText, 0, wxALL, 5 );
+
+	m_separationLabel = new wxStaticText( this, wxID_ANY, wxT("Separation"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_separationLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_separationLabel, 0, wxALL, 5 );
+
+	m_separationText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_separationText, 0, wxALL, 5 );
+
 	m_simulationSpeedLabel = new wxStaticText( this, wxID_ANY, wxT("Simulation Speed"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_simulationSpeedLabel->Wrap( -1 );
 	BoidsControlGrid->Add( m_simulationSpeedLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_m_simulationSpeedText = new wxTextCtrl( this, wxID_ANY, wxT("1.0"), wxDefaultPosition, wxDefaultSize, 0 );
-	BoidsControlGrid->Add( m_m_simulationSpeedText, 0, wxALL, 5 );
+	m_simulationSpeedText = new wxTextCtrl( this, wxID_ANY, wxT("1.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_simulationSpeedText, 0, wxALL, 5 );
 
 
 	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 5 );
@@ -67,15 +88,23 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 
 	// Connect Events
 	m_numberOfBoidsText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::NumberOfBoidsChanged ), NULL, this );
-	m_viewDistanceText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::viewDistanceChanged ), NULL, this );
-	m_m_simulationSpeedText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SimulationSpeedChanged ), NULL, this );
+	m_viewDistanceText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewDistanceChanged ), NULL, this );
+	m_viewAngleText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewAngleChanged ), NULL, this );
+	m_alignmentText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::AlignmentChanged ), NULL, this );
+	m_cohesionText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::CohesionChanged ), NULL, this );
+	m_separationText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
+	m_simulationSpeedText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SimulationSpeedChanged ), NULL, this );
 }
 
 Frame::~Frame()
 {
 	// Disconnect Events
 	m_numberOfBoidsText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::NumberOfBoidsChanged ), NULL, this );
-	m_viewDistanceText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::viewDistanceChanged ), NULL, this );
-	m_m_simulationSpeedText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SimulationSpeedChanged ), NULL, this );
+	m_viewDistanceText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewDistanceChanged ), NULL, this );
+	m_viewAngleText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewAngleChanged ), NULL, this );
+	m_alignmentText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::AlignmentChanged ), NULL, this );
+	m_cohesionText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::CohesionChanged ), NULL, this );
+	m_separationText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
+	m_simulationSpeedText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SimulationSpeedChanged ), NULL, this );
 
 }

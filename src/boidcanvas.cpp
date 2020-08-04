@@ -8,6 +8,7 @@ BoidCanvas::BoidCanvas(wxFrame *parent)
 :wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
     int argc = 1;
     char* argv[1] = { wxString((wxTheApp->argv)[0]).char_str() };
+	boids3dframe_ = (Boids3DFrame *) parent;
 	timer = new RenderTimer(this);
 	timer->start();
 }
@@ -34,6 +35,12 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 			/* Problem: glewInit failed, something is seriously wrong. */
 			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
+		auto b3f = (Boids3DFrame *) boids3dframe_;
+		world_ = new World<float>(std::stof(b3f->GetAlignment()),
+			std::stof(b3f->GetCohesion()),
+			std::stof(b3f->GetSeparation()),
+			std::stof(b3f->GetViewDistance()),
+			std::stof(b3f->GetSimulationSpeed()), 1000.0f);
 		initialized_ = true;
 	}
     Render();

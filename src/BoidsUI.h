@@ -37,13 +37,23 @@ class Frame : public wxFrame
 		wxTextCtrl* m_viewDistanceText;
 		wxStaticText* m_viewAngleLabel;
 		wxTextCtrl* m_viewAngleText;
+		wxStaticText* m_alignmentLabel;
+		wxTextCtrl* m_alignmentText;
+		wxStaticText* m_cohesionLabel;
+		wxTextCtrl* m_cohesionText;
+		wxStaticText* m_separationLabel;
+		wxTextCtrl* m_separationText;
 		wxStaticText* m_simulationSpeedLabel;
-		wxTextCtrl* m_m_simulationSpeedText;
+		wxTextCtrl* m_simulationSpeedText;
 		wxPanel* m_boidsPanel;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void NumberOfBoidsChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void viewDistanceChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void ViewDistanceChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void ViewAngleChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void AlignmentChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void CohesionChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void SeparationChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SimulationSpeedChanged( wxCommandEvent& event ) { event.Skip(); }
 
 
