@@ -114,12 +114,10 @@ void BoidCanvas::Render()
 	auto boids = world_->GetBoids();
 	for (auto it : boids) {
 		auto vec = it->GetPosition();
-		float x = vec.X();
-		float y = vec.Y();
-		float z = vec.Z();
+		auto rVec = it->GetVelocity();
 //		std::cout << x << ", " << y << ", " << z << std::endl;
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-		//model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(vec.X(), vec.Y(), vec.Z()));
+		model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(rVec.X(), rVec.X(), rVec.X()));
 
 		glm::mat4 mvp = proj * view * model;
 		
