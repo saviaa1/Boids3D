@@ -32,7 +32,7 @@ class World {
             std::uniform_real_distribution<T> zeroToSize(0, areaSize);
 
             for (auto i = 0; i < numberOfBoids; i++) {
-                vector3d<T> speedV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng)),
+                vector3d<T> speedV(zeroToSize(rng) / 100, zeroToSize(rng), zeroToSize(rng)),
                             posV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng));
                 //std::cout << speedV << posV << "..\n";
                 if (!speedV.isZero()) { speedV.normalize(); }

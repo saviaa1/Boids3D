@@ -28,13 +28,6 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 	SetCurrent(*glContext);
 	wxPaintDC(this);
 	if (!initialized_) {
-		glutInit(&wxTheApp->argc, wxTheApp->argv);
-		GLenum err = glewInit();
-		if (GLEW_OK != err)
-		{
-			/* Problem: glewInit failed, something is seriously wrong. */
-			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-		}
 		auto b3f = (Boids3DFrame *) boids3dframe_;
 		world_ = new World<float>(std::stof(b3f->GetAlignment()),
 			std::stof(b3f->GetCohesion()),
@@ -42,22 +35,34 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 			std::stof(b3f->GetViewDistance()),
 			std::stof(b3f->GetSimulationSpeed()),
 			std::stof(b3f->GetViewAngle()),
-			1000.0f, 10);
-		initialized_ = true;
+			100.0f, 100);
+		InitGL();
 	}
     Render();
 }
 
+void BoidCanvas::InitGL() {
+	glutInit(&wxTheApp->argc, wxTheApp->argv);
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+		{
+			/* Problem: glewInit failed, something is seriously wrong. */
+			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		}
+		
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LEQUAL);
+		glDepthRange(0.0f, 100.0f);
+		glClearDepth(1.0f);
+		glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
+		glMatrixMode(GL_MODELVIEW);
+		r_ = 0.0f;
+		initialized_ = true;
+}
+
 void BoidCanvas::Render()
 {
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LEQUAL);
-	glDepthRange(0.0f, 100.0f);
-	glClearDepth(1.0f);
-	glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
-	glMatrixMode(GL_MODELVIEW);
-
 	static Drawing d;
 
 	unsigned int vao;
@@ -69,10 +74,10 @@ void BoidCanvas::Render()
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), d.GetPositions(), GL_STATIC_DRAW);
 
-	glm::mat4 proj = glm::perspective(45.0f, 1.0f, 1.0f, 100.0f);
+	glm::mat4 proj = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(0,0,10), // Camera is at (0, 0, 10), in World Space
-		glm::vec3(0,0,0), // and looks at the origin
+		glm::vec3(50,50,200), // Camera is at (0, 0, 10), in World Space
+		glm::vec3(50,50,-50), // and looks at the origin
 		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -98,21 +103,23 @@ void BoidCanvas::Render()
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
 	glBindVertexArray(0);
-	float r = 0.0f;
+	
 
 	//std::cout << "loop" << std::endl;
 	glClearColor(0.0, 0.0, 0.4f, 0.0);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	r += 0.02;
-
-	for (unsigned int i = 0; i < 10; i += 1) {
-		float x = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
-		float y = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
-		float z = (float(rand())/float((RAND_MAX)) * 10.0) - 5.0;
+	r_ += 0.02;
+	auto boids = world_->GetBoids();
+	for (auto it : boids) {
+		auto vec = it->GetPosition();
+		float x = vec.X();
+		float y = vec.Y();
+		float z = vec.Z();
+//		std::cout << x << ", " << y << ", " << z << std::endl;
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-		model = model * glm::rotate(glm::mat4(1.0f), r, glm::vec3(0.0f, 0.0f, 1.0f));
+		//model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(0.0f, 0.0f, 1.0f));
 
 		glm::mat4 mvp = proj * view * model;
 		
@@ -126,6 +133,7 @@ void BoidCanvas::Render()
 		
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
 	}
+	world_->moveBoids();
 
 	glFlush();
 	SwapBuffers();

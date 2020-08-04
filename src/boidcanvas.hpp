@@ -32,7 +32,10 @@ public:
     BoidCanvas(wxFrame* parent);
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
+    void InitGL();
 	wxGLContext* glContext;
+private:
+    float r_;
 protected:
     DECLARE_EVENT_TABLE()
 };
