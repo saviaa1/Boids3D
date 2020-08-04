@@ -15,7 +15,11 @@ class Boid {
             this->SetNextVelocity(speedV);
             this->SetNextPosition(nextVelocity, areaSize);
         }
-        void SetNextVelocity(vector3d<T>& speedV) { nextVelocity = speedV; }
+        void SetNextVelocity(vector3d<T>& speedV) {
+            if (!speedV.isZero()) {
+                nextVelocity = speedV;
+            }
+        }
         //Adds given speed vector to pos.
         void SetNextPosition(vector3d<T>& speedV, T areaSize) {
             nextPositio += speedV;
