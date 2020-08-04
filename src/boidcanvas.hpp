@@ -17,6 +17,8 @@
 #include "drawing.hpp"
 #include "shader.hpp"
 #include "rendertimer.hpp"
+#include "world.hpp"
+#include "Boids3DFrame.h"
 
 class BoidCanvas: public wxGLCanvas {
 	void Render();
@@ -24,6 +26,8 @@ class BoidCanvas: public wxGLCanvas {
     int width_ = -1;
     int height_ = -1;
     RenderTimer* timer;
+    World<float> *world_;
+    Boids3DFrame *boids3dframe_;
 public:
     BoidCanvas(wxFrame* parent);
     ~BoidCanvas();
