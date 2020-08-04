@@ -40,7 +40,9 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 			std::stof(b3f->GetCohesion()),
 			std::stof(b3f->GetSeparation()),
 			std::stof(b3f->GetViewDistance()),
-			std::stof(b3f->GetSimulationSpeed()), 1000.0f);
+			std::stof(b3f->GetSimulationSpeed()),
+			std::stof(b3f->GetViewAngle()),
+			1000.0f, 10);
 		initialized_ = true;
 	}
     Render();
