@@ -25,6 +25,7 @@ class BoidCanvas: public wxGLCanvas {
     bool initialized_ = false;
     int width_ = -1;
     int height_ = -1;
+    float cameraDistance_ = 200.0f;
     RenderTimer* timer;
     World<float> *world_;
     Boids3DFrame *boids3dframe_;
@@ -32,6 +33,7 @@ public:
     BoidCanvas(wxFrame* parent);
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
+    void Zoom(wxMouseEvent& event);
     void InitGL();
 	wxGLContext* glContext;
 private:

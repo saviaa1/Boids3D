@@ -30,9 +30,10 @@ class World {
             //std::mt19937 rng(random_device());
             std::mt19937 rng;
             std::uniform_real_distribution<T> zeroToSize(0, areaSize);
+            std::uniform_real_distribution<T> rndSpeed(0, 2);
 
             for (auto i = 0; i < numberOfBoids; i++) {
-                vector3d<T> speedV(zeroToSize(rng) / 100, zeroToSize(rng), zeroToSize(rng)),
+                vector3d<T> speedV(rndSpeed(rng), rndSpeed(rng), rndSpeed(rng)),
                             posV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng));
                 //std::cout << speedV << posV << "..\n";
                 if (!speedV.isZero()) { speedV.normalize(); }

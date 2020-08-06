@@ -2,6 +2,7 @@
 
 BEGIN_EVENT_TABLE(BoidCanvas, wxGLCanvas)
     EVT_PAINT    (BoidCanvas::Paintit)
+	EVT_MOUSEWHEEL(BoidCanvas::Zoom)
 END_EVENT_TABLE()
 
 BoidCanvas::BoidCanvas(wxFrame *parent)
@@ -41,6 +42,10 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
     Render();
 }
 
+void BoidCanvas::Zoom(wxMouseEvent& event) {
+	cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+}
+
 void BoidCanvas::InitGL() {
 	glutInit(&wxTheApp->argc, wxTheApp->argv);
 		GLenum err = glewInit();
@@ -76,7 +81,7 @@ void BoidCanvas::Render()
 
 	glm::mat4 proj = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(50,50,200), // Camera is at (0, 0, 10), in World Space
+		glm::vec3(50, 50, cameraDistance_), // Camera is at (0, 0, 10), in World Space
 		glm::vec3(50,50,-50), // and looks at the origin
 		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
@@ -117,7 +122,7 @@ void BoidCanvas::Render()
 		auto rVec = it->GetVelocity();
 //		std::cout << x << ", " << y << ", " << z << std::endl;
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(vec.X(), vec.Y(), vec.Z()));
-		model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(rVec.X(), rVec.X(), rVec.X()));
+		model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(rVec.X(), rVec.Y(), rVec.Z()));
 
 		glm::mat4 mvp = proj * view * model;
 		
