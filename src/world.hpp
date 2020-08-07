@@ -35,7 +35,7 @@ class World {
                 vector3d<T> speedV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng)),
                             posV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng));
                 //std::cout << speedV << posV << "..\n";
-                if (!speedV.isZero()) { speedV = speedV.normalize(); }
+                if (!speedV.isZero()) { speedV.normalize(); }
                 Boid<T>* b = new Boid<T>(speedV, posV);
                 AddBoid(b);
             }
@@ -59,7 +59,7 @@ class World {
                 velocity = (sep.compute(boids_, boid, viewDistance) * separationWeight)
                     + (coh.compute(boids_, boid, viewDistance) * cohesionWeight)
                     + (ali.compute(boids_, boid, viewDistance) * alignmentWeight);
-                if (!velocity.isZero()) { velocity = velocity.normalize(); }
+                if (!velocity.isZero()) { velocity.normalize(); }
                 //std::cout << velocity << std::endl;
                 boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
             }
