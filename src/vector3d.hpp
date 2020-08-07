@@ -59,7 +59,7 @@ class vector3d {
             if (x==v.x && y==v.y && z==v.z) return true;
             return false;
         }
-        T dot_product(const vector3d& v) {
+        T dot_product(const vector3d& v) const {
             return x*v.x+y*v.y+z*v.z;
         }
         T magnitude() const {
@@ -69,10 +69,10 @@ class vector3d {
             vector3d diff = *this - v;
             return diff.magnitude();
         }
-        vector3d normalize() const {
+        vector3d& normalize() {
             T len = this->magnitude();
             if (len == 0) std::runtime_error("Div by 0 in vector3d.normalize()");
-            return *this/len;
+            return this->operator/=(len);
         }
         friend std::ostream& operator<<(std::ostream& os, const vector3d& v)  {
             os << "vector3d(" << v.x << ", " << v.y << ", " << v.z << ")"  << std::endl;
@@ -98,6 +98,9 @@ class vector3d {
             T y_ang = acos(y / mag);
             T z_ang = acos(z / mag);
             return vector3d(x_ang, y_ang, z_ang);
+        }
+        T angleBetween(const vector3d& v) const {
+            return std::acos(dot_product(v) / (magnitude()*v.magnitude() )) * 180 / M_PI;
         }
 
     private:

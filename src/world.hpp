@@ -13,9 +13,9 @@
 template <typename T>
 class World {
     public:
-        World(T aWeight, T cWeight, T sWeight, T distance, T s, T angle, T size, int numberOfBoids)
-            : alignmentWeight(aWeight), cohesionWeight(cWeight), separationWeight(sWeight), viewDistance(distance), speed(s), viewAngle(angle), areaSize(size) {
-                initBoids(numberOfBoids);
+        World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
+            : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), separationWeight(_separationWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
+                initBoids(_numberOfBoids);
             }
         ~World() {
             for (auto boid : boids_) {
@@ -62,7 +62,7 @@ class World {
                     + (ali.compute(boids_, boid, viewDistance) * alignmentWeight);
                 if (!velocity.isZero()) { velocity.normalize(); }
                 //std::cout << velocity << std::endl;
-                boid->SetNextVelAndPos(velocity * speed, areaSize);
+                boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
             }
             for (auto boid :  boids_) {
                 boid->SetNextToCurrent();
@@ -74,8 +74,8 @@ class World {
         void SetCohesionWeight(T val) { cohesionWeight = val; }
         const T GetSeperationWeight() const { return separationWeight; }
         void SetSeperationWeight(T val) { separationWeight = val; }
-        const T GetSpeed() const { return speed; }
-        void SetSpeed(T val) { speed = val; }
+        const T GetSpeed() const { return boidSpeed; }
+        void SetSpeed(T val) { boidSpeed = val; }
         const T GetViewDistance() const { return viewDistance; }
         void SetViewDistance(T val) {
             if (val < 0) throw std::runtime_error("View distance cannot be < 0");
@@ -87,7 +87,7 @@ class World {
         T cohesionWeight;
         T separationWeight;
         T viewDistance;
-        T speed;
+        T boidSpeed;
         T areaSize;
         std::vector<Boid<T>*> boids_;
 

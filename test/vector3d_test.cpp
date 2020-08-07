@@ -180,7 +180,7 @@ TEST(Vector3dTest, Distance) {
 
 TEST(Vector3dTest, Normalize) {
     vector3d<float> a(2,-4,1);
-    a = a.normalize();
+    a.normalize();
     ASSERT_FLOAT_EQ(2/sqrt(21), a.X());
     ASSERT_FLOAT_EQ(-4/sqrt(21), a.Y());
     ASSERT_FLOAT_EQ(1/sqrt(21), a.Z());
@@ -200,4 +200,10 @@ TEST(Vector3dTest, Angle) {
     ASSERT_FLOAT_EQ((135 * 2 * M_PI) / 360, b.X());
     ASSERT_FLOAT_EQ((90 * 2 * M_PI) / 360, b.Y());
     ASSERT_FLOAT_EQ((45 * 2 * M_PI) / 360, b.Z());
+}
+TEST(Vector3dTest, angleBetween) {
+    vector3d<float> a(5, -20, -14);
+    vector3d<float> b(-1, 3, 2);
+
+    ASSERT_FLOAT_EQ(175.87427, a.angleBetween(b));
 }
