@@ -29,14 +29,14 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_numberOfBoidsLabel->Wrap( -1 );
 	BoidsControlGrid->Add( m_numberOfBoidsLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_numberOfBoidsText = new wxTextCtrl( this, wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_numberOfBoidsText = new wxTextCtrl( this, wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_numberOfBoidsText, 0, wxALL, 5 );
 
 	m_viewDistanceLabel = new wxStaticText( this, wxID_ANY, wxT("View Distance"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_viewDistanceLabel->Wrap( -1 );
 	BoidsControlGrid->Add( m_viewDistanceLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_viewDistanceText = new wxTextCtrl( this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_viewDistanceText = new wxTextCtrl( this, wxID_ANY, wxT("4.2"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_viewDistanceText, 0, wxALL, 5 );
 
 	m_viewAngleLabel = new wxStaticText( this, wxID_ANY, wxT("View Angle"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -71,7 +71,7 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_simulationSpeedLabel->Wrap( -1 );
 	BoidsControlGrid->Add( m_simulationSpeedLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_simulationSpeedText = new wxTextCtrl( this, wxID_ANY, wxT("1.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_simulationSpeedText = new wxTextCtrl( this, wxID_ANY, wxT("0.42"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_simulationSpeedText, 0, wxALL, 5 );
 
 
