@@ -36,7 +36,7 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 			std::stof(b3f->GetViewDistance()),
 			std::stof(b3f->GetSimulationSpeed()),
 			std::stof(b3f->GetViewAngle()),
-			100.0f, 100);
+			100.0f, std::stof(b3f->GetNumberOfBoids()));
 		InitGL();
 	}
     Render();

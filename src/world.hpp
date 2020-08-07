@@ -30,13 +30,12 @@ class World {
             //std::mt19937 rng(random_device());
             std::mt19937 rng;
             std::uniform_real_distribution<T> zeroToSize(0, areaSize);
-            std::uniform_real_distribution<T> rndSpeed(0, 2);
 
             for (auto i = 0; i < numberOfBoids; i++) {
-                vector3d<T> speedV(rndSpeed(rng), rndSpeed(rng), rndSpeed(rng)),
+                vector3d<T> speedV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng)),
                             posV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng));
                 //std::cout << speedV << posV << "..\n";
-                if (!speedV.isZero()) { speedV.normalize(); }
+                if (!speedV.isZero()) { speedV = speedV.normalize(); }
                 Boid<T>* b = new Boid<T>(speedV, posV);
                 AddBoid(b);
             }
@@ -60,7 +59,7 @@ class World {
                 velocity = (sep.compute(boids_, boid, viewDistance) * separationWeight)
                     + (coh.compute(boids_, boid, viewDistance) * cohesionWeight)
                     + (ali.compute(boids_, boid, viewDistance) * alignmentWeight);
-                if (!velocity.isZero()) { velocity.normalize(); }
+                if (!velocity.isZero()) { velocity = velocity.normalize(); }
                 //std::cout << velocity << std::endl;
                 boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
             }
