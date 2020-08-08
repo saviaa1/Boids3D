@@ -75,8 +75,8 @@ class World {
                     boidsHash_[oldHash].erase(std::remove(boidsHash_[oldHash].begin(), boidsHash_[oldHash].end(), boid), boidsHash_[oldHash].end());
                     //std::vector<Boid*>::erase(boidsHash_[oldHash], boid);
                     if (boidsHash_.count(newHash) == 0) {
-                        std::list<Boid<T>*> blist;
-                        //boidsHash_.emplace(newHash, blist);
+                        std::vector<Boid<T>*> blist;
+                        boidsHash_.emplace(newHash, blist);
                     }
                     boidsHash_[newHash].push_back(boid);
                     boid->SetCurrentHash(newHash);
