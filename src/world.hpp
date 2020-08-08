@@ -72,7 +72,7 @@ class World {
                 oldHash = boid->GetCurrentHash();
                 newHash = boid->CalculateHash(gridSize);
                 if (newHash != oldHash) {
-                    //boidsHash_[oldHash].erase(std::remove(boidsHash_[oldHash].begin(), boidsHash_[oldHash].end(), boid), boidsHash_[oldHash].end());
+                    boidsHash_[oldHash].erase(std::remove(boidsHash_[oldHash].begin(), boidsHash_[oldHash].end(), boid), boidsHash_[oldHash].end());
                     //std::vector<Boid*>::erase(boidsHash_[oldHash], boid);
                     if (boidsHash_.count(newHash) == 0) {
                         std::list<Boid<T>*> blist;
