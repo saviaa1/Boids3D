@@ -17,9 +17,9 @@ After this, run the application with: `./boid_app`
 ### Possible errors and fixes:
 
 OpenGL Error: Install a newer version of OpenGL.  
-"The RandR library and headers were not found": `sudo apt-get install xorg-dev libglu1-mesa-dev`
-
+"The RandR library and headers were not found": `sudo apt-get install xorg-dev libglu1-mesa-dev`  
+If the app runs, but only draws one white boid with a blue background, run this command : `export MESA_GL_VERSION_OVERRIDE=3.10`
 
 ### 3D libs added
-'sudo apt install libglew-dev'
-'sudo apt install libglm-dev' // opengl Math library
+`sudo apt install libglew-dev`  
+`sudo apt install libglm-dev` // opengl Math library
