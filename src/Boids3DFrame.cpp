@@ -9,7 +9,7 @@ Frame( parent )
 
 void Boids3DFrame::BoidsChanged( wxCommandEvent& event )
 {
-// TODO: Implement BoidsChanged
+    world_->SetNewNumberOfBoids(std::stoi(GetBoids()));
 }
 
 void Boids3DFrame::SpeedChanged( wxCommandEvent& event )

@@ -33,18 +33,26 @@ class World {
             //std::mt19937 rng(random_device());
             std::mt19937 rng;
             std::uniform_real_distribution<T> zeroToSize(0, areaSize);
-
-            for (auto i = 0; i < numberOfBoids; i++) {
-                vector3d<T> speedV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng)),
-                            posV(zeroToSize(rng), zeroToSize(rng), zeroToSize(rng));
+            AddRandomBoids(rng, zeroToSize, numberOfBoids);
+            newBoids_ = numberOfBoids;
+        }
+        void AddBoid(Boid<T>* b) {
+            boids_.push_back(b);
+        }
+        void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> dist, int nr) {
+            for (auto i = 0; i < nr; i++) {
+                vector3d<T> speedV(dist(rng), dist(rng), dist(rng)),
+                            posV(dist(rng), dist(rng), dist(rng));
                 //std::cout << speedV << posV << "..\n";
-                if (!speedV.isZero()) { speedV.normalize(); }
+                if (!speedV.isZero()) {
+                    speedV.normalize();
+                }
                 Boid<T>* b = new Boid<T>(speedV, posV);
                 AddBoid(b);
             }
         }
-        void AddBoid(Boid<T>* b) {
-            boids_.push_back(b);
+        void SetNewNumberOfBoids(int nr) {
+            newBoids_ = nr;
         }
         const size_t GetNumberOfBoids() const {
             return boids_.size();
@@ -58,6 +66,10 @@ class World {
             CohesionBehavior<T> coh;
             AlignmentBehavior<T> ali;
             vector3d<T> velocity;
+            if (newBoids_ != GetNumberOfBoids()) {
+                UpdateBoids();
+                newBoids_ = GetNumberOfBoids();
+            }
             for (auto boid : boids_) {
                 velocity = (sep.compute(boids_, boid, viewDistance) * separationWeight)
                     + (coh.compute(boids_, boid, viewDistance) * cohesionWeight)
@@ -81,6 +93,23 @@ class World {
                     boidsHash_[newHash].push_back(boid);
                     boid->SetCurrentHash(newHash);
                 }
+            }
+        }
+        void UpdateBoids() {
+            int diff = newBoids_ - GetNumberOfBoids();
+            int oldHash;
+            while  (diff < 0) {
+                Boid<T>* boid = boids_.back();
+                oldHash = boid->GetCurrentHash();
+                boidsHash_[oldHash].erase(std::remove(boidsHash_[oldHash].begin(), boidsHash_[oldHash].end(), boid), boidsHash_[oldHash].end());
+                boids_.pop_back();
+                diff++;
+            }
+            if (diff > 0) {
+                std::random_device random_device;
+                std::mt19937 rng(random_device());
+                std::uniform_real_distribution<T> zeroToSize(0, areaSize);
+                AddRandomBoids(rng, zeroToSize, diff);
             }
         }
         const T GetAligmentWeight() const { return alignmentWeight; }
@@ -115,6 +144,7 @@ class World {
         T areaSize;
         T gridSize;
         std::vector<Boid<T>*> boids_;
+        int newBoids_;
         std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
         //T borderWeight
