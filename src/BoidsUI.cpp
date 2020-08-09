@@ -81,7 +81,6 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_separationText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_separationText, 0, wxALL, 5 );
 
-
 	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 5 );
 
 	m_boidsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 600,600 ), wxTAB_TRAVERSAL );

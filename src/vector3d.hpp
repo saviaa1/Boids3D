@@ -102,6 +102,12 @@ class vector3d {
         T angleBetween(const vector3d& v) const {
             return std::acos(dot_product(v) / (magnitude()*v.magnitude() )) * 180 / M_PI;
         }
+        vector3d crossProduct(const vector3d& v) const {
+            T x = (y * v.z) - (z * v.y);
+            T y = (z * v.x) - (x * v.z);
+            T z = (x * v.y) - (y * v.x);
+            return vector3d(x, y, z);
+        }
 
     private:
         T x, y, z;

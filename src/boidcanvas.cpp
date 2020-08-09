@@ -79,6 +79,41 @@ void BoidCanvas::InitGL() {
 		initialized_ = true;
 }
 
+glm::quat RotationBetweenVectors(vector3d<float> v) {
+	glm::vec3 start = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 dest = glm::vec3(v.X(), v.Y(), v.Z());
+	dest = normalize(dest);
+
+	float cosTheta = dot(start, dest);
+	glm::vec3 rotationAxis;
+	
+
+	if (cosTheta < -1 + 0.001f){
+		// special case when vectors in opposite directions:
+		// there is no "ideal" rotation axis
+		// So guess one; any will do as long as it's perpendicular to start
+		rotationAxis = cross(glm::vec3(0.0f, 0.0f, 1.0f), start);
+		if (glm::length2(rotationAxis) < 0.01 ) // bad luck, they were parallel, try again!
+			rotationAxis = cross(glm::vec3(1.0f, 0.0f, 0.0f), start);
+
+		rotationAxis = normalize(rotationAxis);
+		return glm::angleAxis(glm::radians(180.0f), rotationAxis);
+	}
+
+	rotationAxis = cross(start, dest);
+
+	float s = sqrt( (1+cosTheta)*2 );
+	float invs = 1 / s;
+
+	return glm::quat(
+		s * 0.5f, 
+		rotationAxis.x * invs,
+		rotationAxis.y * invs,
+		rotationAxis.z * invs
+	);
+
+};
+
 void BoidCanvas::Render()
 {
 	static Drawing d;
@@ -133,11 +168,22 @@ void BoidCanvas::Render()
 	for (auto it : boids) {
 		auto vec = it->GetPosition();
 		auto rVec = it->GetVelocity();
-//		std::cout << x << ", " << y << ", " << z << std::endl;
+		// auto nVec = rVec.normalize();
+		// std::cout << "normalized speed V: " << nVec.X() << ", " << nVec.Y() << ", " << nVec.Z() << std::endl;
+
+		// auto cVec = nVec.crossProduct(modelV);
+		// std::cout << "cross product V: " << cVec.X() << ", " << cVec.Y() << ", " << cVec.Z() << std::endl;
+		// float a = nVec.angleBetween(modelV);
+
+		glm::quat q = RotationBetweenVectors(rVec);
+
+		glm::mat4 RotationMatrix = glm::toMat4(q);
+
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(vec.X(), vec.Y(), vec.Z()));
-		model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(rVec.X(), rVec.Y(), rVec.Z()));
+		model = model * RotationMatrix;
 
 		glm::mat4 mvp = proj * view * model;
+
 		
 		glUseProgram(shader);
 
