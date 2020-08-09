@@ -31,8 +31,12 @@ class Frame : public wxFrame
 	private:
 
 	protected:
-		wxStaticText* m_numberOfBoidsLabel;
-		wxTextCtrl* m_numberOfBoidsText;
+		wxStaticText* m_boidsLabel;
+		wxTextCtrl* m_boidsText;
+		wxStaticText* m_speedLabel;
+		wxTextCtrl* m_speedText;
+		wxStaticText* m_worldSizeLabel;
+		wxTextCtrl* m_worldSizeText;
 		wxStaticText* m_viewDistanceLabel;
 		wxTextCtrl* m_viewDistanceText;
 		wxStaticText* m_viewAngleLabel;
@@ -43,18 +47,17 @@ class Frame : public wxFrame
 		wxTextCtrl* m_cohesionText;
 		wxStaticText* m_separationLabel;
 		wxTextCtrl* m_separationText;
-		wxStaticText* m_simulationSpeedLabel;
-		wxTextCtrl* m_simulationSpeedText;
 		wxPanel* m_boidsPanel;
 
 		// Virtual event handlers, overide them in your derived class
-		virtual void NumberOfBoidsChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void BoidsChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void SpeedChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void WorldSizeChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void ViewDistanceChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void ViewAngleChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void AlignmentChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void CohesionChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SeparationChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void SimulationSpeedChanged( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

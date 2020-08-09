@@ -1,8 +1,10 @@
 #pragma once
 #include <list>
 #include <vector>
+#include <map>
 #include <stdexcept>
 #include <random>
+#include <algorithm>
 
 #include "boid.hpp"
 #include "behavior.hpp"
@@ -16,6 +18,7 @@ class World {
         World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
             : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), separationWeight(_separationWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
                 initBoids(_numberOfBoids);
+                SetGridSize(_viewDistance, _areaSize);
             }
         ~World() {
             for (auto boid : boids_) {
@@ -63,8 +66,21 @@ class World {
                 //std::cout << velocity << std::endl;
                 boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
             }
+            int oldHash, newHash;
             for (auto boid :  boids_) {
                 boid->SetNextToCurrent();
+                oldHash = boid->GetCurrentHash();
+                newHash = boid->CalculateHash(gridSize);
+                if (newHash != oldHash) {
+                    boidsHash_[oldHash].erase(std::remove(boidsHash_[oldHash].begin(), boidsHash_[oldHash].end(), boid), boidsHash_[oldHash].end());
+                    //std::vector<Boid*>::erase(boidsHash_[oldHash], boid);
+                    if (boidsHash_.count(newHash) == 0) {
+                        std::vector<Boid<T>*> blist;
+                        boidsHash_.emplace(newHash, blist);
+                    }
+                    boidsHash_[newHash].push_back(boid);
+                    boid->SetCurrentHash(newHash);
+                }
             }
         }
         const T GetAligmentWeight() const { return alignmentWeight; }
@@ -80,6 +96,13 @@ class World {
             if (val < 0) throw std::runtime_error("View distance cannot be < 0");
             viewDistance = val;
         }
+        const T GetGridSize() const { return gridSize; }
+        void SetGridSize(T val, T max) {
+            if (max / val > 1024.0) {
+                val = max / 1024;
+            }
+            gridSize = val;
+        }
 
     private:
         T alignmentWeight;
@@ -88,7 +111,9 @@ class World {
         T viewDistance;
         T boidSpeed;
         T areaSize;
+        T gridSize;
         std::vector<Boid<T>*> boids_;
+        std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
         //T borderWeight
         T viewAngle;

@@ -9,16 +9,24 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/norm.hpp>
+#include <glm/gtx/common.hpp>
+
 
 #include "drawing.hpp"
 #include "shader.hpp"
 #include "rendertimer.hpp"
 #include "world.hpp"
 #include "Boids3DFrame.h"
+#include "vector3d.hpp"
 
 class BoidCanvas: public wxGLCanvas {
 	void Render();
@@ -34,6 +42,7 @@ public:
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
     void Zoom(wxMouseEvent& event);
+    void HandleArgs(Boids3DFrame *b3f);
     void InitGL();
 	wxGLContext* glContext;
 private:

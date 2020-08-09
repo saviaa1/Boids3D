@@ -7,11 +7,9 @@ END_EVENT_TABLE()
 
 BoidCanvas::BoidCanvas(wxFrame *parent)
 :wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
-    int argc = 1;
-    char* argv[1] = { wxString((wxTheApp->argv)[0]).char_str() };
 	boids3dframe_ = (Boids3DFrame *) parent;
 	timer = new RenderTimer(this);
-	timer->start();
+	timer->start();	
 }
 
 BoidCanvas::~BoidCanvas() {
@@ -30,13 +28,15 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 	wxPaintDC(this);
 	if (!initialized_) {
 		auto b3f = (Boids3DFrame *) boids3dframe_;
+		HandleArgs(b3f);
 		world_ = new World<float>(std::stof(b3f->GetAlignment()),
 			std::stof(b3f->GetCohesion()),
 			std::stof(b3f->GetSeparation()),
 			std::stof(b3f->GetViewDistance()),
-			std::stof(b3f->GetSimulationSpeed()),
+			std::stof(b3f->GetSpeed()),
 			std::stof(b3f->GetViewAngle()),
-			100.0f, std::stof(b3f->GetNumberOfBoids()));
+			std::stof(b3f->GetWorldSize()),
+			std::stof(b3f->GetBoids()));
 		InitGL();
 	}
     Render();
@@ -44,6 +44,19 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
 	cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+}
+
+void BoidCanvas::HandleArgs(Boids3DFrame *b3f) {
+	int argc = wxTheApp->argc;
+
+	if (argc > 1) b3f->SetBoids(wxTheApp->argv[1]);
+	if (argc > 2) b3f->SetSpeed(wxTheApp->argv[2]);
+	if (argc > 3) b3f->SetWorldSize(wxTheApp->argv[3]);
+	if (argc > 4) b3f->SetViewDistance(wxTheApp->argv[4]);
+	if (argc > 5) b3f->SetViewAngle(wxTheApp->argv[5]);
+	if (argc > 6) b3f->SetAlignment(wxTheApp->argv[6]);
+	if (argc > 7) b3f->SetCohesion(wxTheApp->argv[7]);
+	if (argc > 8) b3f->SetSeparation(wxTheApp->argv[8]);
 }
 
 void BoidCanvas::InitGL() {
@@ -65,6 +78,41 @@ void BoidCanvas::InitGL() {
 		r_ = 0.0f;
 		initialized_ = true;
 }
+
+glm::quat RotationBetweenVectors(vector3d<float> v) {
+	glm::vec3 start = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 dest = glm::vec3(v.X(), v.Y(), v.Z());
+	dest = normalize(dest);
+
+	float cosTheta = dot(start, dest);
+	glm::vec3 rotationAxis;
+	
+
+	if (cosTheta < -1 + 0.001f){
+		// special case when vectors in opposite directions:
+		// there is no "ideal" rotation axis
+		// So guess one; any will do as long as it's perpendicular to start
+		rotationAxis = cross(glm::vec3(0.0f, 0.0f, 1.0f), start);
+		if (glm::length2(rotationAxis) < 0.01 ) // bad luck, they were parallel, try again!
+			rotationAxis = cross(glm::vec3(1.0f, 0.0f, 0.0f), start);
+
+		rotationAxis = normalize(rotationAxis);
+		return glm::angleAxis(glm::radians(180.0f), rotationAxis);
+	}
+
+	rotationAxis = cross(start, dest);
+
+	float s = sqrt( (1+cosTheta)*2 );
+	float invs = 1 / s;
+
+	return glm::quat(
+		s * 0.5f, 
+		rotationAxis.x * invs,
+		rotationAxis.y * invs,
+		rotationAxis.z * invs
+	);
+
+};
 
 void BoidCanvas::Render()
 {
@@ -120,11 +168,22 @@ void BoidCanvas::Render()
 	for (auto it : boids) {
 		auto vec = it->GetPosition();
 		auto rVec = it->GetVelocity();
-//		std::cout << x << ", " << y << ", " << z << std::endl;
+		// auto nVec = rVec.normalize();
+		// std::cout << "normalized speed V: " << nVec.X() << ", " << nVec.Y() << ", " << nVec.Z() << std::endl;
+
+		// auto cVec = nVec.crossProduct(modelV);
+		// std::cout << "cross product V: " << cVec.X() << ", " << cVec.Y() << ", " << cVec.Z() << std::endl;
+		// float a = nVec.angleBetween(modelV);
+
+		glm::quat q = RotationBetweenVectors(rVec);
+
+		glm::mat4 RotationMatrix = glm::toMat4(q);
+
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(vec.X(), vec.Y(), vec.Z()));
-		model = model * glm::rotate(glm::mat4(1.0f), r_, glm::vec3(rVec.X(), rVec.Y(), rVec.Z()));
+		model = model * RotationMatrix;
 
 		glm::mat4 mvp = proj * view * model;
+
 		
 		glUseProgram(shader);
 

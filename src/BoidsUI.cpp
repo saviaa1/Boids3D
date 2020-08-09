@@ -25,18 +25,32 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	BoidsControlGrid->SetFlexibleDirection( wxBOTH );
 	BoidsControlGrid->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
 
-	m_numberOfBoidsLabel = new wxStaticText( this, wxID_ANY, wxT("Number of Boids"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_numberOfBoidsLabel->Wrap( -1 );
-	BoidsControlGrid->Add( m_numberOfBoidsLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_boidsLabel = new wxStaticText( this, wxID_ANY, wxT("Boids"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_boidsLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_boidsLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_numberOfBoidsText = new wxTextCtrl( this, wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
-	BoidsControlGrid->Add( m_numberOfBoidsText, 0, wxALL, 5 );
+	m_boidsText = new wxTextCtrl( this, wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_boidsText, 0, wxALL, 5 );
+
+	m_speedLabel = new wxStaticText( this, wxID_ANY, wxT("Speed"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_speedLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_speedLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	m_speedText = new wxTextCtrl( this, wxID_ANY, wxT("1.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_speedText, 0, wxALL, 5 );
+
+	m_worldSizeLabel = new wxStaticText( this, wxID_ANY, wxT("World Size"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_worldSizeLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_worldSizeLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	m_worldSizeText = new wxTextCtrl( this, wxID_ANY, wxT("100.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	BoidsControlGrid->Add( m_worldSizeText, 0, wxALL, 5 );
 
 	m_viewDistanceLabel = new wxStaticText( this, wxID_ANY, wxT("View Distance"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_viewDistanceLabel->Wrap( -1 );
 	BoidsControlGrid->Add( m_viewDistanceLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_viewDistanceText = new wxTextCtrl( this, wxID_ANY, wxT("4.2"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_viewDistanceText = new wxTextCtrl( this, wxID_ANY, wxT("10.0"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_viewDistanceText, 0, wxALL, 5 );
 
 	m_viewAngleLabel = new wxStaticText( this, wxID_ANY, wxT("View Angle"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -48,37 +62,29 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 
 	m_alignmentLabel = new wxStaticText( this, wxID_ANY, wxT("Alignment"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_alignmentLabel->Wrap( -1 );
-	BoidsControlGrid->Add( m_alignmentLabel, 0, wxALL, 5 );
+	BoidsControlGrid->Add( m_alignmentLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_alignmentText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_alignmentText, 0, wxALL, 5 );
 
 	m_cohesionLabel = new wxStaticText( this, wxID_ANY, wxT("Cohesion"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_cohesionLabel->Wrap( -1 );
-	BoidsControlGrid->Add( m_cohesionLabel, 0, wxALL, 5 );
+	BoidsControlGrid->Add( m_cohesionLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_cohesionText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_cohesionText, 0, wxALL, 5 );
 
 	m_separationLabel = new wxStaticText( this, wxID_ANY, wxT("Separation"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_separationLabel->Wrap( -1 );
-	BoidsControlGrid->Add( m_separationLabel, 0, wxALL, 5 );
+	BoidsControlGrid->Add( m_separationLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_separationText = new wxTextCtrl( this, wxID_ANY, wxT("0.5"), wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_separationText, 0, wxALL, 5 );
 
-	m_simulationSpeedLabel = new wxStaticText( this, wxID_ANY, wxT("Simulation Speed"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_simulationSpeedLabel->Wrap( -1 );
-	BoidsControlGrid->Add( m_simulationSpeedLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-	m_simulationSpeedText = new wxTextCtrl( this, wxID_ANY, wxT("0.42"), wxDefaultPosition, wxDefaultSize, 0 );
-	BoidsControlGrid->Add( m_simulationSpeedText, 0, wxALL, 5 );
-
-
 	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 5 );
 
 	m_boidsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 600,600 ), wxTAB_TRAVERSAL );
-	BoidsHorizontalSizer->Add( m_boidsPanel, 1, wxEXPAND, 5 );
+	BoidsHorizontalSizer->Add( m_boidsPanel, 1, wxALL, 5 );
 
 
 	this->SetSizer( BoidsHorizontalSizer );
@@ -87,24 +93,26 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	this->Centre( wxBOTH );
 
 	// Connect Events
-	m_numberOfBoidsText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::NumberOfBoidsChanged ), NULL, this );
+	m_boidsText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::BoidsChanged ), NULL, this );
+	m_speedText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SpeedChanged ), NULL, this );
+	m_worldSizeText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::WorldSizeChanged ), NULL, this );
 	m_viewDistanceText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewDistanceChanged ), NULL, this );
 	m_viewAngleText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewAngleChanged ), NULL, this );
 	m_alignmentText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::AlignmentChanged ), NULL, this );
 	m_cohesionText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::CohesionChanged ), NULL, this );
 	m_separationText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
-	m_simulationSpeedText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SimulationSpeedChanged ), NULL, this );
 }
 
 Frame::~Frame()
 {
 	// Disconnect Events
-	m_numberOfBoidsText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::NumberOfBoidsChanged ), NULL, this );
+	m_boidsText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::BoidsChanged ), NULL, this );
+	m_speedText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SpeedChanged ), NULL, this );
+	m_worldSizeText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::WorldSizeChanged ), NULL, this );
 	m_viewDistanceText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewDistanceChanged ), NULL, this );
 	m_viewAngleText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewAngleChanged ), NULL, this );
 	m_alignmentText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::AlignmentChanged ), NULL, this );
 	m_cohesionText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::CohesionChanged ), NULL, this );
 	m_separationText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
-	m_simulationSpeedText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SimulationSpeedChanged ), NULL, this );
 
 }
