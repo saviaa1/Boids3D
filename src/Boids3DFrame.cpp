@@ -7,9 +7,19 @@ Frame( parent )
 
 }
 
-void Boids3DFrame::NumberOfBoidsChanged( wxCommandEvent& event )
+void Boids3DFrame::BoidsChanged( wxCommandEvent& event )
 {
-// TODO: Implement NumberOfBoidsChanged
+// TODO: Implement BoidsChanged
+}
+
+void Boids3DFrame::SpeedChanged( wxCommandEvent& event )
+{
+// TODO: Implement SpeedChanged
+}
+
+void Boids3DFrame::WorldSizeChanged( wxCommandEvent& event )
+{
+// TODO: Implement WorldSizeChanged
 }
 
 void Boids3DFrame::ViewDistanceChanged( wxCommandEvent& event )
@@ -35,9 +45,4 @@ void Boids3DFrame::CohesionChanged( wxCommandEvent& event )
 void Boids3DFrame::SeparationChanged( wxCommandEvent& event )
 {
 // TODO: Implement SeparationChanged
-}
-
-void Boids3DFrame::SimulationSpeedChanged( wxCommandEvent& event )
-{
-// TODO: Implement SimulationSpeedChanged
 }

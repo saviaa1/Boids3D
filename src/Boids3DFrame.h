@@ -15,39 +15,44 @@ class Boids3DFrame : public Frame
 {
 	protected:
 		// Handlers for Frame events.
-		void NumberOfBoidsChanged( wxCommandEvent& event );
+		void BoidsChanged( wxCommandEvent& event );
+		void SpeedChanged( wxCommandEvent& event );
+		void WorldSizeChanged( wxCommandEvent& event );
 		void ViewDistanceChanged( wxCommandEvent& event );
 		void ViewAngleChanged( wxCommandEvent& event );
 		void AlignmentChanged( wxCommandEvent& event );
 		void CohesionChanged( wxCommandEvent& event );
 		void SeparationChanged( wxCommandEvent& event );
-		void SimulationSpeedChanged( wxCommandEvent& event );
 	public:
 		/** Constructor */
 		Boids3DFrame( wxWindow* parent );
 	//// end generated class members
 		wxWindow *Get3DPanel() { return m_boidsPanel; }
-		std::string GetNumberOfBoids() {
-			return std::string(m_numberOfBoidsText->GetValue());
-		}
-		std::string GetViewDistance() {
-			return std::string(m_viewDistanceText->GetValue());
-		}
-		std::string GetViewAngle() {
-			return std::string(m_viewAngleText->GetValue());
-		}
-		std::string GetAlignment() {
-			return std::string(m_alignmentText->GetValue());
-		}
-		std::string GetCohesion() {
-			return std::string(m_cohesionText->GetValue());
-		}
-		std::string GetSeparation() {
-			return std::string(m_separationText->GetValue());
-		}
-		std::string GetSimulationSpeed() {
-			return std::string(m_simulationSpeedText->GetValue());
-		}
+
+		std::string GetBoids() { return std::string(m_boidsText->GetValue()); }
+		void SetBoids(wxString value) { m_boidsText->SetValue(value); }
+
+		std::string GetSpeed() { return std::string(m_speedText->GetValue()); }
+		void SetSpeed(wxString value) { m_speedText->SetValue(value); }
+
+		std::string GetWorldSize() { return std::string(m_worldSizeText->GetValue()); }
+		void SetWorldSize(wxString value) { m_worldSizeText->SetValue(value); }
+
+		std::string GetViewDistance() {return std::string(m_viewDistanceText->GetValue()); }
+		void SetViewDistance(wxString value) { m_viewDistanceText->SetValue(value); }
+
+		std::string GetViewAngle() { return std::string(m_viewAngleText->GetValue()); }
+		void SetViewAngle(wxString value) { m_viewAngleText->SetValue(value); }
+
+		std::string GetAlignment() { return std::string(m_alignmentText->GetValue()); }
+		void SetAlignment(wxString value) { m_alignmentText->SetValue(value); }
+
+		std::string GetCohesion() { return std::string(m_cohesionText->GetValue()); }
+		void SetCohesion(wxString value) { m_cohesionText->SetValue(value); }
+
+		std::string GetSeparation() { return std::string(m_separationText->GetValue()); }
+		void SetSeparation(wxString value) { m_separationText->SetValue(value); }
+
 
 };
 

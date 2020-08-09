@@ -19,9 +19,9 @@ public:
                 }
             }
         }
-        if (neighborCount == 0) { return velocity; }
+        if (neighborCount == 0) { return myBoid->GetVelocity(); }
         velocity /= neighborCount;
-        if (velocity.isZero()) { return velocity; }
+        if (velocity.isZero()) { return myBoid->GetVelocity(); }
         return velocity.normalize();
     }
 };

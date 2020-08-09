@@ -34,6 +34,7 @@
 class MyApp: public wxApp
 {
     virtual bool OnInit();
+    void CheckArgs();
     wxGLCanvas * MyGLCanvas;
 };
 
@@ -41,6 +42,7 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
+    CheckArgs();
 	Boids3DFrame *boidsFrame = new Boids3DFrame(nullptr);
     BoidCanvas *glCanvas = new BoidCanvas(boidsFrame);
 	glCanvas->glContext = new wxGLContext(glCanvas);
@@ -51,4 +53,11 @@ bool MyApp::OnInit()
 	boidsFrame->Show(true);
 
 	return TRUE;
+}
+
+void MyApp::CheckArgs() {
+	if (argc == 2 && std::string(argv[1]).find("help") != std::string::npos) {
+		std::cout << "usage: boid_app nrboids speed size viewdistance viewangle alignment cohesion separation" << std::endl;
+        exit(0);
+	}
 }

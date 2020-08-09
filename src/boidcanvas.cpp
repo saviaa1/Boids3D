@@ -7,11 +7,9 @@ END_EVENT_TABLE()
 
 BoidCanvas::BoidCanvas(wxFrame *parent)
 :wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
-    int argc = 1;
-    char* argv[1] = { wxString((wxTheApp->argv)[0]).char_str() };
 	boids3dframe_ = (Boids3DFrame *) parent;
 	timer = new RenderTimer(this);
-	timer->start();
+	timer->start();	
 }
 
 BoidCanvas::~BoidCanvas() {
@@ -30,13 +28,15 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 	wxPaintDC(this);
 	if (!initialized_) {
 		auto b3f = (Boids3DFrame *) boids3dframe_;
+		HandleArgs(b3f);
 		world_ = new World<float>(std::stof(b3f->GetAlignment()),
 			std::stof(b3f->GetCohesion()),
 			std::stof(b3f->GetSeparation()),
 			std::stof(b3f->GetViewDistance()),
-			std::stof(b3f->GetSimulationSpeed()),
+			std::stof(b3f->GetSpeed()),
 			std::stof(b3f->GetViewAngle()),
-			100.0f, std::stof(b3f->GetNumberOfBoids()));
+			std::stof(b3f->GetWorldSize()),
+			std::stof(b3f->GetBoids()));
 		InitGL();
 	}
     Render();
@@ -44,6 +44,19 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
 	cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+}
+
+void BoidCanvas::HandleArgs(Boids3DFrame *b3f) {
+	int argc = wxTheApp->argc;
+
+	if (argc > 1) b3f->SetBoids(wxTheApp->argv[1]);
+	if (argc > 2) b3f->SetSpeed(wxTheApp->argv[2]);
+	if (argc > 3) b3f->SetWorldSize(wxTheApp->argv[3]);
+	if (argc > 4) b3f->SetViewDistance(wxTheApp->argv[4]);
+	if (argc > 5) b3f->SetViewAngle(wxTheApp->argv[5]);
+	if (argc > 6) b3f->SetAlignment(wxTheApp->argv[6]);
+	if (argc > 7) b3f->SetCohesion(wxTheApp->argv[7]);
+	if (argc > 8) b3f->SetSeparation(wxTheApp->argv[8]);
 }
 
 void BoidCanvas::InitGL() {

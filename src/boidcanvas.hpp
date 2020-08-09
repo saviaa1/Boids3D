@@ -34,6 +34,7 @@ public:
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
     void Zoom(wxMouseEvent& event);
+    void HandleArgs(Boids3DFrame *b3f);
     void InitGL();
 	wxGLContext* glContext;
 private:
