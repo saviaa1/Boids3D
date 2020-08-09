@@ -14,7 +14,7 @@ void Boids3DFrame::BoidsChanged( wxCommandEvent& event )
 
 void Boids3DFrame::SpeedChanged( wxCommandEvent& event )
 {
-// TODO: Implement SpeedChanged
+    world_->SetSpeed(std::stof(GetSpeed()));
 }
 
 void Boids3DFrame::WorldSizeChanged( wxCommandEvent& event )
@@ -24,25 +24,25 @@ void Boids3DFrame::WorldSizeChanged( wxCommandEvent& event )
 
 void Boids3DFrame::ViewDistanceChanged( wxCommandEvent& event )
 {
-// TODO: Implement ViewDistanceChanged
+    world_->SetViewDistance(std::stof(GetViewDistance()));
 }
 
 void Boids3DFrame::ViewAngleChanged( wxCommandEvent& event )
 {
-// TODO: Implement ViewAngleChanged
+    world_->SetViewAngle(std::stof(GetViewAngle()));
 }
 
 void Boids3DFrame::AlignmentChanged( wxCommandEvent& event )
 {
-// TODO: Implement AlignmentChanged
+    world_->SetAligmentWeight(std::stof(GetAlignment()));
 }
 
 void Boids3DFrame::CohesionChanged( wxCommandEvent& event )
 {
-// TODO: Implement CohesionChanged
+    world_->SetCohesionWeight(std::stof(GetCohesion()));
 }
 
 void Boids3DFrame::SeparationChanged( wxCommandEvent& event )
 {
-// TODO: Implement SeparationChanged
+    world_->SetSeperationWeight(std::stof(GetSeparation()));
 }

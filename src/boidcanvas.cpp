@@ -37,6 +37,7 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 			std::stof(b3f->GetViewAngle()),
 			std::stof(b3f->GetWorldSize()),
 			std::stof(b3f->GetBoids()));
+		b3f->SetWorld(world_);
 		InitGL();
 	}
     Render();

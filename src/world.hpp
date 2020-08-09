@@ -96,6 +96,8 @@ class World {
             if (val < 0) throw std::runtime_error("View distance cannot be < 0");
             viewDistance = val;
         }
+        const T GetViewAngle() const { return viewAngle; }
+        void SetViewAngle(T val) { viewAngle = val; }
         const T GetGridSize() const { return gridSize; }
         void SetGridSize(T val, T max) {
             if (max / val > 1024.0) {
