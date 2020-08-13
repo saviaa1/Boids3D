@@ -174,7 +174,7 @@ void BoidCanvas::Render()
 
 		// auto cVec = nVec.crossProduct(modelV);
 		// std::cout << "cross product V: " << cVec.X() << ", " << cVec.Y() << ", " << cVec.Z() << std::endl;
-		// float a = nVec.angleBetween(modelV);
+		// float a = nVec.angle(modelV);
 
 		glm::quat q = RotationBetweenVectors(rVec);
 
