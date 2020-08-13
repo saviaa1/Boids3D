@@ -201,9 +201,9 @@ TEST(Vector3dTest, Angle) {
     ASSERT_FLOAT_EQ((90 * 2 * M_PI) / 360, b.Y());
     ASSERT_FLOAT_EQ((45 * 2 * M_PI) / 360, b.Z());
 }
-TEST(Vector3dTest, angleBetween) {
+TEST(Vector3dTest, angleBetweenVec) {
     vector3d<float> a(5, -20, -14);
     vector3d<float> b(-1, 3, 2);
 
-    ASSERT_FLOAT_EQ(175.87427, a.angleBetween(b));
+    ASSERT_FLOAT_EQ(175.87427, a.angle(b));
 }

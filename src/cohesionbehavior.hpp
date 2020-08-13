@@ -8,12 +8,14 @@ public:
     CohesionBehavior() {}
     virtual ~CohesionBehavior() {}
 
-    virtual vector3d<T> compute(std::vector<Boid<T>*> boids, Boid<T>* myBoid, T viewDistance) {
+    virtual vector3d<T> compute(std::vector<Boid<T>*>& boids, Boid<T>* myBoid, T viewDistance, T viewAngle) {
         unsigned int neighborCount = 0;
         vector3d<T> position;
         for (auto boid : boids) {
             if (boid != myBoid) {
-                if (boid->GetPosition().distance(myBoid->GetPosition()) < viewDistance) {
+                T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
+                T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
+                if (tempDis <= viewDistance && TempAng <= viewAngle) {
                     position += boid->GetPosition();
                     neighborCount++;
                 }

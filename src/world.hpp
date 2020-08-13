@@ -34,10 +34,10 @@ class World {
             std::mt19937 rng;
             std::uniform_real_distribution<T> zeroToSize(0, areaSize);
             AddRandomBoids(rng, zeroToSize, numberOfBoids);
-            newBoids_ = numberOfBoids;
         }
         void AddBoid(Boid<T>* b) {
             boids_.push_back(b);
+            newBoids_++;
         }
         void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> dist, int nr) {
             for (auto i = 0; i < nr; i++) {
@@ -71,9 +71,9 @@ class World {
                 newBoids_ = GetNumberOfBoids();
             }
             for (auto boid : boids_) {
-                velocity = (sep.compute(boids_, boid, viewDistance) * separationWeight)
-                    + (coh.compute(boids_, boid, viewDistance) * cohesionWeight)
-                    + (ali.compute(boids_, boid, viewDistance) * alignmentWeight);
+                velocity = (sep.compute(boids_, boid, viewDistance, viewAngle) * separationWeight)
+                    + (coh.compute(boids_, boid, viewDistance, viewAngle) * cohesionWeight)
+                    + (ali.compute(boids_, boid, viewDistance, viewAngle) * alignmentWeight);
                 if (!velocity.isZero()) { velocity.normalize(); }
                 //std::cout << velocity << std::endl;
                 boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
@@ -143,11 +143,11 @@ class World {
         T boidSpeed;
         T areaSize;
         T gridSize;
+        T viewAngle;
         std::vector<Boid<T>*> boids_;
-        int newBoids_;
+        int newBoids_ = 0;
         std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
         //T borderWeight
-        T viewAngle;
         //std::list<Behavior<T>> behaviors;
 };
