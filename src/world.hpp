@@ -70,14 +70,24 @@ class World {
                 UpdateBoids();
                 newBoids_ = GetNumberOfBoids();
             }
+
             for (auto boid : boids_) {
-                velocity = (sep.compute(boids_, boid, viewDistance, viewAngle) * separationWeight)
-                    + (coh.compute(boids_, boid, viewDistance, viewAngle) * cohesionWeight)
-                    + (ali.compute(boids_, boid, viewDistance, viewAngle) * alignmentWeight);
+                std::vector<int> hashesToCheck = boid->hashesToCheck();
+                std::vector<Boid<T>*> temp;
+                for( auto hash : hashesToCheck )
+                {
+                    for( auto hashBoid : boidsHash_[hash] )
+                    {
+                        temp.push_back(hashBoid);
+                    }
+                }
+                velocity = (sep.compute(temp, boid, viewDistance, viewAngle) * separationWeight)
+                    + (coh.compute(temp, boid, viewDistance, viewAngle) * cohesionWeight)
+                    + (ali.compute(temp, boid, viewDistance, viewAngle) * alignmentWeight);
                 if (!velocity.isZero()) { velocity.normalize(); }
-                //std::cout << velocity << std::endl;
                 boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
             }
+
             int oldHash, newHash;
             for (auto boid :  boids_) {
                 boid->SetNextToCurrent();
