@@ -45,6 +45,15 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
 	cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+	auto b3f = (Boids3DFrame *) boids3dframe_;
+	float c_pos = std::stof(b3f->GetWorldSize())/2;
+	proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
+	view_ = glm::lookAt(
+		glm::vec3(c_pos, c_pos, cameraDistance_), // Camera is at (0, 0, 10), in World Space
+		glm::vec3(c_pos,c_pos,-c_pos), // and looks at the origin
+		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+	);
+	mvp_ = proj_ * view_ * model_;
 }
 
 void BoidCanvas::HandleArgs(Boids3DFrame *b3f) {
@@ -84,14 +93,15 @@ void BoidCanvas::InitGL() {
 		glBindBuffer(GL_ARRAY_BUFFER, buffer_);
 		glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), drawing_.GetPositions(), GL_STATIC_DRAW);
 
+		auto b3f = (Boids3DFrame *) boids3dframe_;
+		float c_pos = std::stof(b3f->GetWorldSize())/2;
 		proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 		view_ = glm::lookAt(
-			glm::vec3(50, 50, cameraDistance_), // Camera is at (0, 0, 10), in World Space
-			glm::vec3(50,50,-50), // and looks at the origin
+			glm::vec3(c_pos, c_pos, cameraDistance_), // Camera is at (0, 0, 10), in World Space
+			glm::vec3(c_pos,c_pos,-c_pos), // and looks at the origin
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		model_ = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
 		mvp_ = proj_ * view_ * model_;
 
 		glEnableVertexAttribArray(0);
