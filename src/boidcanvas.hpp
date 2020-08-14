@@ -43,10 +43,20 @@ public:
     void Paintit(wxPaintEvent& event);
     void Zoom(wxMouseEvent& event);
     void HandleArgs(Boids3DFrame *b3f);
+    glm::quat RotationBetweenVectors(vector3d<float> v);
     void InitGL();
 	wxGLContext* glContext;
 private:
-    float r_;
+    glm::mat4 proj_;
+    glm::mat4 view_;
+    glm::mat4 model_;
+    glm::mat4 mvp_;
+    unsigned int vao_;
+    unsigned int buffer_;
+    unsigned int ibo_;
+    unsigned int shader_;
+    int MatrixID_;
+    Drawing drawing_;
 protected:
     DECLARE_EVENT_TABLE()
 };
