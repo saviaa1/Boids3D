@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <random>
 #include <algorithm>
+#include <chrono>
 
 #include "boid.hpp"
 #include "behavior.hpp"
@@ -61,6 +62,12 @@ class World {
             return boids_;
         }
         void moveBoids() {
+            static auto max1 = std::chrono::high_resolution_clock::now() - std::chrono::high_resolution_clock::now();
+            static auto max2 = std::chrono::high_resolution_clock::now() - std::chrono::high_resolution_clock::now();
+            static bool max2set = false;
+            static float speedfactor = 1.0;
+
+            auto start = std::chrono::high_resolution_clock::now();
             //TODO: chainge behaviours to use behaviours list.
             SeparationBehavior<T> sep;
             CohesionBehavior<T> coh;
@@ -85,7 +92,12 @@ class World {
                     + (coh.compute(temp, boid, viewDistance, viewAngle) * cohesionWeight)
                     + (ali.compute(temp, boid, viewDistance, viewAngle) * alignmentWeight);
                 if (!velocity.isZero()) { velocity.normalize(); }
-                boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
+                boid->SetNextVelAndPos(velocity * boidSpeed * speedfactor, areaSize);
+            }
+            auto middle = std::chrono::high_resolution_clock::now();
+            if (middle - start > max1) {
+                max1 = middle - start;
+                std::cout << "max1: " << std::chrono::duration_cast<std::chrono::milliseconds>(max1).count() << std::endl;
             }
 
             int oldHash, newHash;
@@ -103,6 +115,18 @@ class World {
                     boidsHash_[newHash].push_back(boid);
                     boid->SetCurrentHash(newHash);
                 }
+            }
+            auto end = std::chrono::high_resolution_clock::now();
+            if (end - middle > max2) {
+                if (max2set) {
+                    max2 = end - middle;
+                }
+                max2set = true;
+                std::cout << "max2: " << std::chrono::duration_cast<std::chrono::milliseconds>(max2).count() << std::endl;
+            }
+            auto total = end - start;
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(total).count() > 17) {
+                speedfactor = std::chrono::duration_cast<std::chrono::milliseconds>(total).count() / 17;
             }
         }
         void UpdateBoids() {
