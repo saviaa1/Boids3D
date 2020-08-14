@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "vector3d.hpp"
 
 template <typename T>
@@ -50,6 +52,44 @@ public:
         currentHash_ = hash;
     }
 
+    std::vector<int> hashesToCheck() const
+    {
+        int i,j,k;
+        std::vector<int> hashes;
+        int c = 0;
+        for(i = -1; i <= 1; i++ )
+        {
+            for( j = -1; j <= 1; j++)
+            {
+                for( k = -1; k <= 1; k++)
+                {
+                    int t1,t2,t3;
+
+                    if((currentHash_&0x3FF)+i >= 0 && (currentHash_&0x3FF)+i <= 1024) { 
+                        t1 = (currentHash_&0x3FF)+i;
+                    } else {
+                        t1 = (currentHash_&0x3FF);
+                    }
+
+                    if(((currentHash_ >> 10)&0x3FF)+j >= 0 && ((currentHash_ >> 10)&0x3FF)+j <= 1024) { 
+                        t2 = ((currentHash_ >> 10)&0x3FF)+j;
+                    } else {
+                        t2 = ((currentHash_ >> 10)&0x3FF);
+                    }
+
+                    if((currentHash_ >> 20) + k >= 0 && (currentHash_ >> 20) + k <= 1024) { 
+                        t3 = (currentHash_ >> 20) + k;
+                    } else {
+                        t3 = (currentHash_ >> 20);
+                    }
+                    hashes.push_back(t1 + (t2<<10) + (t3<<20));
+                }
+            }
+        }
+        sort( hashes.begin(), hashes.end() );
+        hashes.erase( unique( hashes.begin(), hashes.end() ), hashes.end() );
+        return hashes;
+    }
     bool operator==(const Boid &b) const
     {
         if (positio == b.positio)
@@ -67,7 +107,6 @@ private:
     vector3d<T> nextVelocity;
     vector3d<T> nextPositio;
     int currentHash_ = -1;
-
 /*
     float mass;
     //vector3D position;
