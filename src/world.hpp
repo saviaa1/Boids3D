@@ -5,13 +5,13 @@
 #include <stdexcept>
 #include <random>
 #include <algorithm>
-#include <chrono>
 
 #include "boid.hpp"
 #include "behavior.hpp"
 #include "separationbehavior.hpp"
 #include "cohesionbehavior.hpp"
 #include "alignmentbehavior.hpp"
+#include "perftimer.hpp"
 
 template <typename T>
 class World {
@@ -62,12 +62,11 @@ class World {
             return boids_;
         }
         void moveBoids() {
-            static auto max1 = std::chrono::high_resolution_clock::now() - std::chrono::high_resolution_clock::now();
-            static auto max2 = std::chrono::high_resolution_clock::now() - std::chrono::high_resolution_clock::now();
-            static bool max2set = false;
             static float speedfactor = 1.0;
+            static double simulateMax = 0.0;
+            static double collectMax = 0.0;
 
-            auto start = std::chrono::high_resolution_clock::now();
+            PerfTimer perfTimer;
             //TODO: chainge behaviours to use behaviours list.
             SeparationBehavior<T> sep;
             CohesionBehavior<T> coh;
@@ -94,10 +93,10 @@ class World {
                 if (!velocity.isZero()) { velocity.normalize(); }
                 boid->SetNextVelAndPos(velocity * boidSpeed * speedfactor, areaSize);
             }
-            auto middle = std::chrono::high_resolution_clock::now();
-            if (middle - start > max1) {
-                max1 = middle - start;
-                std::cout << "max1: " << std::chrono::duration_cast<std::chrono::milliseconds>(max1).count() << std::endl;
+            double simulate = perfTimer.GetMS();
+            if (simulate > simulateMax) {
+                simulateMax = simulate;
+                std::cout << "Simulate: " << simulate << " ms" << std::endl;
             }
 
             int oldHash, newHash;
@@ -107,7 +106,6 @@ class World {
                 newHash = boid->CalculateHash(gridSize);
                 if (newHash != oldHash) {
                     boidsHash_[oldHash].erase(std::remove(boidsHash_[oldHash].begin(), boidsHash_[oldHash].end(), boid), boidsHash_[oldHash].end());
-                    //std::vector<Boid*>::erase(boidsHash_[oldHash], boid);
                     if (boidsHash_.count(newHash) == 0) {
                         std::vector<Boid<T>*> blist;
                         boidsHash_.emplace(newHash, blist);
@@ -116,17 +114,14 @@ class World {
                     boid->SetCurrentHash(newHash);
                 }
             }
-            auto end = std::chrono::high_resolution_clock::now();
-            if (end - middle > max2) {
-                if (max2set) {
-                    max2 = end - middle;
-                }
-                max2set = true;
-                std::cout << "max2: " << std::chrono::duration_cast<std::chrono::milliseconds>(max2).count() << std::endl;
+            double total = perfTimer.GetMS();
+            double collect = total - simulate;
+            if (collect > collectMax) {
+                collectMax = collect;
+                std::cout << "Collect: " << collect << " ms" << std::endl;
             }
-            auto total = end - start;
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(total).count() > 17) {
-                speedfactor = std::chrono::duration_cast<std::chrono::milliseconds>(total).count() / 17;
+            if (total > 16.67) {
+                speedfactor = total / 16.67;
             }
         }
         void UpdateBoids() {
