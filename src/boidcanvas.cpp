@@ -3,6 +3,7 @@
 BEGIN_EVENT_TABLE(BoidCanvas, wxGLCanvas)
     EVT_PAINT    (BoidCanvas::Paintit)
 	EVT_MOUSEWHEEL(BoidCanvas::Zoom)
+	EVT_LEFT_DOWN(BoidCanvas::RotateLeft)
 END_EVENT_TABLE()
 
 BoidCanvas::BoidCanvas(wxFrame *parent)
@@ -44,13 +45,36 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 }
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
-	cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+	if (cameraDistance_ - 10 * event.GetWheelRotation() / event.GetWheelDelta() > 0) {
+		cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+		auto b3f = (Boids3DFrame *) boids3dframe_;
+		float c_pos = std::stof(b3f->GetWorldSize())/2;
+		cam_pos_ = glm::vec3(c_pos + std::cos(r_) * cameraDistance_, c_pos, c_pos + (std::sin(r_) * cameraDistance_));
+		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
+		view_ = glm::lookAt(
+			cam_pos_, // Camera is at (0, 0, 10), in World Space
+			glm::vec3(c_pos,c_pos,c_pos), // and looks at the origin
+			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+		mvp_ = proj_ * view_ * model_;
+	} else {
+		std::cout << "max zoom in" << std::endl;
+	}
+	
+}
+
+void BoidCanvas::RotateLeft(wxMouseEvent& event) {
+	r_ += 0.05;
+	std::cout << r_ << std::endl;
 	auto b3f = (Boids3DFrame *) boids3dframe_;
 	float c_pos = std::stof(b3f->GetWorldSize())/2;
-	proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
+
+	cam_pos_ = glm::vec3(c_pos + std::cos(r_) * cameraDistance_, c_pos, c_pos + (std::sin(r_) * cameraDistance_));
+
+	std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 	view_ = glm::lookAt(
-		glm::vec3(c_pos, c_pos, cameraDistance_), // Camera is at (0, 0, 10), in World Space
-		glm::vec3(c_pos,c_pos,-c_pos), // and looks at the origin
+		cam_pos_, // Camera is at (0, 0, 10), in World Space+
+		glm::vec3(c_pos,c_pos,c_pos), // and looks at the origin
 		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 	mvp_ = proj_ * view_ * model_;
@@ -77,7 +101,7 @@ void BoidCanvas::InitGL() {
 			/* Problem: glewInit failed, something is seriously wrong. */
 			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
-		
+		r_ = M_PI/2;
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
@@ -94,11 +118,13 @@ void BoidCanvas::InitGL() {
 		glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), drawing_.GetPositions(), GL_STATIC_DRAW);
 
 		auto b3f = (Boids3DFrame *) boids3dframe_;
-		float c_pos = std::stof(b3f->GetWorldSize())/2;
+		float map_center = std::stof(b3f->GetWorldSize())/2;
+		cam_pos_ = glm::vec3(map_center + std::cos(r_) * cameraDistance_, map_center, map_center + (std::sin(r_) * cameraDistance_));
+		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 		view_ = glm::lookAt(
-			glm::vec3(c_pos, c_pos, cameraDistance_), // Camera is at (0, 0, 10), in World Space
-			glm::vec3(c_pos,c_pos,-c_pos), // and looks at the origin
+			cam_pos_, // Camera is at (0, 0, 10), in World Space
+			glm::vec3(map_center,map_center,map_center), // and looks at the origin
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		model_ = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

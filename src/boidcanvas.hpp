@@ -42,6 +42,7 @@ public:
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
     void Zoom(wxMouseEvent& event);
+    void RotateLeft(wxMouseEvent& event);
     void HandleArgs(Boids3DFrame *b3f);
     glm::quat RotationBetweenVectors(vector3d<float> v);
     void InitGL();
@@ -57,6 +58,8 @@ private:
     unsigned int shader_;
     int MatrixID_;
     Drawing drawing_;
+    glm::vec3 cam_pos_;
+    float r_;
 protected:
     DECLARE_EVENT_TABLE()
 };
