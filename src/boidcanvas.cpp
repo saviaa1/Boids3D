@@ -47,13 +47,11 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 void BoidCanvas::Zoom(wxMouseEvent& event) {
 	if (cameraDistance_ - 10 * event.GetWheelRotation() / event.GetWheelDelta() > 0) {
 		cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
-		auto b3f = (Boids3DFrame *) boids3dframe_;
-		float c_pos = std::stof(b3f->GetWorldSize())/2;
-		cam_pos_ = glm::vec3(c_pos + std::cos(r_) * cameraDistance_, c_pos, c_pos + (std::sin(r_) * cameraDistance_));
+		cam_pos_ = glm::vec3(world_size_/2 + std::cos(r_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(r_) * cameraDistance_));
 		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		view_ = glm::lookAt(
 			cam_pos_, // Camera is at (0, 0, 10), in World Space
-			glm::vec3(c_pos,c_pos,c_pos), // and looks at the origin
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // and looks at the origin
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		mvp_ = proj_ * view_ * model_;
@@ -66,15 +64,13 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 void BoidCanvas::RotateLeft(wxMouseEvent& event) {
 	r_ += 0.05;
 	std::cout << r_ << std::endl;
-	auto b3f = (Boids3DFrame *) boids3dframe_;
-	float c_pos = std::stof(b3f->GetWorldSize())/2;
 
-	cam_pos_ = glm::vec3(c_pos + std::cos(r_) * cameraDistance_, c_pos, c_pos + (std::sin(r_) * cameraDistance_));
+	cam_pos_ = glm::vec3(world_size_/2 + std::cos(r_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(r_) * cameraDistance_));
 
 	std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 	view_ = glm::lookAt(
 		cam_pos_, // Camera is at (0, 0, 10), in World Space+
-		glm::vec3(c_pos,c_pos,c_pos), // and looks at the origin
+		glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // and looks at the origin
 		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 	mvp_ = proj_ * view_ * model_;
@@ -118,13 +114,13 @@ void BoidCanvas::InitGL() {
 		glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), drawing_.GetPositions(), GL_STATIC_DRAW);
 
 		auto b3f = (Boids3DFrame *) boids3dframe_;
-		float map_center = std::stof(b3f->GetWorldSize())/2;
-		cam_pos_ = glm::vec3(map_center + std::cos(r_) * cameraDistance_, map_center, map_center + (std::sin(r_) * cameraDistance_));
+		world_size_ = std::stof(b3f->GetWorldSize());
+		cam_pos_ = glm::vec3(world_size_/2 + std::cos(r_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(r_) * cameraDistance_));
 		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 		view_ = glm::lookAt(
 			cam_pos_, // Camera is at (0, 0, 10), in World Space
-			glm::vec3(map_center,map_center,map_center), // and looks at the origin
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // and looks at the origin
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		model_ = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -137,9 +133,13 @@ void BoidCanvas::InitGL() {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(unsigned int), drawing_.GetIndices(), GL_STATIC_DRAW);
 
-		static auto sf = ShaderFactory("boid.shader");
+		auto sf = ShaderFactory("boid.shader");
 
 		shader_ = sf.CreateShader();
+
+		sf = ShaderFactory("line.shader");
+
+		line_shader_ = sf.CreateShader();
 
 		glUseProgram(shader_);
 
@@ -148,6 +148,7 @@ void BoidCanvas::InitGL() {
 		glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp_[0][0]);
 
 		glBindVertexArray(0);
+		drawing_.SetCubeVertices(world_size_);
 		initialized_ = true;
 }
 
@@ -189,7 +190,7 @@ glm::quat BoidCanvas::RotationBetweenVectors(vector3d<float> v) {
 void BoidCanvas::Render()
 {
 	//std::cout << "loop" << std::endl;
-	glClearColor(0.0, 0.0, 0.4f, 0.0);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -211,19 +212,37 @@ void BoidCanvas::Render()
 		model_ = glm::translate(glm::mat4(1.0f), glm::vec3(vec.X(), vec.Y(), vec.Z()));
 		model_ = model_ * RotationMatrix;
 
-		mvp_ = proj_ * view_ * model_;
+		glm::mat4 mvp = proj_ * view_ * model_;
 
 		
 		glUseProgram(shader_);
 
 		int MatrixID = glGetUniformLocation(shader_, "u_MVP");
-		glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp_[0][0]);
+		glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp[0][0]);
 
 		glBindVertexArray(vao_);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
 		
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
 	}
+
+	mvp_ = proj_ * view_ * glm::mat4(1.0f);
+
+	glUseProgram(line_shader_);
+
+	MatrixID_ = glGetUniformLocation(line_shader_, "u_MVP");
+
+	glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp_[0][0]);
+
+	glColor3f(0.2, 0.5, 0.4);
+    glBegin(GL_LINES);
+	float *cubeVertices = drawing_.GetCubeVerticies();
+	for (unsigned int i = 0; i < 72; i+=6) {
+		glVertex3f(cubeVertices[i], cubeVertices[i+1], cubeVertices[i+2]);
+		glVertex3f(cubeVertices[i+3], cubeVertices[i+4], cubeVertices[i+5]);
+	}
+    glEnd();
+
 	world_->moveBoids();
 
 	glFlush();

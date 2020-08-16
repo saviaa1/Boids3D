@@ -24,7 +24,52 @@ public:
 		return indices_;
 	}
 
+	void SetCubeVertices(float worldSize) {
+		cubeVertices_ = new float[72] {
+			0,0,0,
+			0,0,worldSize,
+
+			0,0,0,
+			worldSize,0,0,
+
+			0,0,0,
+			0,worldSize,0,
+
+			0,worldSize,0,
+			0,worldSize,worldSize,
+
+			0,worldSize,0,
+			worldSize,worldSize,0,
+
+			worldSize,0,0,
+			worldSize,worldSize,0,
+
+			worldSize,worldSize,0,
+			worldSize,worldSize,worldSize,
+
+			worldSize,0,0,
+			worldSize,0,worldSize,
+
+			worldSize,0,worldSize,
+			worldSize,worldSize,worldSize,
+
+			worldSize,0,worldSize,
+			0,0,worldSize,
+
+			0,worldSize,worldSize,
+			0,0,worldSize,
+
+			0,worldSize,worldSize,
+			worldSize,worldSize,worldSize
+		};
+	}
+
+	float* GetCubeVerticies() const {
+		return cubeVertices_;
+	}
+
 private:
 	float *positions_;
 	unsigned int *indices_;
+	float *cubeVertices_;
 };

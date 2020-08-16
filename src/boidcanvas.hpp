@@ -56,9 +56,11 @@ private:
     unsigned int buffer_;
     unsigned int ibo_;
     unsigned int shader_;
+    unsigned int line_shader_;
     int MatrixID_;
     Drawing drawing_;
     glm::vec3 cam_pos_;
+    float world_size_;
     float r_;
 protected:
     DECLARE_EVENT_TABLE()
