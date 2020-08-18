@@ -86,7 +86,9 @@ public:
             threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, boids_.size()));
         }
         for (auto& t : threads) {
-            t.join();
+            if (t.joinable()) {
+                t.join();
+            }
         }
 
         double simulate = perfTimer.GetMS();
