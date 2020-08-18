@@ -8,16 +8,19 @@ public:
     SeparationBehavior() {}
     virtual ~SeparationBehavior() {}
     
-    virtual vector3d<T> compute(std::vector<Boid<T>*>& boids, Boid<T>* myBoid, T viewDistance, T viewAngle) {
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash,
+        int *hashesArray, int& nr, Boid<T>* myBoid, T viewDistance, T viewAngle) {
         unsigned int neighborCount = 0;
         vector3d<T> position;
-        for (auto boid : boids) {
-            if (boid != myBoid) {
-                T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
-                T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
-                if (tempDis <= viewDistance && TempAng <= viewAngle) {
-                    position += boid->GetPosition() - myBoid->GetPosition();
-                    neighborCount++;
+        for (int i = 0; i < nr; i++) {
+            for (auto boid : boidsHash[hashesArray[i]]) {
+                if (boid != myBoid) {
+                    T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
+                    T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
+                    if (tempDis <= viewDistance && TempAng <= viewAngle) {
+                        position += boid->GetPosition() - myBoid->GetPosition();
+                        neighborCount++;
+                    }
                 }
             }
         }
