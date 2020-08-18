@@ -76,13 +76,15 @@ public:
 
         std::vector<std::thread> threads;
 
-        int nr = 50, start = 0, end = nr;
+        int nr = 20, start = 0, end = nr;
         while (end < boids_.size()) {
-            threads.push_back(std::thread(&SimulateBoids, this, start, end));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, end));
             start = start + nr;
             end = end + nr;
         }
-        threads.push_back(std::thread(&SimulateBoids, this, start, end));
+        if (start < boids_.size()) {
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, boids_.size()));
+        }
         for (auto& t : threads) {
             t.join();
         }
@@ -119,7 +121,7 @@ public:
         }
     }
 
-    static void SimulateBoids(World<T>* world, int start, int end) {
+    void SimulateBoids(int start, int end) {
         vector3d<T> velocity;
         SeparationBehavior<T> sep;
         CohesionBehavior<T> coh;
@@ -129,24 +131,24 @@ public:
 
 //        std::cout << start << ", " << end << std::endl;
 
-        for (auto it = world->boids_.begin() + start; it != world->boids_.begin() + end; it++)
+        for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
             boid = *it;            
             std::vector<int> hashesToCheck = boid->hashesToCheck();
             for( auto hash : hashesToCheck )
             {
-                for( auto hashBoid : world->boidsHash_[hash] )
+                for( auto hashBoid : boidsHash_[hash] )
                 {
                     temp.push_back(hashBoid);
                 }
             }
-            velocity = (sep.compute(temp, boid, world->viewDistance, world->viewAngle) * world->separationWeight)
-                + (coh.compute(temp, boid, world->viewDistance, world->viewAngle) * world->cohesionWeight)
-                + (ali.compute(temp, boid, world->viewDistance, world->viewAngle) * world->alignmentWeight);
+            velocity = (sep.compute(temp, boid, viewDistance, viewAngle) * separationWeight)
+                + (coh.compute(temp, boid, viewDistance, viewAngle) * cohesionWeight)
+                + (ali.compute(temp, boid, viewDistance, viewAngle) * alignmentWeight);
             if (!velocity.isZero()) {
                 velocity.normalize();
             }
-            boid->SetNextVelAndPos(velocity * world->boidSpeed, world->areaSize);
+            boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
         }
     }
 
