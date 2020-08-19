@@ -21,10 +21,10 @@ public:
                 }
             }
         }
-        if (neighborCount == 0) { return myBoid->GetVelocity(); }
+        if (neighborCount == 0) { return position; }
         position /= neighborCount;
         position -= myBoid->GetPosition();
-        if (position.isZero()) { return myBoid->GetVelocity(); }
+        if (position.isZero()) { return position; }
         return position.normalize();
     }
 };

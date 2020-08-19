@@ -11,12 +11,13 @@
 #include "separationbehavior.hpp"
 #include "cohesionbehavior.hpp"
 #include "alignmentbehavior.hpp"
+#include "avoidbordersbehavior.hpp"
 
 template <typename T>
 class World {
     public:
-        World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
-            : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), separationWeight(_separationWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
+        World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _borderWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
+            : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), separationWeight(_separationWeight), borderWeight(_borderWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
                 initBoids(_numberOfBoids);
                 SetGridSize(_viewDistance, _areaSize);
             }
@@ -61,23 +62,23 @@ class World {
             return boids_;
         }
         void moveBoids() {
-            //TODO: chainge behaviours to use behaviours list.
-            SeparationBehavior<T> sep;
-            CohesionBehavior<T> coh;
-            AlignmentBehavior<T> ali;
-            vector3d<T> velocity;
             if (newBoids_ != GetNumberOfBoids()) {
                 UpdateBoids();
                 newBoids_ = GetNumberOfBoids();
             }
-            for (auto boid : boids_) {
-                velocity = (sep.compute(boids_, boid, viewDistance, viewAngle) * separationWeight)
-                    + (coh.compute(boids_, boid, viewDistance, viewAngle) * cohesionWeight)
-                    + (ali.compute(boids_, boid, viewDistance, viewAngle) * alignmentWeight);
+
+            //TODO: chainge behaviours to use behaviours list.
+            vector3d<T> velocity;
+            for (auto it = boids_.begin(); it != boids_.end(); it++) {
+                velocity = (*it)->GetVelocity();
+                velocity += (sep.compute(boids_, *it, viewDistance, viewAngle) * separationWeight);
+                velocity += (coh.compute(boids_, *it, viewDistance, viewAngle) * cohesionWeight);
+                velocity += (ali.compute(boids_, *it, viewDistance, viewAngle) * alignmentWeight);
+                velocity += (bor.compute(boids_, *it, viewDistance, areaSize ) * borderWeight);
                 if (!velocity.isZero()) { velocity.normalize(); }
-                //std::cout << velocity << std::endl;
-                boid->SetNextVelAndPos(velocity * boidSpeed, areaSize);
+                (*it)->SetNextVelAndPos(velocity * boidSpeed, areaSize);
             }
+
             int oldHash, newHash;
             for (auto boid :  boids_) {
                 boid->SetNextToCurrent();
@@ -118,6 +119,8 @@ class World {
         void SetCohesionWeight(T val) { cohesionWeight = val; }
         const T GetSeperationWeight() const { return separationWeight; }
         void SetSeperationWeight(T val) { separationWeight = val; }
+        const T GetBorderWeight() const { return borderWeight; }
+        void SetBorderWeight(T val) { borderWeight = val; }
         const T GetSpeed() const { return boidSpeed; }
         void SetSpeed(T val) { boidSpeed = val; }
         const T GetViewDistance() const { return viewDistance; }
@@ -139,6 +142,7 @@ class World {
         T alignmentWeight;
         T cohesionWeight;
         T separationWeight;
+        T borderWeight;
         T viewDistance;
         T boidSpeed;
         T areaSize;
@@ -148,6 +152,9 @@ class World {
         int newBoids_ = 0;
         std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
-        //T borderWeight
+        SeparationBehavior<T> sep;
+        CohesionBehavior<T> coh;
+        AlignmentBehavior<T> ali;
+        AvoidBordersBehavior<T> bor;
         //std::list<Behavior<T>> behaviors;
 };

@@ -22,9 +22,9 @@ public:
                 }
             }
         }
-        if (neighborCount == 0) { return myBoid->GetVelocity(); }
+        if (neighborCount == 0) { return velocity; }
         velocity /= neighborCount;
-        if (velocity.isZero()) { return myBoid->GetVelocity(); }
+        if (velocity.isZero()) { return velocity; }
         return velocity.normalize();
     }
 };

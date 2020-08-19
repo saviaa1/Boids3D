@@ -7,16 +7,15 @@ class AvoidBordersBehavior : public Behavior<T> {
 public:
     AvoidBordersBehavior() {}
     virtual ~AvoidBordersBehavior() {}
+    vector3d<T> compute(std::vector<Boid<T>*>& boids, Boid<T>* myBoid, T viewDistance, T areaSize) {
+        vector3d<T> force, pos = myBoid->GetPosition();
+        if (pos.X() < viewDistance) { force.X() = 1; }
+        if (pos.Y() < viewDistance) { force.Y() = 1; }
+        if (pos.Z() < viewDistance) { force.Z() = 1; }
 
-    vector3d<T> compute(Boid<T> myBoid, T areaMinSize, T areaMaxSize) {
-        vector3d<T> velocity;
-        if (myBoid.X() < areaMinSize) { velocity.X() += 10; }
-        if (myBoid.Y() < areaMinSize) { velocity.Y() += 10; }
-        if (myBoid.Z() < areaMinSize) { velocity.Z() += 10; }
-
-        if (myBoid.X() > areaMaxSize) { velocity.X() -= 10; }
-        if (myBoid.Y() > areaMaxSize) { velocity.Y() -= 10; }
-        if (myBoid.Z() > areaMaxSize) { velocity.Z() -= 10; }
-        return velocity;
+        if (pos.X() > areaSize - viewDistance) { force.X() = -1; }
+        if (pos.Y() > areaSize - viewDistance) { force.Y() = -1; }
+        if (pos.Z() > areaSize - viewDistance) { force.Z() = -1; }
+        return force;
     }
 };

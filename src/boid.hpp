@@ -23,14 +23,6 @@ public:
     //Adds given speed vector to pos.
     void SetNextPosition(vector3d<T> speedV, T areaSize) {
         nextPositio += speedV;
-        //Calc borders
-        if (nextPositio.X() < 0) { nextPositio.X() *= -1; nextVelocity.X() *= -1; }
-        if (nextPositio.Y() < 0) { nextPositio.Y() *= -1; nextVelocity.Y() *= -1; }
-        if (nextPositio.Z() < 0) { nextPositio.Z() *= -1; nextVelocity.Z() *= -1; }
-
-        if (nextPositio.X() > areaSize) { nextPositio.X() = areaSize - (nextPositio.X() - areaSize); nextVelocity.X() *= -1; }
-        if (nextPositio.Y() > areaSize) { nextPositio.Y() = areaSize - (nextPositio.Y() - areaSize); nextVelocity.Y() *= -1; }
-        if (nextPositio.Z() > areaSize) { nextPositio.Z() = areaSize - (nextPositio.Z() - areaSize); nextVelocity.Z() *= -1; }
     }
     void SetNextToCurrent() {
         velocity = nextVelocity;

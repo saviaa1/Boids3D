@@ -57,7 +57,7 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_viewAngleLabel->Wrap( -1 );
 	BoidsControlGrid->Add( m_viewAngleLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_viewAngleText = new wxTextCtrl( this, wxID_ANY, wxT("220"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+	m_viewAngleText = new wxTextCtrl( this, wxID_ANY, wxT("45"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
 	BoidsControlGrid->Add( m_viewAngleText, 0, wxALL, 5 );
 
 	m_alignmentLabel = new wxStaticText( this, wxID_ANY, wxT("Alignment"), wxDefaultPosition, wxDefaultSize, 0 );
