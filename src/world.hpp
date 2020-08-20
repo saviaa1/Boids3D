@@ -9,6 +9,7 @@
 
 #include "boid.hpp"
 #include "behavior.hpp"
+#include "combinedbehavior.hpp"
 #include "separationbehavior.hpp"
 #include "cohesionbehavior.hpp"
 #include "alignmentbehavior.hpp"
@@ -131,12 +132,13 @@ public:
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = (bor.compute(boidsHash_, *it, viewDistance, areaSize ) * boidSpeed * 2 / viewDistance);
+            velocity = bor.compute(boidsHash_, *it, viewDistance, areaSize, 0, 0, 0) * boidSpeed * 2 / viewDistance;
             if (velocity.isZero()) { 
                 velocity = (*it)->GetVelocity();
-                velocity += (sep.compute(boidsHash_, *it, viewDistance, viewAngle) * separationWeight);
-                velocity += (coh.compute(boidsHash_, *it, viewDistance, viewAngle) * cohesionWeight);
-                velocity += (ali.compute(boidsHash_, *it, viewDistance, viewAngle) * alignmentWeight);
+                velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle, alignmentWeight, cohesionWeight, separationWeight);
+                //velocity += sep.compute(boidsHash_, *it, viewDistance, viewAngle, 0, 0, 0) * separationWeight;
+                //velocity += coh.compute(boidsHash_, *it, viewDistance, viewAngle, 0, 0, 0) * cohesionWeight;
+                //velocity += ali.compute(boidsHash_, *it, viewDistance, viewAngle, 0, 0, 0) * alignmentWeight;
             } else {
                 velocity += (*it)->GetVelocity();
             }
@@ -205,9 +207,10 @@ private:
     int newBoids_ = 0;
     std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
-    SeparationBehavior<T> sep;
-    CohesionBehavior<T> coh;
-    AlignmentBehavior<T> ali;
+    //SeparationBehavior<T> sep;
+    //CohesionBehavior<T> coh;
+    //AlignmentBehavior<T> ali;
+    CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> bor;
     //std::list<Behavior<T>> behaviors;
 };

@@ -9,7 +9,7 @@ public:
     virtual ~SeparationBehavior() {}
     
     virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash,
-        Boid<T>* myBoid, T viewDistance, T viewAngle) {
+        Boid<T>* myBoid, T viewDistance, T viewAngle, T, T, T) {
         unsigned int neighborCount = 0;
         vector3d<T> position;
         for (int i = 0; i < myBoid->nr; i++) {
