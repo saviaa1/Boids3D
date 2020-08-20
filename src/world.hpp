@@ -127,15 +127,19 @@ public:
     }
 
     void SimulateBoids(int start, int end) {
-        static vector3d<T> velocity;
+        vector3d<T> velocity;
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = (*it)->GetVelocity();
-            velocity += (sep.compute(boidsHash_, *it, viewDistance, viewAngle) * separationWeight);
-            velocity += (coh.compute(boidsHash_, *it, viewDistance, viewAngle) * cohesionWeight);
-            velocity += (ali.compute(boidsHash_, *it, viewDistance, viewAngle) * alignmentWeight);
-            velocity += (bor.compute(boidsHash_, *it, viewDistance, areaSize ) * borderWeight);
+            velocity = (bor.compute(boidsHash_, *it, viewDistance, areaSize ) * boidSpeed * 2 / viewDistance);
+            if (velocity.isZero()) { 
+                velocity = (*it)->GetVelocity();
+                velocity += (sep.compute(boidsHash_, *it, viewDistance, viewAngle) * separationWeight);
+                velocity += (coh.compute(boidsHash_, *it, viewDistance, viewAngle) * cohesionWeight);
+                velocity += (ali.compute(boidsHash_, *it, viewDistance, viewAngle) * alignmentWeight);
+            } else {
+                velocity += (*it)->GetVelocity();
+            }
             if (!velocity.isZero()) {
                 velocity.normalize();
             }

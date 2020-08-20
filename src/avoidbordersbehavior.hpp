@@ -7,7 +7,9 @@ class AvoidBordersBehavior : public Behavior<T> {
 public:
     AvoidBordersBehavior() {}
     virtual ~AvoidBordersBehavior() {}
-    vector3d<T> compute(std::vector<Boid<T>*>& boids, Boid<T>* myBoid, T viewDistance, T areaSize) {
+
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash,
+        Boid<T>* myBoid, T viewDistance, T areaSize) {
         vector3d<T> force, pos = myBoid->GetPosition();
         if (pos.X() < viewDistance) { force.X() = 1; }
         if (pos.Y() < viewDistance) { force.Y() = 1; }

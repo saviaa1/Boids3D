@@ -20,7 +20,7 @@ public:
                     //std::cout << TempAng << "; ";
                     if (tempDis <= viewDistance && TempAng <= viewAngle) {
                         velocity += boid->GetVelocity();
-                     neighborCount++;
+                        neighborCount++;
                     }
                 }
             }

@@ -33,7 +33,7 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 		world_ = new World<float>(std::stof(b3f->GetAlignment()),
 			std::stof(b3f->GetCohesion()),
 			std::stof(b3f->GetSeparation()),
-			0.05,
+			0.5,
 			std::stof(b3f->GetViewDistance()),
 			std::stof(b3f->GetSpeed()),
 			std::stof(b3f->GetViewAngle()),
