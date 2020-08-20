@@ -42,10 +42,25 @@ public:
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
     void Zoom(wxMouseEvent& event);
+    void RotateLeft(wxMouseEvent& event);
     void HandleArgs(Boids3DFrame *b3f);
+    glm::quat RotationBetweenVectors(vector3d<float> v);
     void InitGL();
 	wxGLContext* glContext;
 private:
+    glm::mat4 proj_;
+    glm::mat4 view_;
+    glm::mat4 model_;
+    glm::mat4 mvp_;
+    unsigned int vao_;
+    unsigned int buffer_;
+    unsigned int ibo_;
+    unsigned int shader_;
+    unsigned int line_shader_;
+    int MatrixID_;
+    Drawing drawing_;
+    glm::vec3 cam_pos_;
+    float world_size_;
     float r_;
 protected:
     DECLARE_EVENT_TABLE()

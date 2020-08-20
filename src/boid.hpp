@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "vector3d.hpp"
 
 template <typename T>
@@ -38,8 +40,29 @@ public:
     int GetCurrentHash() const {
         return currentHash_;
     }
-    void SetCurrentHash(int hash) {
+    void SetCurrentHash(int& hash, int max) {
         currentHash_ = hash;
+        nr = 0;
+        hashesToCheck(neighbours, nr, max);
+    }
+
+    void hashesToCheck(int *hashesArray, int& nr, int max)
+    {
+        int i, j ,k;
+        int c = 0;
+        int x = currentHash_ & 0x3FF;
+        int y = (currentHash_ >> 10) & 0x3FF;
+        int z = (currentHash_ >> 20) & 0x3FF;
+
+        for (i = -1; i <= 1; i++) {
+            for (j = -1; j <= 1; j++) {
+                for (k = -1; k <= 1; k++) {
+                    if (x + i >= 0 && y + j >= 0 && z + k >= 0 && x + i < max && y + j < max && z + k) {
+                        hashesArray[nr++] = x + i + (y + j) * (1 << 10) + (z + k) * (1 << 20);
+                    }
+                }
+            }
+        }
     }
 
     bool operator==(const Boid &b) const
@@ -53,13 +76,15 @@ public:
         return !( (*this) == b );
     }
 
+    int neighbours[27]; // 3 * 3 * 3 grid size
+    int nr;
+
 private:
     vector3d<T> velocity;
     vector3d<T> positio;
     vector3d<T> nextVelocity;
     vector3d<T> nextPositio;
     int currentHash_ = -1;
-
 /*
     float mass;
     //vector3D position;

@@ -8,17 +8,20 @@ public:
     AlignmentBehavior() {}
     virtual ~AlignmentBehavior() {}
 
-    virtual vector3d<T> compute(std::vector<Boid<T>*>& boids, Boid<T>* myBoid, T viewDistance, T viewAngle) {
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash,
+        Boid<T>* myBoid, T viewDistance, T viewAngle) {
         unsigned int neighborCount = 0;
         vector3d<T> velocity;
-        for (auto boid : boids) {
-            if (boid != myBoid) {
-                T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
-                T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
-                //std::cout << TempAng << "; ";
-                if (tempDis <= viewDistance && TempAng <= viewAngle) {
-                    velocity += boid->GetVelocity();
-                    neighborCount++;
+        for (int i = 0; i < myBoid->nr; i++) {
+            for (auto boid : boidsHash[myBoid->neighbours[i]]) {
+                if (boid != myBoid) {
+                    T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
+                    T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
+                    //std::cout << TempAng << "; ";
+                    if (tempDis <= viewDistance && TempAng <= viewAngle) {
+                        velocity += boid->GetVelocity();
+                     neighborCount++;
+                    }
                 }
             }
         }
