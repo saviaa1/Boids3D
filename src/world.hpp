@@ -9,9 +9,7 @@
 
 #include "boid.hpp"
 #include "behavior.hpp"
-#include "separationbehavior.hpp"
-#include "cohesionbehavior.hpp"
-#include "alignmentbehavior.hpp"
+#include "combinedbehavior.hpp"
 #include "avoidbordersbehavior.hpp"
 #include "perftimer.hpp"
 
@@ -19,10 +17,10 @@ template <typename T>
 class World {
 public:
     World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _borderWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
-        : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), separationWeight(_separationWeight), borderWeight(_borderWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
+        : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), borderWeight(_borderWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
         initBoids(_numberOfBoids);
         SetGridSize(_viewDistance, _areaSize);
-        }
+    }
     ~World() {
         for (auto boid : boids_) {
             delete boid;
@@ -131,12 +129,10 @@ public:
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = (bor.compute(boidsHash_, *it, viewDistance, areaSize ) * boidSpeed * 2 / viewDistance);
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 2 / viewDistance;
             if (velocity.isZero()) { 
                 velocity = (*it)->GetVelocity();
-                velocity += (sep.compute(boidsHash_, *it, viewDistance, viewAngle) * separationWeight);
-                velocity += (coh.compute(boidsHash_, *it, viewDistance, viewAngle) * cohesionWeight);
-                velocity += (ali.compute(boidsHash_, *it, viewDistance, viewAngle) * alignmentWeight);
+                velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
             } else {
                 velocity += (*it)->GetVelocity();
             }
@@ -166,12 +162,12 @@ public:
     }
 
     // Property getters and setters
-    const T GetAligmentWeight() const { return alignmentWeight; }
-    void SetAligmentWeight(T val) { alignmentWeight = val; }
-    const T GetCohesionWeight() const { return cohesionWeight; }
-    void SetCohesionWeight(T val) { cohesionWeight = val; }
-    const T GetSeperationWeight() const { return separationWeight; }
-    void SetSeperationWeight(T val) { separationWeight = val; }
+    const T GetAligmentWeight() const { return flockingBehavior.GetAligmentWeight(); }
+    void SetAligmentWeight(T val) { flockingBehavior.SetAligmentWeight(val); }
+    const T GetCohesionWeight() const { return flockingBehavior.GetCohesionWeight(); }
+    void SetCohesionWeight(T val) { flockingBehavior.SetCohesionWeight(val); }
+    const T GetSeperationWeight() const { return flockingBehavior.GetSeperationWeight(); }
+    void SetSeperationWeight(T val) { flockingBehavior.SetSeperationWeight(val); }
     const T GetBorderWeight() const { return borderWeight; }
     void SetBorderWeight(T val) { borderWeight = val; }
     const T GetSpeed() const { return boidSpeed; }
@@ -192,9 +188,9 @@ public:
     }
 
 private:
-    T alignmentWeight;
-    T cohesionWeight;
-    T separationWeight;
+    //T alignmentWeight;
+    //T cohesionWeight;
+    //T separationWeight;
     T borderWeight;
     T viewDistance;
     T boidSpeed;
@@ -205,9 +201,7 @@ private:
     int newBoids_ = 0;
     std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
-    SeparationBehavior<T> sep;
-    CohesionBehavior<T> coh;
-    AlignmentBehavior<T> ali;
-    AvoidBordersBehavior<T> bor;
+    CombinedBehavior<T> flockingBehavior;
+    AvoidBordersBehavior<T> borderBehavior;
     //std::list<Behavior<T>> behaviors;
 };

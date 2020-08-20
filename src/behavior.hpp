@@ -11,6 +11,4 @@ public:
     Behavior() {};
     virtual ~Behavior() {};
     virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T) = 0;
-private:
-    //T weight;
 };

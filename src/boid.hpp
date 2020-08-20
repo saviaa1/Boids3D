@@ -18,13 +18,22 @@ public:
         this->SetNextPosition(nextVelocity, areaSize);
     }
     void SetNextVelocity(vector3d<T>& speedV) {
-        if (!speedV.isZero()) {
-            nextVelocity = speedV;
-        }
+        nextVelocity = speedV;
     }
     //Adds given speed vector to pos.
     void SetNextPosition(vector3d<T> speedV, T areaSize) {
         nextPositio += speedV;
+        /*if (nextPositio.X() < 0 || nextPositio.Y() < 0 || nextPositio.Z() < 0
+            || nextPositio.X() > areaSize || nextPositio.Y() > areaSize || nextPositio.Z() > areaSize) {
+            std::cout << "Out of area " << nextPositio;
+        }*/
+        //To make sure that boids do not go outside of the area.
+        if (nextPositio.X() < 0) { nextPositio.X() = 0; }
+        if (nextPositio.Y() < 0) { nextPositio.Y() = 0; }
+        if (nextPositio.Z() < 0) { nextPositio.Z() = 0; }
+        if (nextPositio.X() > areaSize) { nextPositio.X() = areaSize; }
+        if (nextPositio.Y() > areaSize) { nextPositio.Y() = areaSize; }
+        if (nextPositio.Z() > areaSize) { nextPositio.Z() = areaSize; }
     }
     void SetNextToCurrent() {
         velocity = nextVelocity;
@@ -85,15 +94,4 @@ private:
     vector3d<T> nextVelocity;
     vector3d<T> nextPositio;
     int currentHash_ = -1;
-/*
-    float mass;
-    //vector3D position;
-    int positionIndex;
-    //vector3D nextPosition;
-    int nextPositionIndex;
-    //vector3D velocity;
-    float maxForce;
-    float maxSpeed;
-    //vector3D orientation;
-    */
 };
