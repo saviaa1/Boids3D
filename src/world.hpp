@@ -39,6 +39,8 @@ public:
     }
     void AddBoid(Boid<T>* b) {
         boids_.push_back(b);
+        int hash = b->CalculateHash(gridSize);
+        b->SetCurrentHash(hash, areaSize / gridSize);
         newBoids_++;
     }
     void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> dist, int nr) {
@@ -68,7 +70,7 @@ public:
         static double collectMax = 0.0;
 
         PerfTimer perfTimer;
-        //TODO: chainge behaviours to use behaviours list.
+        //TODO: change behaviours to use behaviours list.
         if (newBoids_ != GetNumberOfBoids()) {
             UpdateBoids();
             newBoids_ = GetNumberOfBoids();
@@ -109,7 +111,7 @@ public:
                     boidsHash_.emplace(newHash, blist);
                 }
                 boidsHash_[newHash].push_back(boid);
-                boid->SetCurrentHash(newHash);
+                boid->SetCurrentHash(newHash, areaSize / gridSize);
             }
         }
         double total = perfTimer.GetMS();
@@ -128,7 +130,6 @@ public:
         static SeparationBehavior<T> sep;
         static CohesionBehavior<T> coh;
         static AlignmentBehavior<T> ali;
-        int hashesArray[27]; // We know that the maximum is 27 cells
         int hashNr;
         Boid<T> *boid;
 
@@ -137,11 +138,9 @@ public:
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
             boid = *it;
-            hashNr = 0;
-            boid->hashesToCheck(hashesArray, hashNr, areaSize / gridSize);
-            velocity = (sep.compute(boidsHash_, hashesArray, hashNr, boid, viewDistance, viewAngle) * separationWeight)
-                + (coh.compute(boidsHash_, hashesArray, hashNr, boid, viewDistance, viewAngle) * cohesionWeight)
-                + (ali.compute(boidsHash_, hashesArray, hashNr, boid, viewDistance, viewAngle) * alignmentWeight);
+            velocity = (sep.compute(boidsHash_, boid, viewDistance, viewAngle) * separationWeight)
+                + (coh.compute(boidsHash_, boid, viewDistance, viewAngle) * cohesionWeight)
+                + (ali.compute(boidsHash_, boid, viewDistance, viewAngle) * alignmentWeight);
             if (!velocity.isZero()) {
                 velocity.normalize();
             }

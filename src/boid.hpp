@@ -48,8 +48,10 @@ public:
     int GetCurrentHash() const {
         return currentHash_;
     }
-    void SetCurrentHash(int hash) {
+    void SetCurrentHash(int& hash, int max) {
         currentHash_ = hash;
+        nr = 0;
+        hashesToCheck(neighbours, nr, max);
     }
 
     void hashesToCheck(int *hashesArray, int& nr, int max)
@@ -81,6 +83,9 @@ public:
     {
         return !( (*this) == b );
     }
+
+    int neighbours[27]; // 3 * 3 * 3 grid size
+    int nr;
 
 private:
     vector3d<T> velocity;

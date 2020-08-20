@@ -9,11 +9,11 @@ public:
     virtual ~CohesionBehavior() {}
 
     virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash,
-        int *hashesArray, int& nr, Boid<T>* myBoid, T viewDistance, T viewAngle) {
+        Boid<T>* myBoid, T viewDistance, T viewAngle) {
         unsigned int neighborCount = 0;
         vector3d<T> position;
-        for (int i = 0; i < nr; i++) {
-            for (auto boid : boidsHash[hashesArray[i]]) {
+        for (int i = 0; i < myBoid->nr; i++) {
+            for (auto boid : boidsHash[myBoid->neighbours[i]]) {
                 if (boid != myBoid) {
                     T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
                     T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
