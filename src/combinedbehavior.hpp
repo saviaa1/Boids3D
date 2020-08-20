@@ -6,9 +6,11 @@ template <typename T>
 class CombinedBehavior : public Behavior<T> {
 public:
     CombinedBehavior() {}
+    CombinedBehavior(T _alignmentWeight, T _cohesionWeight, T _seperationWeight)
+        : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), seperationWeight(_seperationWeight) {}
     virtual ~CombinedBehavior() {}
 
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle, T alignmentWeight, T cohesionWeight, T seperationWeight) {
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle) {
         unsigned int neighborCount = 0;
         vector3d<T> alignmentForce, cohesionForce, seperationForce;
         for (int i = 0; i < myBoid->nr; i++) {
@@ -42,4 +44,13 @@ public:
 
         return alignmentForce * alignmentWeight + cohesionForce * cohesionWeight + seperationForce * seperationWeight;
     }
+
+    const T GetAligmentWeight() const { return alignmentWeight; }
+    void SetAligmentWeight(T val) { alignmentWeight = val; }
+    const T GetCohesionWeight() const { return cohesionWeight; }
+    void SetCohesionWeight(T val) { cohesionWeight = val; }
+    const T GetSeperationWeight() const { return seperationWeight; }
+    void SetSeperationWeight(T val) { seperationWeight = val; }
+private:
+    T alignmentWeight = 1, cohesionWeight = 1, seperationWeight = 1;
 };

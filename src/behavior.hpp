@@ -10,5 +10,5 @@ class Behavior {
 public:
     Behavior() {};
     virtual ~Behavior() {};
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T, T, T, T) = 0;
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T) = 0;
 };
