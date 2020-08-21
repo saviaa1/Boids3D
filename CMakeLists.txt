@@ -74,3 +74,6 @@ add_executable(
 target_link_libraries(boid_app
 	${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} ${wxWidgets_LIBRARIES}
 )
+
+file(GLOB MY_SHADERS "src/*.shader")
+file(COPY ${MY_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
