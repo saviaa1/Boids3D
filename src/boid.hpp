@@ -31,9 +31,9 @@ public:
         if (nextPositio.X() < 0) { nextPositio.X() = 0; }
         if (nextPositio.Y() < 0) { nextPositio.Y() = 0; }
         if (nextPositio.Z() < 0) { nextPositio.Z() = 0; }
-        if (nextPositio.X() > areaSize) { nextPositio.X() = areaSize; }
-        if (nextPositio.Y() > areaSize) { nextPositio.Y() = areaSize; }
-        if (nextPositio.Z() > areaSize) { nextPositio.Z() = areaSize; }
+        if (nextPositio.X() > areaSize-0.01) { nextPositio.X() = areaSize-0.01; }
+        if (nextPositio.Y() > areaSize-0.01) { nextPositio.Y() = areaSize-0.01; }
+        if (nextPositio.Z() > areaSize-0.01) { nextPositio.Z() = areaSize-0.01; }
     }
     void SetNextToCurrent() {
         velocity = nextVelocity;
