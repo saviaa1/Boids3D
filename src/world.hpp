@@ -16,8 +16,8 @@
 template <typename T>
 class World {
 public:
-    World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _borderWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
-        : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), borderWeight(_borderWeight), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
+    World(T _alignmentWeight, T _cohesionWeight, T _separationWeight, T _viewDistance, T _boidSpeed, T _viewAngle, T _areaSize, int _numberOfBoids)
+        : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
         initBoids(_numberOfBoids);
         SetGridSize(_viewDistance, _areaSize);
     }
@@ -27,15 +27,6 @@ public:
         }
     }
 
-    //uniform_real_distribution defined on float, double and long double. If others types are needed templates partial specialization is needed.
-    void initBoids(int numberOfBoids) {
-        //Currently generates same sequence every time, if more random is wanted, uncomment next two lines and comment third.
-        //std::random_device random_device;
-        //std::mt19937 rng(random_device());
-        std::mt19937 rng;
-        std::uniform_real_distribution<T> zeroToSize(0, areaSize);
-        AddRandomBoids(rng, zeroToSize, numberOfBoids);
-    }
     void AddBoid(Boid<T>* b) {
         boids_.push_back(b);
         int hash = b->CalculateHash(gridSize);
@@ -46,7 +37,6 @@ public:
         for (auto i = 0; i < nr; i++) {
             vector3d<T> speedV(dist(rng), dist(rng), dist(rng)),
                         posV(dist(rng), dist(rng), dist(rng));
-            //std::cout << speedV << posV << "..\n";
             if (!speedV.isZero()) {
                 speedV.normalize();
             }
@@ -69,7 +59,6 @@ public:
         static double collectMax = 0.0;
 
         PerfTimer perfTimer;
-        //TODO: change behaviours to use behaviours list.
         if (newBoids_ != GetNumberOfBoids()) {
             UpdateBoids();
             newBoids_ = GetNumberOfBoids();
@@ -156,8 +145,8 @@ public:
         if (diff > 0) {
             std::random_device random_device;
             std::mt19937 rng(random_device());
-            std::uniform_real_distribution<T> zeroToSize(0, areaSize);
-            AddRandomBoids(rng, zeroToSize, diff);
+            std::uniform_real_distribution<T> dist_inside_area(viewDistance, areaSize-viewDistance);
+            AddRandomBoids(rng, dist_inside_area, diff);
         }
     }
 
@@ -168,8 +157,6 @@ public:
     void SetCohesionWeight(T val) { flockingBehavior.SetCohesionWeight(val); }
     const T GetSeperationWeight() const { return flockingBehavior.GetSeperationWeight(); }
     void SetSeperationWeight(T val) { flockingBehavior.SetSeperationWeight(val); }
-    const T GetBorderWeight() const { return borderWeight; }
-    void SetBorderWeight(T val) { borderWeight = val; }
     const T GetSpeed() const { return boidSpeed; }
     void SetSpeed(T val) { boidSpeed = val; }
     const T GetViewDistance() const { return viewDistance; }
@@ -188,10 +175,6 @@ public:
     }
 
 private:
-    //T alignmentWeight;
-    //T cohesionWeight;
-    //T separationWeight;
-    T borderWeight;
     T viewDistance;
     T boidSpeed;
     T areaSize;
@@ -203,5 +186,14 @@ private:
 
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;
-    //std::list<Behavior<T>> behaviors;
+
+    //uniform_real_distribution defined on float, double and long double. If others types are needed templates partial specialization is needed.
+    void initBoids(int numberOfBoids) {
+        //Currently generates same sequence every time, if more random is wanted, uncomment next two lines and comment third.
+        //std::random_device random_device;
+        //std::mt19937 rng(random_device());
+        std::mt19937 rng;
+        std::uniform_real_distribution<T> dist_inside_area(viewDistance, areaSize-viewDistance);
+        AddRandomBoids(rng, dist_inside_area, numberOfBoids);
+    }
 };
