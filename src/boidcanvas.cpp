@@ -3,7 +3,9 @@
 BEGIN_EVENT_TABLE(BoidCanvas, wxGLCanvas)
     EVT_PAINT    (BoidCanvas::Paintit)
 	EVT_MOUSEWHEEL(BoidCanvas::Zoom)
-	EVT_LEFT_DOWN(BoidCanvas::RotateLeft)
+	EVT_LEFT_DOWN(BoidCanvas::MouseDown)
+	EVT_LEFT_UP(BoidCanvas::MouseUp)
+	EVT_MOTION(BoidCanvas::MoveCamera)
 END_EVENT_TABLE()
 
 BoidCanvas::BoidCanvas(wxFrame *parent)
@@ -48,11 +50,11 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 void BoidCanvas::Zoom(wxMouseEvent& event) {
 	if (cameraDistance_ - 10 * event.GetWheelRotation() / event.GetWheelDelta() > 0) {
 		cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
-		cam_pos_ = glm::vec3(world_size_/2 + std::cos(r_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(r_) * cameraDistance_));
+		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotateX_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotateX_) * cameraDistance_));
 		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		view_ = glm::lookAt(
-			cam_pos_, // Camera is at (0, 0, 10), in World Space
-			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // and looks at the origin
+			cam_pos_, // Camera position in the world
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		mvp_ = proj_ * view_ * model_;
@@ -62,19 +64,38 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 	
 }
 
-void BoidCanvas::RotateLeft(wxMouseEvent& event) {
-	r_ += 0.05;
-	std::cout << r_ << std::endl;
+void BoidCanvas::MouseUp(wxMouseEvent& event) {
+	mouse_down_ = false;
+	rotateX_ =+ moving_rotation_x_;
+}
 
-	cam_pos_ = glm::vec3(world_size_/2 + std::cos(r_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(r_) * cameraDistance_));
+void BoidCanvas::MouseDown(wxMouseEvent& event) {
+	mouse_down_ = true;
+	const wxPoint pos = wxGetMousePosition();
+	rotate_point_x_ = pos.x - this->GetScreenPosition().x;
+	rotate_point_y_ = pos.y - this->GetScreenPosition().y;
+	//std::cout << rotateX_ << std::endl;
+}
 
-	std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
-	view_ = glm::lookAt(
-		cam_pos_, // Camera is at (0, 0, 10), in World Space+
-		glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // and looks at the origin
-		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-	);
-	mvp_ = proj_ * view_ * model_;
+void BoidCanvas::MoveCamera(wxMouseEvent& event) {
+	if (mouse_down_) {
+		float sensitivity = 0.01;
+		const wxPoint pos = wxGetMousePosition();
+		int mouseX = pos.x - this->GetScreenPosition().x;
+		int mouseY = pos.y - this->GetScreenPosition().y;
+
+		moving_rotation_x_ = rotateX_ + ((mouseX - rotate_point_x_) * sensitivity);
+		//std::cout << moving_rotation_x_ << std::endl;
+
+		cam_pos_ = glm::vec3(world_size_/2 + std::cos(moving_rotation_x_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(moving_rotation_x_) * cameraDistance_));
+
+		view_ = glm::lookAt(
+			cam_pos_, // Camera position in the world
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
+			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+		mvp_ = proj_ * view_ * model_;
+	}
 }
 
 void BoidCanvas::HandleArgs(Boids3DFrame *b3f) {
@@ -98,7 +119,7 @@ void BoidCanvas::InitGL() {
 			/* Problem: glewInit failed, something is seriously wrong. */
 			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
-		r_ = M_PI/2;
+		rotateX_ = M_PI/2;
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
@@ -116,12 +137,12 @@ void BoidCanvas::InitGL() {
 
 		auto b3f = (Boids3DFrame *) boids3dframe_;
 		world_size_ = std::stof(b3f->GetWorldSize());
-		cam_pos_ = glm::vec3(world_size_/2 + std::cos(r_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(r_) * cameraDistance_));
+		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotateX_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotateX_) * cameraDistance_));
 		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 		view_ = glm::lookAt(
-			cam_pos_, // Camera is at (0, 0, 10), in World Space
-			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // and looks at the origin
+			cam_pos_, // Camera position in the world
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		model_ = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

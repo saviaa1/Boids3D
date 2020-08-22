@@ -42,7 +42,9 @@ public:
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
     void Zoom(wxMouseEvent& event);
-    void RotateLeft(wxMouseEvent& event);
+    void MouseDown(wxMouseEvent& event);
+    void MouseUp(wxMouseEvent& event);
+    void MoveCamera(wxMouseEvent& event);
     void HandleArgs(Boids3DFrame *b3f);
     glm::quat RotationBetweenVectors(vector3d<float> v);
     void InitGL();
@@ -61,7 +63,11 @@ private:
     Drawing drawing_;
     glm::vec3 cam_pos_;
     float world_size_;
-    float r_;
+    float rotateX_;
+    float moving_rotation_x_;
+    bool mouse_down_ = false;
+    int rotate_point_x_;
+    int rotate_point_y_;
 protected:
     DECLARE_EVENT_TABLE()
 };
