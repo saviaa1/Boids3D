@@ -19,7 +19,7 @@ void Boids3DFrame::SpeedChanged( wxCommandEvent& event )
 
 void Boids3DFrame::WorldSizeChanged( wxCommandEvent& event )
 {
-// TODO: Implement WorldSizeChanged
+    world_->SetWorldSize(std::stof(GetWorldSize()));
 }
 
 void Boids3DFrame::ViewDistanceChanged( wxCommandEvent& event )

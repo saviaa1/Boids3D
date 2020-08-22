@@ -172,17 +172,24 @@ public:
     void SetBorderWeight(T val) { borderWeight = val; }
     const T GetSpeed() const { return boidSpeed; }
     void SetSpeed(T val) { boidSpeed = val; }
+    const T GetWorldSize() const { return areaSize; }
+    void SetWorldSize(T val) {
+        if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
+        areaSize = val;
+        SetGridSize(viewDistance, areaSize);
+    }
     const T GetViewDistance() const { return viewDistance; }
     void SetViewDistance(T val) {
         if (val < 0) throw std::runtime_error("View distance cannot be < 0");
         viewDistance = val;
+        SetGridSize(viewDistance, areaSize);
     }
     const T GetViewAngle() const { return viewAngle; }
     void SetViewAngle(T val) { viewAngle = val; }
     const T GetGridSize() const { return gridSize; }
     void SetGridSize(T val, T max) {
-        if (max / val > 1024.0) {
-            val = max / 1024;
+        if (max / val > 1023.0) {
+            val = max / 1023;
         }
         gridSize = val;
     }
