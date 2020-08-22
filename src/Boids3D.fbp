@@ -67,7 +67,7 @@
                 <property name="rows">1</property>
                 <property name="vgap">0</property>
                 <object class="sizeritem" expanded="1">
-                    <property name="border">5</property>
+                    <property name="border">0</property>
                     <property name="flag"></property>
                     <property name="proportion">1</property>
                     <object class="wxFlexGridSizer" expanded="0">
@@ -1093,8 +1093,8 @@
                     </object>
                 </object>
                 <object class="sizeritem" expanded="0">
-                    <property name="border">5</property>
-                    <property name="flag">wxALL</property>
+                    <property name="border">0</property>
+                    <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
                     <object class="wxPanel" expanded="0">
                         <property name="BottomDockable">1</property>

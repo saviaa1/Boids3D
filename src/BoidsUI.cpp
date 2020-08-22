@@ -82,10 +82,10 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	BoidsControlGrid->Add( m_separationText, 0, wxALL, 5 );
 
 
-	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 5 );
+	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 0 );
 
 	m_boidsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 600,600 ), wxTAB_TRAVERSAL );
-	BoidsHorizontalSizer->Add( m_boidsPanel, 1, wxALL, 5 );
+	BoidsHorizontalSizer->Add( m_boidsPanel, 1, wxEXPAND, 0 );
 
 
 	this->SetSizer( BoidsHorizontalSizer );
