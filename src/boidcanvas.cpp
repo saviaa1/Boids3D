@@ -106,8 +106,14 @@ void BoidCanvas::MoveCamera(wxMouseEvent& event) {
 		
 		if (moving_rotation_y_ > pi / 2 - 0.01) {
 			moving_rotation_y_ = pi / 2 - 0.01f;
+			const wxPoint pos = wxGetMousePosition();
+			rotate_point_y_ = pos.y - this->GetScreenPosition().y;
+			rotate_y_ = moving_rotation_y_;
 		} else if (moving_rotation_y_ < -pi / 2 + 0.01) {
 			moving_rotation_y_ = -pi / 2 + 0.01;
+			const wxPoint pos = wxGetMousePosition();
+			rotate_point_y_ = pos.y - this->GetScreenPosition().y;
+			rotate_y_ = moving_rotation_y_;
 		}
 		
 		// std::cout << moving_rotation_y_ << std::endl;
