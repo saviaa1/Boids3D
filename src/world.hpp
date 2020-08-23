@@ -39,7 +39,7 @@ public:
     void AddBoid(Boid<T>* b) {
         boids_.push_back(b);
         int hash = b->CalculateHash(gridSize);
-        b->SetCurrentHash(hash, areaSize / gridSize);
+        b->SetCurrentHash(hash, (int) (areaSize / gridSize));
         newBoids_++;
     }
     void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> dist, int nr) {
@@ -57,8 +57,8 @@ public:
     void SetNewNumberOfBoids(int nr) {
         newBoids_ = nr;
     }
-    const size_t GetNumberOfBoids() const {
-        return boids_.size();
+    const int GetNumberOfBoids() const {
+        return (int) boids_.size();
     }
     const std::vector<Boid<T>*> &GetBoids() const {
         return boids_;
@@ -84,7 +84,7 @@ public:
             end = end + nr;
         }
         if (start < boids_.size()) {
-            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, boids_.size()));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, (int) boids_.size()));
         }
         for (auto& t : threads) {
             if (t.joinable()) {
@@ -110,7 +110,7 @@ public:
                     boidsHash_.emplace(newHash, blist);
                 }
                 boidsHash_[newHash].push_back(boid);
-                boid->SetCurrentHash(newHash, areaSize / gridSize);
+                boid->SetCurrentHash(newHash, (int) (areaSize / gridSize));
             }
         }
         double total = perfTimer.GetMS();
@@ -120,7 +120,7 @@ public:
             std::cout << "Collect: " << collect << " ms" << std::endl;
         }
         if (total > 16.67) {
-            speedfactor = total / 16.67;
+            speedfactor = (T) (total / 16.67);
         }
     }
 

@@ -12,5 +12,5 @@ public:
     }
 
 private:
-    std::chrono::system_clock::time_point start_;
+    std::chrono::steady_clock::time_point start_;
 };

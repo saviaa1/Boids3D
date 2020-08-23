@@ -11,7 +11,7 @@ public:
     virtual ~CombinedBehavior() {}
 
     virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle) {
-        unsigned int neighborCount = 0;
+        int neighborCount = 0;
         vector3d<T> alignmentForce, cohesionForce, seperationForce;
         for (int i = 0; i < myBoid->nr; i++) {
             for (auto boid : boidsHash[myBoid->neighbours[i]]) {
@@ -31,9 +31,9 @@ public:
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) { return alignmentForce; }
 
-        alignmentForce /= neighborCount;
-        cohesionForce /= neighborCount;
-        seperationForce /= neighborCount;
+        alignmentForce /= (T) neighborCount;
+        cohesionForce /= (T) neighborCount;
+        seperationForce /= (T) neighborCount;
 
         cohesionForce -= myBoid->GetPosition();
         seperationForce *= -1;
