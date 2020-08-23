@@ -63,8 +63,10 @@ private:
     Drawing drawing_;
     glm::vec3 cam_pos_;
     float world_size_;
-    float rotateX_;
+    float rotate_x_;
+    float rotate_y_;
     float moving_rotation_x_;
+    float moving_rotation_y_;
     bool mouse_down_ = false;
     int rotate_point_x_;
     int rotate_point_y_;

@@ -50,7 +50,11 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 void BoidCanvas::Zoom(wxMouseEvent& event) {
 	if (cameraDistance_ - 10 * event.GetWheelRotation() / event.GetWheelDelta() > 0) {
 		cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
-		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotateX_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotateX_) * cameraDistance_));
+		cam_pos_ = glm::vec3(
+			world_size_/2 + (std::cos(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_)),
+			world_size_/2 + (std::sin(rotate_y_) * cameraDistance_),
+			world_size_/2 + (std::sin(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_))
+		);
 		//std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		view_ = glm::lookAt(
 			cam_pos_, // Camera position in the world
@@ -66,7 +70,8 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 
 void BoidCanvas::MouseUp(wxMouseEvent& event) {
 	mouse_down_ = false;
-	rotateX_ =+ moving_rotation_x_;
+	rotate_x_ =+ moving_rotation_x_;
+	rotate_y_ =+ moving_rotation_y_;
 }
 
 void BoidCanvas::MouseDown(wxMouseEvent& event) {
@@ -74,20 +79,34 @@ void BoidCanvas::MouseDown(wxMouseEvent& event) {
 	const wxPoint pos = wxGetMousePosition();
 	rotate_point_x_ = pos.x - this->GetScreenPosition().x;
 	rotate_point_y_ = pos.y - this->GetScreenPosition().y;
-	//std::cout << rotateX_ << std::endl;
+	//std::cout << rotate_x_ << std::endl;
 }
 
 void BoidCanvas::MoveCamera(wxMouseEvent& event) {
+	static const float pi = acos(-1.0f);
 	if (mouse_down_) {
 		float sensitivity = 0.01;
 		const wxPoint pos = wxGetMousePosition();
 		int mouseX = pos.x - this->GetScreenPosition().x;
 		int mouseY = pos.y - this->GetScreenPosition().y;
 
-		moving_rotation_x_ = rotateX_ + ((mouseX - rotate_point_x_) * sensitivity);
-		//std::cout << moving_rotation_x_ << std::endl;
+		moving_rotation_x_ = rotate_x_ + ((mouseX - rotate_point_x_) * sensitivity);
+		moving_rotation_y_ = rotate_y_ + ((mouseY - rotate_point_y_) * sensitivity);
+		
+		if (moving_rotation_y_ > pi / 2 - 0.01) {
+			moving_rotation_y_ = pi / 2 - 0.01f;
+		} else if (moving_rotation_y_ < -pi / 2 + 0.01) {
+			moving_rotation_y_ = -pi / 2 + 0.01;
+		}
+		
+		
+		// std::cout << moving_rotation_y_ << std::endl;
 
-		cam_pos_ = glm::vec3(world_size_/2 + std::cos(moving_rotation_x_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(moving_rotation_x_) * cameraDistance_));
+		cam_pos_ = glm::vec3(
+			world_size_/2 + (std::cos(moving_rotation_x_) * (std::cos(moving_rotation_y_) * cameraDistance_)),
+			world_size_/2 + (std::sin(moving_rotation_y_) * cameraDistance_),
+			world_size_/2 + (std::sin(moving_rotation_x_) * (std::cos(moving_rotation_y_) * cameraDistance_))
+		);
 
 		view_ = glm::lookAt(
 			cam_pos_, // Camera position in the world
@@ -119,7 +138,7 @@ void BoidCanvas::InitGL() {
 			/* Problem: glewInit failed, something is seriously wrong. */
 			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
-		rotateX_ = M_PI/2;
+		rotate_x_ = M_PI/2;
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
@@ -137,7 +156,7 @@ void BoidCanvas::InitGL() {
 
 		auto b3f = (Boids3DFrame *) boids3dframe_;
 		world_size_ = std::stof(b3f->GetWorldSize());
-		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotateX_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotateX_) * cameraDistance_));
+		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotate_x_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotate_x_) * cameraDistance_));
 		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
 		view_ = glm::lookAt(
