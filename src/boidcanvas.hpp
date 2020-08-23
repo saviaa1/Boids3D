@@ -41,6 +41,7 @@ public:
     BoidCanvas(wxFrame* parent);
     ~BoidCanvas();
     void Paintit(wxPaintEvent& event);
+    void CanvasResize(wxSizeEvent& event);
     void Zoom(wxMouseEvent& event);
     void MouseDown(wxMouseEvent& event);
     void MouseUp(wxMouseEvent& event);
@@ -70,6 +71,7 @@ private:
     bool mouse_down_ = false;
     int rotate_point_x_;
     int rotate_point_y_;
+    float aspect_ratio_;
 protected:
     DECLARE_EVENT_TABLE()
 };

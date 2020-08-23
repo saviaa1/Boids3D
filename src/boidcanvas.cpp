@@ -6,6 +6,7 @@ BEGIN_EVENT_TABLE(BoidCanvas, wxGLCanvas)
 	EVT_LEFT_DOWN(BoidCanvas::MouseDown)
 	EVT_LEFT_UP(BoidCanvas::MouseUp)
 	EVT_MOTION(BoidCanvas::MoveCamera)
+	EVT_SIZE(BoidCanvas::CanvasResize)
 END_EVENT_TABLE()
 
 BoidCanvas::BoidCanvas(wxFrame *parent)
@@ -45,6 +46,16 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 		InitGL();
 	}
     Render();
+}
+
+void BoidCanvas::CanvasResize(wxSizeEvent& event) {
+	wxSize size = this->GetSize();
+	int h = size.GetHeight();
+	int w = size.GetWidth();
+	glViewport(0, 0, w, h);
+	aspect_ratio_ = (float) (w / h);
+	proj_ = glm::perspective(45.0f, float(w) / float(h), 1.0f, 1500.0f);
+	mvp_ = proj_ * view_ * model_;
 }
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
@@ -99,7 +110,6 @@ void BoidCanvas::MoveCamera(wxMouseEvent& event) {
 			moving_rotation_y_ = -pi / 2 + 0.01;
 		}
 		
-		
 		// std::cout << moving_rotation_y_ << std::endl;
 
 		cam_pos_ = glm::vec3(
@@ -139,13 +149,18 @@ void BoidCanvas::InitGL() {
 			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
 		rotate_x_ = M_PI/2;
+		wxSize size = this->GetSize();
+		int h = size.GetHeight();
+		int w = size.GetWidth();
+		aspect_ratio_ = (float) (w / h);
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
 		glDepthRange(0.0f, 100.0f);
 		glClearDepth(1.0f);
-		glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
-		glMatrixMode(GL_MODELVIEW);
+		glViewport(0, 0, w, h);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
@@ -158,7 +173,7 @@ void BoidCanvas::InitGL() {
 		world_size_ = std::stof(b3f->GetWorldSize());
 		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotate_x_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotate_x_) * cameraDistance_));
 		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
-		proj_ = glm::perspective(45.0f, 1.0f, 1.0f, 1500.0f);
+		proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, 1500.0f);
 		view_ = glm::lookAt(
 			cam_pos_, // Camera position in the world
 			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
