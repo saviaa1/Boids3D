@@ -51,7 +51,7 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 	if (cameraDistance_ - 10 * event.GetWheelRotation() / event.GetWheelDelta() > 0) {
 		cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
 		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotateX_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotateX_) * cameraDistance_));
-		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
+		//std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		view_ = glm::lookAt(
 			cam_pos_, // Camera position in the world
 			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
