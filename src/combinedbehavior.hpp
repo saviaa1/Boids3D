@@ -5,7 +5,7 @@
 template <typename T>
 class CombinedBehavior : public Behavior<T> {
 public:
-    CombinedBehavior() {}
+    CombinedBehavior() : Behavior<T>() {}
     CombinedBehavior(T _alignmentWeight, T _cohesionWeight, T _seperationWeight)
         : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), seperationWeight(_seperationWeight) {}
     virtual ~CombinedBehavior() {}
@@ -29,7 +29,10 @@ public:
         }
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
-        if (neighborCount == 0) { return alignmentForce; }
+        if (neighborCount == 0) {
+            return this->randRand();
+            //return this->sineRand(myBoid);
+        }
 
         alignmentForce /= (T) neighborCount;
         cohesionForce /= (T) neighborCount;

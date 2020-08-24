@@ -81,10 +81,19 @@ class vector3d {
         T& X() {
             return x;
         }
+        const T& cX() const {
+            return x;
+        }
         T& Y() {
             return y;
         }
+        const T& cY() const {
+            return y;
+        }
         T& Z() {
+            return z;
+        }
+        const T& cZ() const {
             return z;
         }
         bool isZero() {
