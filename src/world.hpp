@@ -11,6 +11,7 @@
 #include "behavior.hpp"
 #include "combinedbehavior.hpp"
 #include "avoidbordersbehavior.hpp"
+#include "predatorbehavior.hpp"
 #include "perftimer.hpp"
 
 template <typename T>
