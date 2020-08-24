@@ -165,10 +165,12 @@ public:
     void SetSpeed(T val) { boidSpeed = val; }
     const T GetWorldSize() const { return areaSize; }
     void SetWorldSize(T val) {
-        if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
-        areaSize = val;
-        SetGridSize(viewDistance, areaSize);
-        SetWorldSizeChanged(true);
+        if (val != areaSize) {
+            if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
+            areaSize = val;
+            SetGridSize(viewDistance, areaSize);
+            SetWorldSizeChanged(true);
+        }
     }
     const T GetViewDistance() const { return viewDistance; }
     void SetViewDistance(T val) {

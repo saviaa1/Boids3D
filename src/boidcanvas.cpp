@@ -58,9 +58,9 @@ void BoidCanvas::CanvasResize(wxSizeEvent& event) {
 }
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
-	if (cameraDistance_ - (world_size_ / 50) * event.GetWheelRotation() / event.GetWheelDelta() > 0 &&
-		cameraDistance_ - (world_size_ / 50) * event.GetWheelRotation() / event.GetWheelDelta() < world_size_*2) {
-		cameraDistance_ -= (world_size_ / 50) * event.GetWheelRotation() / event.GetWheelDelta();
+	if (cameraDistance_ - (world_size_ / 25) * event.GetWheelRotation() / event.GetWheelDelta() > 0 &&
+		cameraDistance_ - (world_size_ / 25) * event.GetWheelRotation() / event.GetWheelDelta() < world_size_*2) {
+		cameraDistance_ -= (world_size_ / 25) * event.GetWheelRotation() / event.GetWheelDelta();
 		cam_pos_ = glm::vec3(
 			world_size_/2 + (std::cos(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_)),
 			world_size_/2 + (std::sin(rotate_y_) * cameraDistance_),
@@ -73,10 +73,7 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		mvp_ = proj_ * view_ * model_;
-	} else {
-		std::cout << "max zoom in or out" << std::endl;
 	}
-	
 }
 
 void BoidCanvas::MouseUp(wxMouseEvent& event) {
@@ -176,7 +173,6 @@ void BoidCanvas::InitGL() {
 		auto b3f = (Boids3DFrame *) boids3dframe_;
 		world_size_ = std::stof(b3f->GetWorldSize());
 		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotate_x_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotate_x_) * cameraDistance_));
-		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
 		proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, world_size_*3);
 		view_ = glm::lookAt(
 			cam_pos_, // Camera position in the world
@@ -249,9 +245,10 @@ void BoidCanvas::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (world_->GetWorldSizeChanged()) {
+		float oldSize = world_size_; 
 		world_size_= world_->GetWorldSize();
 		drawing_.SetCubeVertices(world_size_);
-		cameraDistance_ = world_size_; 
+		cameraDistance_ = cameraDistance_ * (world_size_ / oldSize); 
 		cam_pos_ = glm::vec3(
 			world_size_/2 + (std::cos(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_)),
 			world_size_/2 + (std::sin(rotate_y_) * cameraDistance_),
