@@ -11,6 +11,7 @@
 #include "behavior.hpp"
 #include "combinedbehavior.hpp"
 #include "avoidbordersbehavior.hpp"
+#include "predatorbehavior.hpp"
 #include "perftimer.hpp"
 
 template <typename T>
@@ -33,10 +34,10 @@ public:
         b->SetCurrentHash(hash, areaSize / gridSize);
         newBoids_++;
     }
-    void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> dist, int nr) {
+    void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> vel_dist, std::uniform_real_distribution<T> pos_dist, int nr) {
         for (auto i = 0; i < nr; i++) {
-            vector3d<T> speedV(dist(rng), dist(rng), dist(rng)),
-                        posV(dist(rng), dist(rng), dist(rng));
+            vector3d<T> speedV(vel_dist(rng), vel_dist(rng), vel_dist(rng)),
+                        posV(pos_dist(rng), pos_dist(rng), pos_dist(rng));
             if (!speedV.isZero()) {
                 speedV.normalize();
             }
@@ -119,7 +120,7 @@ public:
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
             velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 2 / viewDistance;
-            if (velocity.isZero()) { 
+            if (velocity.isZero()) {
                 velocity = (*it)->GetVelocity();
                 velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
             } else {
@@ -145,8 +146,9 @@ public:
         if (diff > 0) {
             std::random_device random_device;
             std::mt19937 rng(random_device());
-            std::uniform_real_distribution<T> dist_inside_area(viewDistance, areaSize-viewDistance);
-            AddRandomBoids(rng, dist_inside_area, diff);
+            std::uniform_real_distribution<T> vel_dist(-1, 1);
+            std::uniform_real_distribution<T> pos_dist(viewDistance, areaSize-viewDistance);
+            AddRandomBoids(rng, vel_dist, pos_dist, diff);
         }
     }
 
@@ -189,11 +191,10 @@ private:
 
     //uniform_real_distribution defined on float, double and long double. If others types are needed templates partial specialization is needed.
     void initBoids(int numberOfBoids) {
-        //Currently generates same sequence every time, if more random is wanted, uncomment next two lines and comment third.
-        //std::random_device random_device;
-        //std::mt19937 rng(random_device());
-        std::mt19937 rng;
-        std::uniform_real_distribution<T> dist_inside_area(viewDistance, areaSize-viewDistance);
-        AddRandomBoids(rng, dist_inside_area, numberOfBoids);
+        std::random_device random_device;
+        std::mt19937 rng(random_device());
+        std::uniform_real_distribution<T> vel_dist(-1, 1);
+        std::uniform_real_distribution<T> pos_dist(viewDistance, areaSize-viewDistance);
+        AddRandomBoids(rng, vel_dist, pos_dist, numberOfBoids);
     }
 };
