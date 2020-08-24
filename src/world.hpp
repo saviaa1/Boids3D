@@ -11,7 +11,6 @@
 #include "behavior.hpp"
 #include "combinedbehavior.hpp"
 #include "avoidbordersbehavior.hpp"
-#include "predatorbehavior.hpp"
 #include "perftimer.hpp"
 
 template <typename T>
@@ -34,7 +33,7 @@ public:
     void AddBoid(Boid<T>* b) {
         boids_.push_back(b);
         int hash = b->CalculateHash(gridSize);
-        b->SetCurrentHash(hash, areaSize / gridSize);
+        b->SetCurrentHash(hash, (int) (areaSize / gridSize));
         newBoids_++;
     }
     void AddRandomBoids(std::mt19937 rng, std::uniform_real_distribution<T> vel_dist, std::uniform_real_distribution<T> pos_dist, int nr) {
@@ -51,8 +50,8 @@ public:
     void SetNewNumberOfBoids(int nr) {
         newBoids_ = nr;
     }
-    const size_t GetNumberOfBoids() const {
-        return boids_.size();
+    const int GetNumberOfBoids() const {
+        return (int) boids_.size();
     }
     const std::vector<Boid<T>*> &GetBoids() const {
         return boids_;
@@ -77,7 +76,7 @@ public:
             end = end + nr;
         }
         if (start < boids_.size()) {
-            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, boids_.size()));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, (int) boids_.size()));
         }
         for (auto& t : threads) {
             if (t.joinable()) {
@@ -103,7 +102,7 @@ public:
                     boidsHash_.emplace(newHash, blist);
                 }
                 boidsHash_[newHash].push_back(boid);
-                boid->SetCurrentHash(newHash, areaSize / gridSize);
+                boid->SetCurrentHash(newHash, (int) (areaSize / gridSize));
             }
         }
         double total = perfTimer.GetMS();
@@ -113,7 +112,7 @@ public:
             std::cout << "Collect: " << collect << " ms" << std::endl;
         }
         if (total > 16.67) {
-            speedfactor = total / 16.67;
+            speedfactor = (T) (total / 16.67);
         }
     }
 
@@ -173,17 +172,24 @@ public:
     void SetSeperationWeight(T val) { flockingBehavior.SetSeperationWeight(val); }
     const T GetSpeed() const { return boidSpeed; }
     void SetSpeed(T val) { boidSpeed = val; }
+    const T GetWorldSize() const { return areaSize; }
+    void SetWorldSize(T val) {
+        if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
+        areaSize = val;
+        SetGridSize(viewDistance, areaSize);
+    }
     const T GetViewDistance() const { return viewDistance; }
     void SetViewDistance(T val) {
         if (val < 0) throw std::runtime_error("View distance cannot be < 0");
         viewDistance = val;
+        SetGridSize(viewDistance, areaSize);
     }
     const T GetViewAngle() const { return viewAngle; }
     void SetViewAngle(T val) { viewAngle = val; }
     const T GetGridSize() const { return gridSize; }
     void SetGridSize(T val, T max) {
-        if (max / val > 1024.0) {
-            val = max / 1024;
+        if (max / val > 1023.0) {
+            val = max / 1023;
         }
         gridSize = val;
     }

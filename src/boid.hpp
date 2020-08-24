@@ -28,12 +28,12 @@ public:
             std::cout << "Out of area " << nextPositio;
         }*/
         //To make sure that boids do not go outside of the area.
-        if (nextPositio.X() < 0) { nextPositio.X() = 0; }
-        if (nextPositio.Y() < 0) { nextPositio.Y() = 0; }
-        if (nextPositio.Z() < 0) { nextPositio.Z() = 0; }
-        if (nextPositio.X() > areaSize-0.01) { nextPositio.X() = areaSize-0.01; }
-        if (nextPositio.Y() > areaSize-0.01) { nextPositio.Y() = areaSize-0.01; }
-        if (nextPositio.Z() > areaSize-0.01) { nextPositio.Z() = areaSize-0.01; }
+        if (nextPositio.X() < 0.0f) { nextPositio.X() = 0.0f; }
+        if (nextPositio.Y() < 0.0f) { nextPositio.Y() = 0.0f; }
+        if (nextPositio.Z() < 0.0f) { nextPositio.Z() = 0.0f; }
+        if (nextPositio.X() > areaSize-0.01f) { nextPositio.X() = areaSize-0.01f; }
+        if (nextPositio.Y() > areaSize-0.01f) { nextPositio.Y() = areaSize-0.01f; }
+        if (nextPositio.Z() > areaSize-0.01f) { nextPositio.Z() = areaSize-0.01f; }
     }
     void SetNextToCurrent() {
         velocity = nextVelocity;

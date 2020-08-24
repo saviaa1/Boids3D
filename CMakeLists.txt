@@ -6,11 +6,17 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
-find_package(wxWidgets COMPONENTS net core base gl REQUIRED)
 
+if(MSVC)
+    add_definitions(/MP)
+endif()
 
-include(${wxWidgets_USE_FILE})
-
+if(MSVC AND NOT WXSOURCE)
+    include(${CMAKE_SOURCE_DIR}/winmsvc.cmake)
+else()
+    find_package(wxWidgets REQUIRED COMPONENTS net core base gl)
+    include(${wxWidgets_USE_FILE})
+endif()
 
 # START GOOGLE TEST:
 # Download and unpack googletest at configure time
