@@ -17,8 +17,8 @@ public:
             for (auto boid : boidsHash[myBoid->neighbours[i]]) {
                 if (boid != myBoid) {
                     T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
-                    T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
-                    if (tempDis <= viewDistance && TempAng <= viewAngle) {
+                    T tempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
+                    if (tempDis <= viewDistance && tempAng <= viewAngle) {
                         alignmentForce += boid->GetVelocity();
                         cohesionForce += boid->GetPosition();
                         seperationForce += boid->GetPosition() - myBoid->GetPosition();
@@ -30,6 +30,7 @@ public:
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) {
+            //return alignmentForce; //empty = no random.
             return this->randRand();
             //return this->sineRand(myBoid);
         }

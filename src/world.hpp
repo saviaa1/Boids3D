@@ -21,6 +21,9 @@ public:
         : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
         initBoids(_numberOfBoids);
         SetGridSize(_viewDistance, _areaSize);
+        predator = boids_.front();
+        AvoidPredatorBeh = AvoidPredatorBehavior<T>();
+        PursueBoidsBeh = PursueBoidsBehavior<T>();
     }
     ~World() {
         for (auto boid : boids_) {
@@ -121,8 +124,17 @@ public:
         {
             velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 2 / viewDistance;
             if (velocity.isZero()) {
-                velocity = (*it)->GetVelocity();
-                velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
+                //if predator pursue closest boid. Will be calculated if predator pointer defined, if pointer is nullptr no predator or avoidPredator behavior.
+                if (predator && *it == predator) {
+                    velocity = (*it)->GetVelocity();
+                    velocity += PursueBoidsBeh.compute(boidsHash_, *it, viewDistance, viewAngle);
+                }
+                //else normal behavior + avoid predator if in viewDistance.
+                else {
+                    velocity = (*it)->GetVelocity();
+                    velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
+                    if (predator) { velocity += AvoidPredatorBeh.computeA(predator, *it, viewDistance, viewAngle); }
+                }
             } else {
                 velocity += (*it)->GetVelocity();
             }
@@ -175,6 +187,8 @@ public:
         }
         gridSize = val;
     }
+    const Boid<T>* GetPredator() const { return predator; }
+    void SetPredator(Boid<T>* val) { predator = val; }
 
 private:
     T viewDistance;
@@ -182,12 +196,15 @@ private:
     T areaSize;
     T gridSize;
     T viewAngle;
-    std::vector<Boid<T>*> boids_;
     int newBoids_ = 0;
+    Boid<T>* predator;
+    std::vector<Boid<T>*> boids_;
     std::map<int, std::vector<Boid<T>*>> boidsHash_;
 
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;
+    AvoidPredatorBehavior<T> AvoidPredatorBeh;
+    PursueBoidsBehavior<T> PursueBoidsBeh;
 
     //uniform_real_distribution defined on float, double and long double. If others types are needed templates partial specialization is needed.
     void initBoids(int numberOfBoids) {
