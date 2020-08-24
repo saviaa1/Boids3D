@@ -220,14 +220,11 @@ glm::quat BoidCanvas::RotationBetweenVectors(vector3d<float> v) {
 
 	float cosTheta = dot(start, dest);
 	glm::vec3 rotationAxis;
-	
+
 
 	if (cosTheta < -1 + 0.001f){
-		// special case when vectors in opposite directions:
-		// there is no "ideal" rotation axis
-		// So guess one; any will do as long as it's perpendicular to start
 		rotationAxis = cross(glm::vec3(0.0f, 0.0f, 1.0f), start);
-		if (glm::length2(rotationAxis) < 0.01 ) // bad luck, they were parallel, try again!
+		if (glm::length2(rotationAxis) < 0.01)
 			rotationAxis = cross(glm::vec3(1.0f, 0.0f, 0.0f), start);
 
 		rotationAxis = normalize(rotationAxis);
@@ -250,21 +247,31 @@ glm::quat BoidCanvas::RotationBetweenVectors(vector3d<float> v) {
 
 void BoidCanvas::Render()
 {
-	//std::cout << "loop" << std::endl;
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (world_->GetWorldSizeChanged()) {
+		float old_size = world_size_;
+		world_size_= world_->GetWorldSize();
+		drawing_.SetCubeVertices(world_size_);
+		float a = world_size_ / old_size;
+		cam_pos_ = glm::vec3(
+			world_size_/2 + (std::cos(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_)),
+			world_size_/2 + (std::sin(rotate_y_) * cameraDistance_),
+			world_size_/2 + (std::sin(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_))
+		);
+		view_ = glm::lookAt(
+			cam_pos_, // Camera position in the world
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
+			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+		world_->SetWorldSizeChanged(false);
+	}
 
 	auto boids = world_->GetBoids();
 	for (auto it : boids) {
 		auto vec = it->GetPosition();
 		auto rVec = it->GetVelocity();
-		// auto nVec = rVec.normalize();
-		// std::cout << "normalized speed V: " << nVec.X() << ", " << nVec.Y() << ", " << nVec.Z() << std::endl;
-
-		// auto cVec = nVec.crossProduct(modelV);
-		// std::cout << "cross product V: " << cVec.X() << ", " << cVec.Y() << ", " << cVec.Z() << std::endl;
-		// float a = nVec.angle(modelV);
 
 		glm::quat q = RotationBetweenVectors(rVec);
 
@@ -274,7 +281,6 @@ void BoidCanvas::Render()
 		model_ = model_ * RotationMatrix;
 
 		glm::mat4 mvp = proj_ * view_ * model_;
-
 		
 		glUseProgram(shader_);
 
