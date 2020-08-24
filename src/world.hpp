@@ -68,12 +68,12 @@ public:
 
         int nr = 50, start = 0, end = nr;
         while (end < boids_.size()) {
-            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, end));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, end, speedfactor));
             start = start + nr;
             end = end + nr;
         }
         if (start < boids_.size()) {
-            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, (int) boids_.size()));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, (int) boids_.size(), speedfactor));
         }
         for (auto& t : threads) {
             if (t.joinable()) {
@@ -84,7 +84,7 @@ public:
         double simulate = perfTimer.GetMS();
         if (simulate > simulateMax) {
             simulateMax = simulate;
-            std::cout << "Simulate: " << simulate << " ms" << std::endl;
+            //std::cout << "Simulate: " << simulate << " ms" << std::endl;
         }
 
         int oldHash, newHash;
@@ -106,19 +106,22 @@ public:
         double collect = total - simulate;
         if (collect > collectMax) {
             collectMax = collect;
-            std::cout << "Collect: " << collect << " ms" << std::endl;
+            //std::cout << "Collect: " << collect << " ms" << std::endl;
         }
         if (total > 16.67) {
             speedfactor = (T) (total / 16.67);
         }
+        else {
+            speedfactor = 1.0;
+        }
     }
 
-    void SimulateBoids(int start, int end) {
+    void SimulateBoids(int start, int end, float speedfactor) {
         vector3d<T> velocity;
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 2 / viewDistance;
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 0.02 * 2 * speedfactor / viewDistance;
             if (velocity.isZero()) {
                 velocity = (*it)->GetVelocity();
                 velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
@@ -128,7 +131,7 @@ public:
             if (!velocity.isZero()) {
                 velocity.normalize();
             }
-            (*it)->SetNextVelAndPos(velocity * boidSpeed, areaSize);
+            (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor, areaSize);
         }
     }
 

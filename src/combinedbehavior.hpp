@@ -30,6 +30,7 @@ public:
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) {
+            //return myBoid->GetVelocity();
             return this->randRand();
             //return this->sineRand(myBoid);
         }
@@ -45,7 +46,7 @@ public:
         if (!cohesionForce.isZero()) { cohesionForce.normalize(); }
         if (!seperationForce.isZero()) { seperationForce.normalize(); }
 
-        return alignmentForce * alignmentWeight + cohesionForce * cohesionWeight + seperationForce * seperationWeight;
+        return alignmentForce * alignmentWeight * 0.01 + cohesionForce * cohesionWeight * 0.01 + seperationForce * seperationWeight * 0.01;
     }
 
     const T GetAligmentWeight() const { return alignmentWeight; }

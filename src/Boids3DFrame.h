@@ -31,31 +31,88 @@ class Boids3DFrame : public Frame
 	//// end generated class members
 		wxWindow *Get3DPanel() { return m_boidsPanel; }
 
-		std::string GetBoids() { return std::string(m_boidsText->GetValue()); }
-		void SetBoids(wxString value) { m_boidsText->SetValue(value); }
+		std::string GetBoids() {
+			SetBoids(m_boidsText->GetValue());
+			return std::string(m_boidsText->GetValue());
+		}
+		void SetBoids(wxString value) {
+			m_boidsText->SetValue(CheckArg(value, 1, 10000, 500, "Number of Boids"));
+		}
 
-		std::string GetSpeed() { return std::string(m_speedText->GetValue()); }
-		void SetSpeed(wxString value) { m_speedText->SetValue(value); }
+		std::string GetSpeed() {
+			SetSpeed(m_speedText->GetValue());
+			return std::string(m_speedText->GetValue());
+		}
+		void SetSpeed(wxString value) {
+			m_speedText->SetValue(CheckArg(value, 1, 100, 50, "Speed of Boids"));
+		}
 
-		std::string GetWorldSize() { return std::string(m_worldSizeText->GetValue()); }
-		void SetWorldSize(wxString value) { m_worldSizeText->SetValue(value); }
+		std::string GetWorldSize() {
+			SetWorldSize(m_worldSizeText->GetValue());
+			return std::string(m_worldSizeText->GetValue());
+		}
+		void SetWorldSize(wxString value) {
+			m_worldSizeText->SetValue(CheckArg(value, 50, 1000, 100, "Size of world"));
+		}
 
-		std::string GetViewDistance() {return std::string(m_viewDistanceText->GetValue()); }
-		void SetViewDistance(wxString value) { m_viewDistanceText->SetValue(value); }
+		std::string GetViewDistance() {
+			SetViewDistance(m_viewDistanceText->GetValue());
+			return std::string(m_viewDistanceText->GetValue());
+		}
+		void SetViewDistance(wxString value) {
+			m_viewDistanceText->SetValue(CheckArg(value, 1, 10, 5, "View distance"));
+		}
 
-		std::string GetViewAngle() { return std::string(m_viewAngleText->GetValue()); }
-		void SetViewAngle(wxString value) { m_viewAngleText->SetValue(value); }
+		std::string GetViewAngle() {
+			SetViewAngle(m_viewAngleText->GetValue());
+			return std::string(m_viewAngleText->GetValue());
+		}
+		void SetViewAngle(wxString value) {
+			m_viewAngleText->SetValue(CheckArg(value, 1, 180, 90, "View angle"));
+		}
 
-		std::string GetAlignment() { return std::string(m_alignmentText->GetValue()); }
-		void SetAlignment(wxString value) { m_alignmentText->SetValue(value); }
+		std::string GetAlignment() {
+			SetAlignment(m_alignmentText->GetValue());
+			return std::string(m_alignmentText->GetValue());
+		}
+		void SetAlignment(wxString value) {
+			m_alignmentText->SetValue(CheckArg(value, 0, 100, 50, "Alignment factor"));
+		}
 
-		std::string GetCohesion() { return std::string(m_cohesionText->GetValue()); }
-		void SetCohesion(wxString value) { m_cohesionText->SetValue(value); }
+		std::string GetCohesion() {
+			SetCohesion(m_cohesionText->GetValue());
+			return std::string(m_cohesionText->GetValue());
+		}
+		void SetCohesion(wxString value) {
+			m_cohesionText->SetValue(CheckArg(value, 0, 100, 50, "Cohesion factor"));
+		}
 
-		std::string GetSeparation() { return std::string(m_separationText->GetValue()); }
-		void SetSeparation(wxString value) { m_separationText->SetValue(value); }
+		std::string GetSeparation() {
+			SetSeparation(m_separationText->GetValue());
+			return std::string(m_separationText->GetValue());
+		}
+		void SetSeparation(wxString value) {
+			m_separationText->SetValue(CheckArg(value, 0, 100, 50, "Separation factor"));
+		}
 
 		void SetWorld( World<float>* world) { world_ = world; }
+
+		wxString CheckArg(const wxString value, int min, int max, int defaultvalue, std::string str) {
+			int val = -1;
+			try {
+				val = std::stoi(std::string(value));
+			}
+			catch (...) {
+			}
+
+			if (val < min || val > max) {
+				std::cout << str << " must be between " << min << " and " << max << std::endl;
+				val = defaultvalue;
+			}
+
+			return wxString(std::to_string(val));
+		}
+	
 	private:
 		World<float>* world_;
 };

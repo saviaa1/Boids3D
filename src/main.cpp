@@ -56,7 +56,7 @@ bool MyApp::OnInit()
 }
 
 void MyApp::CheckArgs() {
-	if (argc == 2 && std::string(argv[1]).find("help") != std::string::npos) {
+	if (argc >= 2 && (std::string(argv[1]).find("help") != std::string::npos || std::string(argv[1]).find("?") != std::string::npos)) {
 		std::cout << "usage: boid_app nrboids speed size viewdistance viewangle alignment cohesion separation" << std::endl;
         exit(0);
 	}
