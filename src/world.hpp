@@ -168,6 +168,7 @@ public:
         if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
         areaSize = val;
         SetGridSize(viewDistance, areaSize);
+        SetWorldSizeChanged(true);
     }
     const T GetViewDistance() const { return viewDistance; }
     void SetViewDistance(T val) {
@@ -184,6 +185,10 @@ public:
         }
         gridSize = val;
     }
+    const bool GetWorldSizeChanged() const { return size_changed_; }
+    void SetWorldSizeChanged(bool val) {
+        size_changed_ = val;
+    }
 
 private:
     T viewDistance;
@@ -194,7 +199,7 @@ private:
     std::vector<Boid<T>*> boids_;
     int newBoids_ = 0;
     std::map<int, std::vector<Boid<T>*>> boidsHash_;
-
+    bool size_changed_ = false;
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;
 
