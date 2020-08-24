@@ -94,26 +94,42 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	m_boidsText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::BoidsChanged ), NULL, this );
 	m_boidsText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::BoidsChanged ), NULL, this );
+	m_speedText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::SpeedChanged ), NULL, this );
 	m_speedText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SpeedChanged ), NULL, this );
+	m_worldSizeText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::WorldSizeChanged ), NULL, this );
 	m_worldSizeText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::WorldSizeChanged ), NULL, this );
+	m_viewDistanceText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::ViewDistanceChanged ), NULL, this );
 	m_viewDistanceText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewDistanceChanged ), NULL, this );
+	m_viewAngleText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::ViewAngleChanged ), NULL, this );
 	m_viewAngleText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewAngleChanged ), NULL, this );
+	m_alignmentText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::AlignmentChanged ), NULL, this );
 	m_alignmentText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::AlignmentChanged ), NULL, this );
+	m_cohesionText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::CohesionChanged ), NULL, this );
 	m_cohesionText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::CohesionChanged ), NULL, this );
+	m_separationText->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::SeparationChanged ), NULL, this );
 	m_separationText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
 }
 
 Frame::~Frame()
 {
 	// Disconnect Events
+	m_boidsText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::BoidsChanged ), NULL, this );
 	m_boidsText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::BoidsChanged ), NULL, this );
+	m_speedText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::SpeedChanged ), NULL, this );
 	m_speedText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SpeedChanged ), NULL, this );
+	m_worldSizeText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::WorldSizeChanged ), NULL, this );
 	m_worldSizeText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::WorldSizeChanged ), NULL, this );
+	m_viewDistanceText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::ViewDistanceChanged ), NULL, this );
 	m_viewDistanceText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewDistanceChanged ), NULL, this );
+	m_viewAngleText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::ViewAngleChanged ), NULL, this );
 	m_viewAngleText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::ViewAngleChanged ), NULL, this );
+	m_alignmentText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::AlignmentChanged ), NULL, this );
 	m_alignmentText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::AlignmentChanged ), NULL, this );
+	m_cohesionText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::CohesionChanged ), NULL, this );
 	m_cohesionText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::CohesionChanged ), NULL, this );
+	m_separationText->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( Frame::SeparationChanged ), NULL, this );
 	m_separationText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
 
 }

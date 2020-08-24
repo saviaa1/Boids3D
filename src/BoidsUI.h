@@ -50,13 +50,21 @@ class Frame : public wxFrame
 		wxPanel* m_boidsPanel;
 
 		// Virtual event handlers, overide them in your derived class
+		virtual void BoidsChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void BoidsChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void SpeedChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void SpeedChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void WorldSizeChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void WorldSizeChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void ViewDistanceChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void ViewDistanceChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void ViewAngleChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void ViewAngleChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void AlignmentChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void AlignmentChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void CohesionChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void CohesionChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void SeparationChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void SeparationChanged( wxCommandEvent& event ) { event.Skip(); }
 
 

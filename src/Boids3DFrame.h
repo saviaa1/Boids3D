@@ -25,6 +25,14 @@ class Boids3DFrame : public Frame
 		void AlignmentChanged( wxCommandEvent& event );
 		void CohesionChanged( wxCommandEvent& event );
 		void SeparationChanged( wxCommandEvent& event );
+		void BoidsChanged( wxFocusEvent& event );
+		void SpeedChanged( wxFocusEvent& event );
+		void WorldSizeChanged( wxFocusEvent& event );
+		void ViewDistanceChanged( wxFocusEvent& event );
+		void ViewAngleChanged( wxFocusEvent& event );
+		void AlignmentChanged( wxFocusEvent& event );
+		void CohesionChanged( wxFocusEvent& event );
+		void SeparationChanged( wxFocusEvent& event );
 	public:
 		/** Constructor */
 		Boids3DFrame( wxWindow* parent );
@@ -112,9 +120,10 @@ class Boids3DFrame : public Frame
 
 			return wxString(std::to_string(val));
 		}
-	
+
 	private:
 		World<float>* world_;
+
 };
 
 #endif // __Boids3DFrame__

@@ -205,6 +205,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">BoidsChanged</event>
                                 <event name="OnTextEnter">BoidsChanged</event>
                             </object>
                         </object>
@@ -331,6 +332,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">SpeedChanged</event>
                                 <event name="OnTextEnter">SpeedChanged</event>
                             </object>
                         </object>
@@ -457,6 +459,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">WorldSizeChanged</event>
                                 <event name="OnTextEnter">WorldSizeChanged</event>
                             </object>
                         </object>
@@ -583,6 +586,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">ViewDistanceChanged</event>
                                 <event name="OnTextEnter">ViewDistanceChanged</event>
                             </object>
                         </object>
@@ -709,6 +713,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">ViewAngleChanged</event>
                                 <event name="OnTextEnter">ViewAngleChanged</event>
                             </object>
                         </object>
@@ -835,6 +840,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">AlignmentChanged</event>
                                 <event name="OnTextEnter">AlignmentChanged</event>
                             </object>
                         </object>
@@ -961,6 +967,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">CohesionChanged</event>
                                 <event name="OnTextEnter">CohesionChanged</event>
                             </object>
                         </object>
@@ -1087,6 +1094,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">SeparationChanged</event>
                                 <event name="OnTextEnter">SeparationChanged</event>
                             </object>
                         </object>
