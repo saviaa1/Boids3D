@@ -52,8 +52,8 @@ void BoidCanvas::CanvasResize(wxSizeEvent& event) {
 	int h = size.GetHeight();
 	int w = size.GetWidth();
 	glViewport(0, 0, w, h);
-	aspect_ratio_ = (float) (w / h);
-	proj_ = glm::perspective(45.0f, float(w) / float(h), 1.0f, 1500.0f);
+	aspect_ratio_ = (float) w / (float) h;
+	proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, 1500.0f);
 	mvp_ = proj_ * view_ * model_;
 }
 
@@ -153,7 +153,7 @@ void BoidCanvas::InitGL() {
 		wxSize size = this->GetSize();
 		int h = size.GetHeight();
 		int w = size.GetWidth();
-		aspect_ratio_ = (float) (w / h);
+		aspect_ratio_ = (float) w / (float) h;
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
