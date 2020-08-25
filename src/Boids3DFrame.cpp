@@ -94,5 +94,10 @@ void Boids3DFrame::WanderChanged( wxCommandEvent& event )
 
 void Boids3DFrame::PredatorChanged( wxCommandEvent& event )
 {
-// TODO: Implement PredatorChanged
+    if (world_->GetPredator() == nullptr) {
+        world_->SetPredator(true);
+    }
+    else {
+        world_->SetPredator(false);
+    }
 }

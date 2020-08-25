@@ -215,11 +215,13 @@ public:
         gridSize = val;
     }
     const Boid<T>* GetPredator() const { return predator; }
-    /**
-     * if predator off set use nullptr input, if on copy a pointer to a boid from the
-     * boids_ vector and do not delete that boid from the boids_ vector.
-     */
-    void SetPredator(Boid<T>* val) { predator = val; }
+    void SetPredator(bool val) { 
+        if (val) { 
+            predator = boids_[0];
+        } else {
+            predator = nullptr;
+        }
+    }
 
     //randRand is the default and active on startup
     //change randMov on and of and return bool value of the status.
@@ -238,7 +240,7 @@ public:
 private:
     T viewDistance;
     T boidSpeed;
-    T predSpeedFactor = 1.0f;
+    T predSpeedFactor = 0.9f;
     T areaSize;
     T gridSize;
     T viewAngle;
