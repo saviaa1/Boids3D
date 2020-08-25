@@ -1,7 +1,14 @@
 #pragma once
 #include <list>
 #include <vector>
+#define USEMAP 0
+#if USEMAP
 #include <map>
+#define USEDMAP std::map
+#else
+#include <unordered_map>
+#define USEDMAP std::unordered_map
+#endif
 #include <stdexcept>
 #include <random>
 #include <algorithm>
@@ -238,7 +245,7 @@ private:
     int newBoids_ = 0;
     Boid<T>* predator;
     std::vector<Boid<T>*> boids_;
-    std::map<int, std::vector<Boid<T>*>> boidsHash_;
+    USEDMAP<int, std::vector<Boid<T>*>> boidsHash_;
     bool size_changed_ = false;
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;

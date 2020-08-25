@@ -10,7 +10,7 @@ class Behavior {
 public:
     Behavior() {}
     virtual ~Behavior() {}
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T, T, int) = 0;
+    virtual vector3d<T> compute(USEDMAP<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T, T, int) = 0;
 
     vector3d<T> getRand(Boid<T>* myboid) {
         if (randActive) {

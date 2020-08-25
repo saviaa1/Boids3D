@@ -7,9 +7,19 @@ Frame( parent )
 
 }
 
+void Boids3DFrame::BoidsFocusChanged( wxFocusEvent& event )
+{
+    world_->SetNewNumberOfBoids(std::stoi(GetBoids()));
+}
+
 void Boids3DFrame::BoidsChanged( wxCommandEvent& event )
 {
     world_->SetNewNumberOfBoids(std::stoi(GetBoids()));
+}
+
+void Boids3DFrame::SpeedFocusChanged( wxFocusEvent& event )
+{
+    world_->SetSpeed(std::stof(GetSpeed()));
 }
 
 void Boids3DFrame::SpeedChanged( wxCommandEvent& event )
@@ -17,9 +27,19 @@ void Boids3DFrame::SpeedChanged( wxCommandEvent& event )
     world_->SetSpeed(std::stof(GetSpeed()));
 }
 
+void Boids3DFrame::WorldSizeFocusChanged( wxFocusEvent& event )
+{
+    world_->SetWorldSize(std::stof(GetWorldSize()));
+}
+
 void Boids3DFrame::WorldSizeChanged( wxCommandEvent& event )
 {
     world_->SetWorldSize(std::stof(GetWorldSize()));
+}
+
+void Boids3DFrame::ViewDistanceFocusChanged( wxFocusEvent& event )
+{
+    world_->SetViewDistance(std::stof(GetViewDistance()));
 }
 
 void Boids3DFrame::ViewDistanceChanged( wxCommandEvent& event )
@@ -27,14 +47,29 @@ void Boids3DFrame::ViewDistanceChanged( wxCommandEvent& event )
     world_->SetViewDistance(std::stof(GetViewDistance()));
 }
 
+void Boids3DFrame::ViewAngleFocusChanged( wxFocusEvent& event )
+{
+    world_->SetViewAngle(std::stof(GetViewAngle()));
+}
+
 void Boids3DFrame::ViewAngleChanged( wxCommandEvent& event )
+{
+    world_->SetViewAngle(std::stof(GetViewAngle()));
+}
+
+void Boids3DFrame::AlignmentFocusChanged( wxFocusEvent& event )
 {
     world_->SetViewAngle(std::stof(GetViewAngle()));
 }
 
 void Boids3DFrame::AlignmentChanged( wxCommandEvent& event )
 {
-    world_->SetAligmentWeight(std::stof(GetAlignment()));
+    world_->SetViewAngle(std::stof(GetViewAngle()));
+}
+
+void Boids3DFrame::CohesionFocusChanged( wxFocusEvent& event )
+{
+    world_->SetCohesionWeight(std::stof(GetCohesion()));
 }
 
 void Boids3DFrame::CohesionChanged( wxCommandEvent& event )
@@ -42,47 +77,22 @@ void Boids3DFrame::CohesionChanged( wxCommandEvent& event )
     world_->SetCohesionWeight(std::stof(GetCohesion()));
 }
 
+void Boids3DFrame::SeparationFocusChanged( wxFocusEvent& event )
+{
+    world_->SetSeperationWeight(std::stof(GetSeparation()));
+}
+
 void Boids3DFrame::SeparationChanged( wxCommandEvent& event )
 {
     world_->SetSeperationWeight(std::stof(GetSeparation()));
 }
 
-void Boids3DFrame::BoidsChanged( wxFocusEvent& event )
+void Boids3DFrame::WanderChanged( wxCommandEvent& event )
 {
-    world_->SetNewNumberOfBoids(std::stoi(GetBoids()));
+    world_->SwitchRandMov();
 }
 
-void Boids3DFrame::SpeedChanged( wxFocusEvent& event )
+void Boids3DFrame::PredatorChanged( wxCommandEvent& event )
 {
-    world_->SetSpeed(std::stof(GetSpeed()));
-}
-
-void Boids3DFrame::WorldSizeChanged( wxFocusEvent& event )
-{
-    world_->SetWorldSize(std::stof(GetWorldSize()));
-}
-
-void Boids3DFrame::ViewDistanceChanged( wxFocusEvent& event )
-{
-    world_->SetViewDistance(std::stof(GetViewDistance()));
-}
-
-void Boids3DFrame::ViewAngleChanged( wxFocusEvent& event )
-{
-    world_->SetViewAngle(std::stof(GetViewAngle()));
-}
-
-void Boids3DFrame::AlignmentChanged( wxFocusEvent& event )
-{
-    world_->SetAligmentWeight(std::stof(GetAlignment()));
-}
-
-void Boids3DFrame::CohesionChanged( wxFocusEvent& event )
-{
-    world_->SetCohesionWeight(std::stof(GetCohesion()));
-}
-
-void Boids3DFrame::SeparationChanged( wxFocusEvent& event )
-{
-    world_->SetSeperationWeight(std::stof(GetSeparation()));
+// TODO: Implement PredatorChanged
 }

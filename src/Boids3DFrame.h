@@ -17,22 +17,24 @@ class Boids3DFrame : public Frame
 {
 	protected:
 		// Handlers for Frame events.
+		void BoidsFocusChanged( wxFocusEvent& event );
 		void BoidsChanged( wxCommandEvent& event );
+		void SpeedFocusChanged( wxFocusEvent& event );
 		void SpeedChanged( wxCommandEvent& event );
+		void WorldSizeFocusChanged( wxFocusEvent& event );
 		void WorldSizeChanged( wxCommandEvent& event );
+		void ViewDistanceFocusChanged( wxFocusEvent& event );
 		void ViewDistanceChanged( wxCommandEvent& event );
+		void ViewAngleFocusChanged( wxFocusEvent& event );
 		void ViewAngleChanged( wxCommandEvent& event );
+		void AlignmentFocusChanged( wxFocusEvent& event );
 		void AlignmentChanged( wxCommandEvent& event );
+		void CohesionFocusChanged( wxFocusEvent& event );
 		void CohesionChanged( wxCommandEvent& event );
+		void SeparationFocusChanged( wxFocusEvent& event );
 		void SeparationChanged( wxCommandEvent& event );
-		void BoidsChanged( wxFocusEvent& event );
-		void SpeedChanged( wxFocusEvent& event );
-		void WorldSizeChanged( wxFocusEvent& event );
-		void ViewDistanceChanged( wxFocusEvent& event );
-		void ViewAngleChanged( wxFocusEvent& event );
-		void AlignmentChanged( wxFocusEvent& event );
-		void CohesionChanged( wxFocusEvent& event );
-		void SeparationChanged( wxFocusEvent& event );
+		void WanderChanged( wxCommandEvent& event );
+		void PredatorChanged( wxCommandEvent& event );
 	public:
 		/** Constructor */
 		Boids3DFrame( wxWindow* parent );

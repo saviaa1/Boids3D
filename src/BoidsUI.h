@@ -16,6 +16,7 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/textctrl.h>
+#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/frame.h>
@@ -47,25 +48,31 @@ class Frame : public wxFrame
 		wxTextCtrl* m_cohesionText;
 		wxStaticText* m_separationLabel;
 		wxTextCtrl* m_separationText;
+		wxStaticText* m_wanderLabel;
+		wxCheckBox* m_wanderCheck;
+		wxStaticText* m_predatorLabel;
+		wxCheckBox* m_predatorCheck;
 		wxPanel* m_boidsPanel;
 
 		// Virtual event handlers, overide them in your derived class
-		virtual void BoidsChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void BoidsFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void BoidsChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void SpeedChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void SpeedFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void SpeedChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void WorldSizeChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void WorldSizeFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void WorldSizeChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void ViewDistanceChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void ViewDistanceFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void ViewDistanceChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void ViewAngleChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void ViewAngleFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void ViewAngleChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void AlignmentChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void AlignmentFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void AlignmentChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void CohesionChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void CohesionFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void CohesionChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void SeparationChanged( wxFocusEvent& event ) { event.Skip(); }
+		virtual void SeparationFocusChanged( wxFocusEvent& event ) { event.Skip(); }
 		virtual void SeparationChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void WanderChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void PredatorChanged( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

@@ -7,7 +7,7 @@ class AvoidPredatorBehavior : public Behavior<T> {
 public:
     AvoidPredatorBehavior() {}
     virtual ~AvoidPredatorBehavior() {}
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T, T, int) {
+    virtual vector3d<T> compute(USEDMAP<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T, T, int) {
         return vector3d<T>();
     }
     virtual vector3d<T> computeA(Boid<T>* predator, Boid<T>* myBoid, T areaSize, T viewAngle) {
@@ -30,7 +30,7 @@ class PursueBoidsBehavior : public Behavior<T> {
 public:
     PursueBoidsBehavior() {}
     virtual ~PursueBoidsBehavior() {}
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* predator, T viewDistance, T viewAngle, T speed, int tick) {
+    virtual vector3d<T> compute(USEDMAP<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* predator, T viewDistance, T viewAngle, T speed, int tick) {
         vector3d<T> pursueForce;
         Boid<T>* closestBoid = nullptr;
         T disToClosest = viewDistance * 2;

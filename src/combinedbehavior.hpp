@@ -10,7 +10,7 @@ public:
         : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), seperationWeight(_seperationWeight) {}
     virtual ~CombinedBehavior() {}
 
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle, T speed, int tick) {
+    virtual vector3d<T> compute(USEDMAP<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle, T speed, int tick) {
         int neighborCount = 0;
         vector3d<T> alignmentForce, cohesionForce, seperationForce;
         for (int i = 0; i < myBoid->nr; i++) {
