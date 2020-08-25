@@ -21,7 +21,8 @@ public:
         : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
         initBoids(_numberOfBoids);
         SetGridSize(_viewDistance, _areaSize);
-        predator = nullptr;
+        //Set nullptr if predator off at startup, else for expamle boids_.front();
+        predator = nullptr;// boids_.front();
         AvoidPredatorBeh = AvoidPredatorBehavior<T>();
         PursueBoidsBeh = PursueBoidsBehavior<T>();
     }
@@ -146,7 +147,11 @@ public:
             if (!velocity.isZero()) {
                 velocity.normalize();
             }
-            (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor, areaSize);
+            if (predator && *it == predator) {
+                (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor * predSpeedFactor, areaSize);
+            } else {
+                (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor, areaSize);
+            }
         }
     }
 
@@ -203,6 +208,10 @@ public:
         gridSize = val;
     }
     const Boid<T>* GetPredator() const { return predator; }
+    /**
+     * if predator off set use nullptr input, if on copy a pointer to a boid from the
+     * boids_ vector and do not delete that boid from the boids_ vector.
+     */
     void SetPredator(Boid<T>* val) { predator = val; }
 
     //randRand is the default and active on startup
@@ -222,6 +231,7 @@ public:
 private:
     T viewDistance;
     T boidSpeed;
+    T predSpeedFactor = 1.0f;
     T areaSize;
     T gridSize;
     T viewAngle;

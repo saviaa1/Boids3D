@@ -30,14 +30,16 @@ public:
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) {
+            T tempSpeed = speed*0.02;
+            //if (tempSpeed > 1) { tempSpeed = 1; }
             //If speed is below 0.5, return rand on only every N tick, otherwise return zero to reduce twitching. If speed over 0.5 return rand.
-            if (speed < 0.5) {
+            if (tempSpeed < 0.5) {
                 if (tick % 5 == 0) {
-                    return this->getRand(myBoid) * speed;
+                    return this->getRand(myBoid) * tempSpeed;
                 }
                 return alignmentForce;
             }
-            return this->getRand(myBoid) * speed;
+            return this->getRand(myBoid) * tempSpeed;
         }
 
         alignmentForce /= (T) neighborCount;

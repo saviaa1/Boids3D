@@ -48,13 +48,14 @@ public:
         }
         if (!closestBoid) {
             //If speed is below 0.5, return rand on only every N tick, otherwise return zero. If speed over return rand.
-            if (speed < 0.5) {
+            T tempSpeed = speed*0.02;
+            if (tempSpeed < 0.5) {
                 if (tick % 5 == 0) {
-                    return this->getRand(predator) * speed;
+                    return this->getRand(predator) * tempSpeed;
                 }
                 return pursueForce;
             }
-            return this->getRand(predator) * speed;
+            return this->getRand(predator) * tempSpeed;
         }
         pursueForce = closestBoid->GetPosition() - predator->GetPosition();
         if (!pursueForce.isZero()) { pursueForce.normalize(); }
