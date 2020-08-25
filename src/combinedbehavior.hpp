@@ -14,15 +14,17 @@ public:
         int neighborCount = 0;
         vector3d<T> alignmentForce, cohesionForce, seperationForce;
         for (int i = 0; i < myBoid->nr; i++) {
-            for (auto boid : boidsHash[myBoid->neighbours[i]]) {
-                if (boid != myBoid) {
-                    T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
-                    T tempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
-                    if (tempDis <= viewDistance && tempAng <= viewAngle) {
-                        alignmentForce += boid->GetVelocity();
-                        cohesionForce += boid->GetPosition();
-                        seperationForce += boid->GetPosition() - myBoid->GetPosition();
-                        neighborCount++;
+            if (boidsHash.count(myBoid->neighbours[i]) > 0) {
+                for (auto boid : boidsHash.at(myBoid->neighbours[i])) {
+                    if (boid != myBoid) {
+                        T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
+                        T tempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
+                        if (tempDis <= viewDistance && tempAng <= viewAngle) {
+                            alignmentForce += boid->GetVelocity();
+                            cohesionForce += boid->GetPosition();
+                            seperationForce += boid->GetPosition() - myBoid->GetPosition();
+                            neighborCount++;
+                        }
                     }
                 }
             }
