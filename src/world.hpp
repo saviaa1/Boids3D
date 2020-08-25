@@ -11,6 +11,7 @@
 #include "behavior.hpp"
 #include "combinedbehavior.hpp"
 #include "avoidbordersbehavior.hpp"
+#include "predatorbehavior.hpp"
 #include "perftimer.hpp"
 
 template <typename T>
@@ -20,6 +21,10 @@ public:
         : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
         initBoids(_numberOfBoids);
         SetGridSize(_viewDistance, _areaSize);
+        //Set nullptr if predator off at startup, else for expamle boids_.front();
+        predator = nullptr;// boids_.front();
+        AvoidPredatorBeh = AvoidPredatorBehavior<T>();
+        PursueBoidsBeh = PursueBoidsBehavior<T>();
     }
     ~World() {
         for (auto boid : boids_) {
@@ -111,9 +116,11 @@ public:
         if (total > 16.67) {
             speedfactor = (T) (total / 16.67);
         }
+
         else {
             speedfactor = 1.0;
         }
+        tick++;
     }
 
     void SimulateBoids(int start, int end, float speedfactor) {
@@ -121,17 +128,30 @@ public:
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 0.02 * 2 * speedfactor / viewDistance;
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * 0.02 * 2 * speedfactor / viewDistance;
             if (velocity.isZero()) {
-                velocity = (*it)->GetVelocity();
-                velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
+                //if predator pursue closest boid. Will be calculated if predator pointer defined, if pointer is nullptr no predator or avoidPredator behavior.
+                if (predator && *it == predator) {
+                    velocity = (*it)->GetVelocity();
+                    velocity += PursueBoidsBeh.compute(boidsHash_, *it, viewDistance, 0, boidSpeed, tick);
+                }
+                //else normal behavior + avoid predator if in viewDistance.
+                else {
+                    velocity = (*it)->GetVelocity();
+                    velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle, boidSpeed, tick);
+                    if (predator) { velocity += AvoidPredatorBeh.computeA(predator, *it, areaSize, 0); }
+                }
             } else {
                 velocity += (*it)->GetVelocity();
             }
             if (!velocity.isZero()) {
                 velocity.normalize();
             }
-            (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor, areaSize);
+            if (predator && *it == predator) {
+                (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor * predSpeedFactor, areaSize);
+            } else {
+                (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor, areaSize);
+            }
         }
     }
 
@@ -187,6 +207,22 @@ public:
         }
         gridSize = val;
     }
+    const Boid<T>* GetPredator() const { return predator; }
+    /**
+     * if predator off set use nullptr input, if on copy a pointer to a boid from the
+     * boids_ vector and do not delete that boid from the boids_ vector.
+     */
+    void SetPredator(Boid<T>* val) { predator = val; }
+
+    //randRand is the default and active on startup
+    //change randMov on and of and return bool value of the status.
+    bool SwitchRandMov() {
+        bool val = true;
+        if (flockingBehavior.getRandStatus()) { val = false; }
+        flockingBehavior.setRandStatus(val);
+        PursueBoidsBeh.setRandStatus(val);
+        return val;
+    } 
     const bool GetWorldSizeChanged() const { return size_changed_; }
     void SetWorldSizeChanged(bool val) {
         size_changed_ = val;
@@ -195,15 +231,21 @@ public:
 private:
     T viewDistance;
     T boidSpeed;
+    T predSpeedFactor = 1.0f;
     T areaSize;
     T gridSize;
     T viewAngle;
-    std::vector<Boid<T>*> boids_;
     int newBoids_ = 0;
+    Boid<T>* predator;
+    std::vector<Boid<T>*> boids_;
     std::map<int, std::vector<Boid<T>*>> boidsHash_;
     bool size_changed_ = false;
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;
+    AvoidPredatorBehavior<T> AvoidPredatorBeh;
+    PursueBoidsBehavior<T> PursueBoidsBeh;
+
+    int tick = 0;
 
     //uniform_real_distribution defined on float, double and long double. If others types are needed templates partial specialization is needed.
     void initBoids(int numberOfBoids) {

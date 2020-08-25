@@ -10,15 +10,15 @@ public:
         : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), seperationWeight(_seperationWeight) {}
     virtual ~CombinedBehavior() {}
 
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle) {
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle, T speed, int tick) {
         int neighborCount = 0;
         vector3d<T> alignmentForce, cohesionForce, seperationForce;
         for (int i = 0; i < myBoid->nr; i++) {
             for (auto boid : boidsHash[myBoid->neighbours[i]]) {
                 if (boid != myBoid) {
                     T tempDis = boid->GetPosition().distance(myBoid->GetPosition());
-                    T TempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
-                    if (tempDis <= viewDistance && TempAng <= viewAngle) {
+                    T tempAng = myBoid->GetVelocity().angle(boid->GetPosition() - myBoid->GetPosition());
+                    if (tempDis <= viewDistance && tempAng <= viewAngle) {
                         alignmentForce += boid->GetVelocity();
                         cohesionForce += boid->GetPosition();
                         seperationForce += boid->GetPosition() - myBoid->GetPosition();
@@ -30,9 +30,16 @@ public:
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) {
-            //return myBoid->GetVelocity();
-            return this->randRand();
-            //return this->sineRand(myBoid);
+            T tempSpeed = speed*0.02;
+            //if (tempSpeed > 1) { tempSpeed = 1; }
+            //If speed is below 0.5, return rand on only every N tick, otherwise return zero to reduce twitching. If speed over 0.5 return rand.
+            if (tempSpeed < 0.5) {
+                if (tick % 5 == 0) {
+                    return this->getRand(myBoid) * tempSpeed;
+                }
+                return alignmentForce;
+            }
+            return this->getRand(myBoid) * tempSpeed;
         }
 
         alignmentForce /= (T) neighborCount;

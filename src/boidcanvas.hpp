@@ -59,6 +59,7 @@ private:
     unsigned int buffer_;
     unsigned int ibo_;
     unsigned int shader_;
+    unsigned int predator_shader_;
     unsigned int line_shader_;
     int MatrixID_;
     Drawing drawing_;
