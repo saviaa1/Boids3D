@@ -202,7 +202,7 @@ void BoidCanvas::InitGL() {
 
 		line_shader_ = sf.CreateShader();
 
-		//Alex
+		//Predator shader
 		sf = ShaderFactory("predator.shader");
 		predator_shader_ = sf.CreateShader();
 
@@ -261,6 +261,7 @@ void BoidCanvas::Render()
 
 	auto boids = world_->GetBoids();
 	for (auto it : boids) {
+		//If boid is predator skip it
 		if (it != world_->GetPredator()) {
 			auto vec = it->GetPosition();
 			auto rVec = it->GetVelocity();
@@ -292,6 +293,8 @@ void BoidCanvas::Render()
 			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
 		}
 	}
+
+	//If there is predator it shader is run here.
 	if (world_->GetPredator()) {
 		auto it = world_->GetPredator();
 		auto vec = it->GetPosition();

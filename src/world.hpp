@@ -21,7 +21,7 @@ public:
         : flockingBehavior(CombinedBehavior<T>(_alignmentWeight, _cohesionWeight, _separationWeight)), viewDistance(_viewDistance), boidSpeed(_boidSpeed), viewAngle(_viewAngle), areaSize(_areaSize) {
         initBoids(_numberOfBoids);
         SetGridSize(_viewDistance, _areaSize);
-        predator = boids_.front();
+        predator = nullptr;
         AvoidPredatorBeh = AvoidPredatorBehavior<T>();
         PursueBoidsBeh = PursueBoidsBehavior<T>();
     }
@@ -198,6 +198,16 @@ public:
     }
     const Boid<T>* GetPredator() const { return predator; }
     void SetPredator(Boid<T>* val) { predator = val; }
+
+    //randRand is the default and active on startup
+    //change randMov on and of and return bool value of the status.
+    bool SwitchRandMov() {
+        bool val = true;
+        if (flockingBehavior.getRandStatus()) { val = false; }
+        flockingBehavior.setRandStatus(val);
+        PursueBoidsBeh.setRandStatus(val);
+        return val;
+    } 
 
 private:
     T viewDistance;

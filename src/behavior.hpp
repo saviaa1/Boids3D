@@ -13,9 +13,10 @@ public:
     virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>&, Boid<T>*, T, T, T, int) = 0;
 
     vector3d<T> getRand(Boid<T>* myboid) {
-        return randRand();
-        //return sineRand(myBoid);
-        //return vector3d<T>();
+        if (randActive) {
+            return randRand();
+        }
+        return vector3d<T>();
     }
 
     vector3d<T> sineRand(Boid<T>* myBoid) {
@@ -32,4 +33,13 @@ public:
         vector3d<T> ret(dist(rng), dist(rng), dist(rng));
         return ret;
     }
+
+    void setRandStatus(bool val) {
+        randActive = val;
+    }
+    const bool getRandStatus() const  {
+        return randActive;
+    }
+private:
+    bool randActive = true;
 };
