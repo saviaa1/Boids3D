@@ -202,6 +202,10 @@ void BoidCanvas::InitGL() {
 
 		line_shader_ = sf.CreateShader();
 
+		//Alex
+		sf = ShaderFactory("predator.shader");
+		predator_shader_ = sf.CreateShader();
+
 		glUseProgram(shader_);
 
 		MatrixID_ = glGetUniformLocation(shader_, "u_MVP");
@@ -257,6 +261,39 @@ void BoidCanvas::Render()
 
 	auto boids = world_->GetBoids();
 	for (auto it : boids) {
+		if (it != world_->GetPredator()) {
+			auto vec = it->GetPosition();
+			auto rVec = it->GetVelocity();
+			// auto nVec = rVec.normalize();
+			// std::cout << "normalized speed V: " << nVec.X() << ", " << nVec.Y() << ", " << nVec.Z() << std::endl;
+
+			// auto cVec = nVec.crossProduct(modelV);
+			// std::cout << "cross product V: " << cVec.X() << ", " << cVec.Y() << ", " << cVec.Z() << std::endl;
+			// float a = nVec.angle(modelV);
+
+			glm::quat q = RotationBetweenVectors(rVec);
+
+			glm::mat4 RotationMatrix = glm::toMat4(q);
+
+			model_ = glm::translate(glm::mat4(1.0f), glm::vec3(vec.X(), vec.Y(), vec.Z()));
+			model_ = model_ * RotationMatrix;
+
+			glm::mat4 mvp = proj_ * view_ * model_;
+
+			
+			glUseProgram(shader_);
+
+			int MatrixID = glGetUniformLocation(shader_, "u_MVP");
+			glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp[0][0]);
+
+			glBindVertexArray(vao_);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
+			
+			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+		}
+	}
+	if (world_->GetPredator()) {
+		auto it = world_->GetPredator();
 		auto vec = it->GetPosition();
 		auto rVec = it->GetVelocity();
 		// auto nVec = rVec.normalize();
@@ -276,9 +313,9 @@ void BoidCanvas::Render()
 		glm::mat4 mvp = proj_ * view_ * model_;
 
 		
-		glUseProgram(shader_);
+		glUseProgram(predator_shader_);
 
-		int MatrixID = glGetUniformLocation(shader_, "u_MVP");
+		int MatrixID = glGetUniformLocation(predator_shader_, "u_MVP");
 		glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp[0][0]);
 
 		glBindVertexArray(vao_);

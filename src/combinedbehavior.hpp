@@ -10,7 +10,7 @@ public:
         : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), seperationWeight(_seperationWeight) {}
     virtual ~CombinedBehavior() {}
 
-    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle) {
+    virtual vector3d<T> compute(std::map<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle, T speed, int tick) {
         int neighborCount = 0;
         vector3d<T> alignmentForce, cohesionForce, seperationForce;
         for (int i = 0; i < myBoid->nr; i++) {
@@ -30,9 +30,14 @@ public:
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) {
-            //return alignmentForce; //empty = no random.
-            return this->randRand();
-            //return this->sineRand(myBoid);
+            //If speed is below 0.5, return rand on only every N tick, otherwise return zero to reduce twitching. If speed over 0.5 return rand.
+            if (speed < 0.5) {
+                if (tick % 5 == 0) {
+                    return this->getRand(myBoid) * speed;
+                }
+                return alignmentForce;
+            }
+            return this->getRand(myBoid) * speed;
         }
 
         alignmentForce /= (T) neighborCount;

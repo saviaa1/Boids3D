@@ -115,6 +115,8 @@ public:
         if (total > 16.67) {
             speedfactor = (T) (total / 16.67);
         }
+
+        tick++;
     }
 
     void SimulateBoids(int start, int end) {
@@ -122,18 +124,18 @@ public:
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize) * boidSpeed * 2 / viewDistance;
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * 2 / viewDistance;
             if (velocity.isZero()) {
                 //if predator pursue closest boid. Will be calculated if predator pointer defined, if pointer is nullptr no predator or avoidPredator behavior.
                 if (predator && *it == predator) {
                     velocity = (*it)->GetVelocity();
-                    velocity += PursueBoidsBeh.compute(boidsHash_, *it, viewDistance, viewAngle);
+                    velocity += PursueBoidsBeh.compute(boidsHash_, *it, viewDistance, 0, boidSpeed, tick);
                 }
                 //else normal behavior + avoid predator if in viewDistance.
                 else {
                     velocity = (*it)->GetVelocity();
-                    velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle);
-                    if (predator) { velocity += AvoidPredatorBeh.computeA(predator, *it, viewDistance, viewAngle); }
+                    velocity += flockingBehavior.compute(boidsHash_, *it, viewDistance, viewAngle, boidSpeed, tick);
+                    if (predator) { velocity += AvoidPredatorBeh.computeA(predator, *it, areaSize, 0); }
                 }
             } else {
                 velocity += (*it)->GetVelocity();
@@ -212,6 +214,8 @@ private:
     AvoidBordersBehavior<T> borderBehavior;
     AvoidPredatorBehavior<T> AvoidPredatorBeh;
     PursueBoidsBehavior<T> PursueBoidsBeh;
+
+    int tick = 0;
 
     //uniform_real_distribution defined on float, double and long double. If others types are needed templates partial specialization is needed.
     void initBoids(int numberOfBoids) {
