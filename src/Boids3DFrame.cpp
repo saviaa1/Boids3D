@@ -46,3 +46,43 @@ void Boids3DFrame::SeparationChanged( wxCommandEvent& event )
 {
     world_->SetSeperationWeight(std::stof(GetSeparation()));
 }
+
+void Boids3DFrame::BoidsChanged( wxFocusEvent& event )
+{
+    world_->SetNewNumberOfBoids(std::stoi(GetBoids()));
+}
+
+void Boids3DFrame::SpeedChanged( wxFocusEvent& event )
+{
+    world_->SetSpeed(std::stof(GetSpeed()));
+}
+
+void Boids3DFrame::WorldSizeChanged( wxFocusEvent& event )
+{
+    world_->SetWorldSize(std::stof(GetWorldSize()));
+}
+
+void Boids3DFrame::ViewDistanceChanged( wxFocusEvent& event )
+{
+    world_->SetViewDistance(std::stof(GetViewDistance()));
+}
+
+void Boids3DFrame::ViewAngleChanged( wxFocusEvent& event )
+{
+    world_->SetViewAngle(std::stof(GetViewAngle()));
+}
+
+void Boids3DFrame::AlignmentChanged( wxFocusEvent& event )
+{
+    world_->SetAligmentWeight(std::stof(GetAlignment()));
+}
+
+void Boids3DFrame::CohesionChanged( wxFocusEvent& event )
+{
+    world_->SetCohesionWeight(std::stof(GetCohesion()));
+}
+
+void Boids3DFrame::SeparationChanged( wxFocusEvent& event )
+{
+    world_->SetSeperationWeight(std::stof(GetSeparation()));
+}

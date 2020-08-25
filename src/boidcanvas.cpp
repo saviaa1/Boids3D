@@ -52,14 +52,15 @@ void BoidCanvas::CanvasResize(wxSizeEvent& event) {
 	int h = size.GetHeight();
 	int w = size.GetWidth();
 	glViewport(0, 0, w, h);
-	aspect_ratio_ = (float) (w / h);
-	proj_ = glm::perspective(45.0f, float(w) / float(h), 1.0f, 1500.0f);
+	aspect_ratio_ = (float) w / (float) h;
+	proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, 1500.0f);
 	mvp_ = proj_ * view_ * model_;
 }
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
-	if (cameraDistance_ - 10 * event.GetWheelRotation() / event.GetWheelDelta() > 0) {
-		cameraDistance_ -= 10 * event.GetWheelRotation() / event.GetWheelDelta();
+	if (cameraDistance_ - (world_size_ / 25) * event.GetWheelRotation() / event.GetWheelDelta() > 0 &&
+		cameraDistance_ - (world_size_ / 25) * event.GetWheelRotation() / event.GetWheelDelta() < world_size_*2) {
+		cameraDistance_ -= (world_size_ / 25) * event.GetWheelRotation() / event.GetWheelDelta();
 		cam_pos_ = glm::vec3(
 			world_size_/2 + (std::cos(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_)),
 			world_size_/2 + (std::sin(rotate_y_) * cameraDistance_),
@@ -72,10 +73,7 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		mvp_ = proj_ * view_ * model_;
-	} else {
-		std::cout << "max zoom in" << std::endl;
 	}
-	
 }
 
 void BoidCanvas::MouseUp(wxMouseEvent& event) {
@@ -95,7 +93,7 @@ void BoidCanvas::MouseDown(wxMouseEvent& event) {
 void BoidCanvas::MoveCamera(wxMouseEvent& event) {
 	static const float pi = acos(-1.0f);
 	if (mouse_down_) {
-		float sensitivity = 0.01;
+		float sensitivity = 0.005;
 		const wxPoint pos = wxGetMousePosition();
 		int mouseX = pos.x - this->GetScreenPosition().x;
 		int mouseY = pos.y - this->GetScreenPosition().y;
@@ -114,8 +112,6 @@ void BoidCanvas::MoveCamera(wxMouseEvent& event) {
 			rotate_point_y_ = pos.y - this->GetScreenPosition().y;
 			rotate_y_ = moving_rotation_y_;
 		}
-		
-		// std::cout << moving_rotation_y_ << std::endl;
 
 		cam_pos_ = glm::vec3(
 			world_size_/2 + (std::cos(moving_rotation_x_) * (std::cos(moving_rotation_y_) * cameraDistance_)),
@@ -157,7 +153,7 @@ void BoidCanvas::InitGL() {
 		wxSize size = this->GetSize();
 		int h = size.GetHeight();
 		int w = size.GetWidth();
-		aspect_ratio_ = (float) (w / h);
+		aspect_ratio_ = (float) w / (float) h;
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
@@ -177,8 +173,7 @@ void BoidCanvas::InitGL() {
 		auto b3f = (Boids3DFrame *) boids3dframe_;
 		world_size_ = std::stof(b3f->GetWorldSize());
 		cam_pos_ = glm::vec3(world_size_/2 + std::cos(rotate_x_) * cameraDistance_, world_size_/2, world_size_/2 + (std::sin(rotate_x_) * cameraDistance_));
-		std::cout << "x: " << cam_pos_.x << ", y: " << cam_pos_.y << ", z: " << cam_pos_.z << std::endl;
-		proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, 1500.0f);
+		proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, world_size_*3);
 		view_ = glm::lookAt(
 			cam_pos_, // Camera position in the world
 			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
@@ -224,14 +219,11 @@ glm::quat BoidCanvas::RotationBetweenVectors(vector3d<float> v) {
 
 	float cosTheta = dot(start, dest);
 	glm::vec3 rotationAxis;
-	
+
 
 	if (cosTheta < -1 + 0.001f){
-		// special case when vectors in opposite directions:
-		// there is no "ideal" rotation axis
-		// So guess one; any will do as long as it's perpendicular to start
 		rotationAxis = cross(glm::vec3(0.0f, 0.0f, 1.0f), start);
-		if (glm::length2(rotationAxis) < 0.01 ) // bad luck, they were parallel, try again!
+		if (glm::length2(rotationAxis) < 0.01)
 			rotationAxis = cross(glm::vec3(1.0f, 0.0f, 0.0f), start);
 
 		rotationAxis = normalize(rotationAxis);
@@ -249,15 +241,31 @@ glm::quat BoidCanvas::RotationBetweenVectors(vector3d<float> v) {
 		rotationAxis.y * invs,
 		rotationAxis.z * invs
 	);
-
 };
 
 void BoidCanvas::Render()
 {
-	//std::cout << "loop" << std::endl;
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (world_->GetWorldSizeChanged()) {
+		float oldSize = world_size_; 
+		world_size_= world_->GetWorldSize();
+		drawing_.SetCubeVertices(world_size_);
+		cameraDistance_ = cameraDistance_ * (world_size_ / oldSize); 
+		cam_pos_ = glm::vec3(
+			world_size_/2 + (std::cos(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_)),
+			world_size_/2 + (std::sin(rotate_y_) * cameraDistance_),
+			world_size_/2 + (std::sin(rotate_x_) * (std::cos(rotate_y_) * cameraDistance_))
+		);
+		view_ = glm::lookAt(
+			cam_pos_, // Camera position in the world
+			glm::vec3(world_size_/2 ,world_size_/2 ,world_size_/2), // Camera looks at cordinate
+			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+		proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, world_size_*3);
+		world_->SetWorldSizeChanged(false);
+	}
 
 	auto boids = world_->GetBoids();
 	for (auto it : boids) {
@@ -299,12 +307,6 @@ void BoidCanvas::Render()
 		auto it = world_->GetPredator();
 		auto vec = it->GetPosition();
 		auto rVec = it->GetVelocity();
-		// auto nVec = rVec.normalize();
-		// std::cout << "normalized speed V: " << nVec.X() << ", " << nVec.Y() << ", " << nVec.Z() << std::endl;
-
-		// auto cVec = nVec.crossProduct(modelV);
-		// std::cout << "cross product V: " << cVec.X() << ", " << cVec.Y() << ", " << cVec.Z() << std::endl;
-		// float a = nVec.angle(modelV);
 
 		glm::quat q = RotationBetweenVectors(rVec);
 
@@ -314,7 +316,6 @@ void BoidCanvas::Render()
 		model_ = model_ * RotationMatrix;
 
 		glm::mat4 mvp = proj_ * view_ * model_;
-
 		
 		glUseProgram(predator_shader_);
 

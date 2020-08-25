@@ -62,7 +62,7 @@
                 <property name="hgap">0</property>
                 <property name="minimum_size"></property>
                 <property name="name">BoidsHorizontalSizer</property>
-                <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
+                <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_ALL</property>
                 <property name="permission">none</property>
                 <property name="rows">1</property>
                 <property name="vgap">0</property>
@@ -201,10 +201,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">100</property>
+                                <property name="value">500</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">BoidsChanged</event>
                                 <event name="OnTextEnter">BoidsChanged</event>
                             </object>
                         </object>
@@ -327,10 +328,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">1.0</property>
+                                <property name="value">50</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">SpeedChanged</event>
                                 <event name="OnTextEnter">SpeedChanged</event>
                             </object>
                         </object>
@@ -453,10 +455,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">100.0</property>
+                                <property name="value">100</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">WorldSizeChanged</event>
                                 <event name="OnTextEnter">WorldSizeChanged</event>
                             </object>
                         </object>
@@ -579,10 +582,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">10.0</property>
+                                <property name="value">5</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">ViewDistanceChanged</event>
                                 <event name="OnTextEnter">ViewDistanceChanged</event>
                             </object>
                         </object>
@@ -705,10 +709,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">45</property>
+                                <property name="value">90</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">ViewAngleChanged</event>
                                 <event name="OnTextEnter">ViewAngleChanged</event>
                             </object>
                         </object>
@@ -831,10 +836,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">0.5</property>
+                                <property name="value">50</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">AlignmentChanged</event>
                                 <event name="OnTextEnter">AlignmentChanged</event>
                             </object>
                         </object>
@@ -957,10 +963,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">0.5</property>
+                                <property name="value">50</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">CohesionChanged</event>
                                 <event name="OnTextEnter">CohesionChanged</event>
                             </object>
                         </object>
@@ -1083,10 +1090,11 @@
                                 <property name="validator_style">wxFILTER_NONE</property>
                                 <property name="validator_type">wxDefaultValidator</property>
                                 <property name="validator_variable"></property>
-                                <property name="value">0.5</property>
+                                <property name="value">50</property>
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <event name="OnKillFocus">SeparationChanged</event>
                                 <event name="OnTextEnter">SeparationChanged</event>
                             </object>
                         </object>

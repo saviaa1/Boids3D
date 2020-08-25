@@ -72,12 +72,12 @@ public:
 
         int nr = 50, start = 0, end = nr;
         while (end < boids_.size()) {
-            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, end));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, end, speedfactor));
             start = start + nr;
             end = end + nr;
         }
         if (start < boids_.size()) {
-            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, (int) boids_.size()));
+            threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, (int) boids_.size(), speedfactor));
         }
         for (auto& t : threads) {
             if (t.joinable()) {
@@ -88,7 +88,7 @@ public:
         double simulate = perfTimer.GetMS();
         if (simulate > simulateMax) {
             simulateMax = simulate;
-            std::cout << "Simulate: " << simulate << " ms" << std::endl;
+            //std::cout << "Simulate: " << simulate << " ms" << std::endl;
         }
 
         int oldHash, newHash;
@@ -110,21 +110,24 @@ public:
         double collect = total - simulate;
         if (collect > collectMax) {
             collectMax = collect;
-            std::cout << "Collect: " << collect << " ms" << std::endl;
+            //std::cout << "Collect: " << collect << " ms" << std::endl;
         }
         if (total > 16.67) {
             speedfactor = (T) (total / 16.67);
         }
 
+        else {
+            speedfactor = 1.0;
+        }
         tick++;
     }
 
-    void SimulateBoids(int start, int end) {
+    void SimulateBoids(int start, int end, float speedfactor) {
         vector3d<T> velocity;
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * 2 / viewDistance;
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * 0.02 * 2 * speedfactor / viewDistance;
             if (velocity.isZero()) {
                 //if predator pursue closest boid. Will be calculated if predator pointer defined, if pointer is nullptr no predator or avoidPredator behavior.
                 if (predator && *it == predator) {
@@ -143,7 +146,7 @@ public:
             if (!velocity.isZero()) {
                 velocity.normalize();
             }
-            (*it)->SetNextVelAndPos(velocity * boidSpeed, areaSize);
+            (*it)->SetNextVelAndPos(velocity * boidSpeed * 0.02 * speedfactor, areaSize);
         }
     }
 
@@ -177,9 +180,12 @@ public:
     void SetSpeed(T val) { boidSpeed = val; }
     const T GetWorldSize() const { return areaSize; }
     void SetWorldSize(T val) {
-        if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
-        areaSize = val;
-        SetGridSize(viewDistance, areaSize);
+        if (val != areaSize) {
+            if (val < viewDistance) throw std::runtime_error("World size cannot be < view distance");
+            areaSize = val;
+            SetGridSize(viewDistance, areaSize);
+            SetWorldSizeChanged(true);
+        }
     }
     const T GetViewDistance() const { return viewDistance; }
     void SetViewDistance(T val) {
@@ -208,6 +214,10 @@ public:
         PursueBoidsBeh.setRandStatus(val);
         return val;
     } 
+    const bool GetWorldSizeChanged() const { return size_changed_; }
+    void SetWorldSizeChanged(bool val) {
+        size_changed_ = val;
+    }
 
 private:
     T viewDistance;
@@ -219,7 +229,7 @@ private:
     Boid<T>* predator;
     std::vector<Boid<T>*> boids_;
     std::map<int, std::vector<Boid<T>*>> boidsHash_;
-
+    bool size_changed_ = false;
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;
     AvoidPredatorBehavior<T> AvoidPredatorBeh;

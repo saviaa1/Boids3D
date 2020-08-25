@@ -51,7 +51,7 @@ public:
         if (!cohesionForce.isZero()) { cohesionForce.normalize(); }
         if (!seperationForce.isZero()) { seperationForce.normalize(); }
 
-        return alignmentForce * alignmentWeight + cohesionForce * cohesionWeight + seperationForce * seperationWeight;
+        return alignmentForce * alignmentWeight * 0.01 + cohesionForce * cohesionWeight * 0.01 + seperationForce * seperationWeight * 0.01;
     }
 
     const T GetAligmentWeight() const { return alignmentWeight; }
