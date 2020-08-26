@@ -32,7 +32,7 @@ public:
         //If neighborCount is 0, all force vectors are zero and a zero vector is returned.
         //If random movemend is wanted return something else here. Sine wave? Or create own behavior class for it.
         if (neighborCount == 0) {
-            T tempSpeed = speed*0.02;
+            T tempSpeed = speed * (T) 0.02;
             //if (tempSpeed > 1) { tempSpeed = 1; }
             //If speed is below 0.5, return rand on only every N tick, otherwise return zero to reduce twitching. If speed over 0.5 return rand.
             if (tempSpeed < 0.5) {
@@ -55,7 +55,7 @@ public:
         if (!cohesionForce.isZero()) { cohesionForce.normalize(); }
         if (!seperationForce.isZero()) { seperationForce.normalize(); }
 
-        return alignmentForce * alignmentWeight * 0.01 + cohesionForce * cohesionWeight * 0.01 + seperationForce * seperationWeight * 0.01;
+        return alignmentForce * alignmentWeight * (T) 0.01 + cohesionForce * cohesionWeight * (T) 0.01 + seperationForce * seperationWeight * (T) 0.01;
     }
 
     const T GetAligmentWeight() const { return alignmentWeight; }

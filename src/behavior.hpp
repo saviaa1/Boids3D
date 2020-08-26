@@ -29,7 +29,7 @@ public:
     vector3d<T> randRand() {
         std::random_device random_device;
         std::mt19937 rng(random_device());
-        std::uniform_real_distribution<T> dist(-0.2, 0.2);
+        std::uniform_real_distribution<T> dist((T) -0.2, (T) 0.2);
         vector3d<T> ret(dist(rng), dist(rng), dist(rng));
         return ret;
     }

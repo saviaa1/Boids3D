@@ -93,7 +93,7 @@ void BoidCanvas::MouseDown(wxMouseEvent& event) {
 void BoidCanvas::MoveCamera(wxMouseEvent& event) {
 	static const float pi = acos(-1.0f);
 	if (mouse_down_) {
-		float sensitivity = 0.005;
+		float sensitivity = 0.005f;
 		const wxPoint pos = wxGetMousePosition();
 		int mouseX = pos.x - this->GetScreenPosition().x;
 		int mouseY = pos.y - this->GetScreenPosition().y;
@@ -149,7 +149,7 @@ void BoidCanvas::InitGL() {
 			/* Problem: glewInit failed, something is seriously wrong. */
 			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
-		rotate_x_ = M_PI/2;
+		rotate_x_ = (float) M_PI / 2;
 		wxSize size = this->GetSize();
 		int h = size.GetHeight();
 		int w = size.GetWidth();
@@ -336,7 +336,7 @@ void BoidCanvas::Render()
 
 	glUniformMatrix4fv(MatrixID_, 1, GL_FALSE, &mvp_[0][0]);
 
-	glColor3f(0.2, 0.5, 0.4);
+	glColor3f(0.2f, 0.5f, 0.4f);
     glBegin(GL_LINES);
 	float *cubeVertices = drawing_.GetCubeVerticies();
 	for (unsigned int i = 0; i < 72; i+=6) {

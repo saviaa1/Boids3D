@@ -48,8 +48,8 @@ public:
         }
         if (!closestBoid) {
             //If speed is below 0.5, return rand on only every N tick, otherwise return zero. If speed over return rand.
-            T tempSpeed = speed*0.02;
-            if (tempSpeed < 0.5) {
+            T tempSpeed = speed * (T) 0.02;
+            if (tempSpeed < (T) 0.5) {
                 if (tick % 5 == 0) {
                     return this->getRand(predator) * tempSpeed;
                 }

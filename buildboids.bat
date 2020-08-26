@@ -26,5 +26,5 @@ RMDIR .\%builddir% /S /Q
 echo Building %build% %arch% using %linking% libraries..
 cmake -G "%generator%" -A %target% -DCMAKE_BUILD_TYPE=%build% -H. -B%builddir% -DCMAKE_TOOLCHAIN_FILE=%VCPKG%\scripts\buildsystems\vcpkg.cmake -DLINKING_TYPE=%linking%
 cmake --build .\%builddir% --config %build%
-echo starting application %builddir%\%build%\boid_app.exe
-%builddir%\%build%\boid_app.exe
+echo Start application:
+echo cd %builddir% ^& %build%\boid_app.exe

@@ -8,7 +8,7 @@ find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 
 if(MSVC)
-    add_definitions(/MP)
+    add_definitions(/MP /D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 if(MSVC AND NOT WXSOURCE)
@@ -68,7 +68,7 @@ link_directories(${GLM_LIBRARY_DIRS})
 add_definitions(${GLM_DEFINITIONS})
 
 add_executable(
-  boid_app
+  boid_app WIN32
 	src/main.cpp
   src/Boids3DFrame.cpp
   src/BoidsUI.cpp
