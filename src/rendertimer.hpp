@@ -8,5 +8,4 @@ class RenderTimer : public wxTimer {
 public:
     RenderTimer(wxGLCanvas *canvas);
     void Notify();
-    void start();
 };

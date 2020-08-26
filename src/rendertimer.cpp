@@ -7,7 +7,3 @@ RenderTimer::RenderTimer(wxGLCanvas* canvas) : wxTimer() {
 void RenderTimer::Notify() {
     canvas_->Refresh();
 }
-
-void RenderTimer::start() {
-    wxTimer::Start(10);
-}
