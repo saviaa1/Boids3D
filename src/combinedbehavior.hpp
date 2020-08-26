@@ -6,13 +6,13 @@ template <typename T>
 class CombinedBehavior : public Behavior<T> {
 public:
     CombinedBehavior() : Behavior<T>() {}
-    CombinedBehavior(T _alignmentWeight, T _cohesionWeight, T _seperationWeight)
-        : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), seperationWeight(_seperationWeight) {}
+    CombinedBehavior(T _alignmentWeight, T _cohesionWeight, T _separationWeight)
+        : alignmentWeight(_alignmentWeight), cohesionWeight(_cohesionWeight), separationWeight(_separationWeight) {}
     virtual ~CombinedBehavior() {}
 
     virtual vector3d<T> compute(USEDMAP<int, std::vector<Boid<T>*>>& boidsHash, Boid<T>* myBoid, T viewDistance, T viewAngle, T speed, int tick) {
         int neighborCount = 0;
-        vector3d<T> alignmentForce, cohesionForce, seperationForce;
+        vector3d<T> alignmentForce, cohesionForce, separationForce;
         for (int i = 0; i < myBoid->nr; i++) {
             if (boidsHash.count(myBoid->neighbours[i]) > 0) {
                 for (auto boid : boidsHash.at(myBoid->neighbours[i])) {
@@ -22,7 +22,7 @@ public:
                         if (tempDis <= viewDistance && tempAng <= viewAngle) {
                             alignmentForce += boid->GetVelocity();
                             cohesionForce += boid->GetPosition();
-                            seperationForce += boid->GetPosition() - myBoid->GetPosition();
+                            separationForce += boid->GetPosition() - myBoid->GetPosition();
                             neighborCount++;
                         }
                     }
@@ -46,24 +46,24 @@ public:
 
         alignmentForce /= (T) neighborCount;
         cohesionForce /= (T) neighborCount;
-        seperationForce /= (T) neighborCount;
+        separationForce /= (T) neighborCount;
 
         cohesionForce -= myBoid->GetPosition();
-        seperationForce *= -1;
+        separationForce *= -1;
 
         if (!alignmentForce.isZero()) { alignmentForce.normalize(); }
         if (!cohesionForce.isZero()) { cohesionForce.normalize(); }
-        if (!seperationForce.isZero()) { seperationForce.normalize(); }
+        if (!separationForce.isZero()) { separationForce.normalize(); }
 
-        return alignmentForce * alignmentWeight * (T) 0.01 + cohesionForce * cohesionWeight * (T) 0.01 + seperationForce * seperationWeight * (T) 0.01;
+        return alignmentForce * alignmentWeight * (T) 0.01 + cohesionForce * cohesionWeight * (T) 0.01 + separationForce * separationWeight * (T) 0.01;
     }
 
     const T GetAligmentWeight() const { return alignmentWeight; }
     void SetAligmentWeight(T val) { alignmentWeight = val; }
     const T GetCohesionWeight() const { return cohesionWeight; }
     void SetCohesionWeight(T val) { cohesionWeight = val; }
-    const T GetSeperationWeight() const { return seperationWeight; }
-    void SetSeperationWeight(T val) { seperationWeight = val; }
+    const T GetSeparationWeight() const { return separationWeight; }
+    void SetSeparationWeight(T val) { separationWeight = val; }
 private:
-    T alignmentWeight = 1, cohesionWeight = 1, seperationWeight = 1;
+    T alignmentWeight = 1, cohesionWeight = 1, separationWeight = 1;
 };

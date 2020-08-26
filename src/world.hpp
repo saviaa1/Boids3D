@@ -66,7 +66,7 @@ public:
         return boids_;
     }
     void moveBoids() {
-        static float speedfactor = 1.0;
+        static float speedfactor = 1.0f;
         static double simulateMax = 0.0;
         static double collectMax = 0.0;
 
@@ -135,7 +135,7 @@ public:
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * (T) 0.02 * 2 * speedfactor / viewDistance;
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * 0.02 * 2 * speedfactor / viewDistance;
             if (velocity.isZero()) {
                 //if predator pursue closest boid. Will be calculated if predator pointer defined, if pointer is nullptr no predator or avoidPredator behavior.
                 if (predator && *it == predator) {
@@ -186,8 +186,8 @@ public:
     void SetAligmentWeight(T val) { flockingBehavior.SetAligmentWeight(val); }
     const T GetCohesionWeight() const { return flockingBehavior.GetCohesionWeight(); }
     void SetCohesionWeight(T val) { flockingBehavior.SetCohesionWeight(val); }
-    const T GetSeperationWeight() const { return flockingBehavior.GetSeperationWeight(); }
-    void SetSeperationWeight(T val) { flockingBehavior.SetSeperationWeight(val); }
+    const T GetSeparationWeight() const { return flockingBehavior.GetSeparationWeight(); }
+    void SetSeparationWeight(T val) { flockingBehavior.SetSeparationWeight(val); }
     const T GetSpeed() const { return boidSpeed; }
     void SetSpeed(T val) { boidSpeed = val; }
     const T GetWorldSize() const { return areaSize; }

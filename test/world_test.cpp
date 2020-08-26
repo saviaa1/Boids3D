@@ -5,7 +5,7 @@ TEST(WorldTest, Creation) {
     World<float> world(1.0f, 2.0f, 3.0f, 10.0f, 4.0f, 90.0f, 100.0f, 10);
     ASSERT_FLOAT_EQ(1.0f, world.GetAligmentWeight());
     ASSERT_FLOAT_EQ(2.0f, world.GetCohesionWeight());
-    ASSERT_FLOAT_EQ(3.0f, world.GetSeperationWeight());
+    ASSERT_FLOAT_EQ(3.0f, world.GetSeparationWeight());
     ASSERT_FLOAT_EQ(4.0f, world.GetSpeed());
     ASSERT_FLOAT_EQ(10.0f, world.GetViewDistance());
     ASSERT_EQ(10, world.GetNumberOfBoids());
@@ -15,10 +15,10 @@ TEST(WorldTest, SetBehaviours) {
     World<float> world(1.0f, 2.0f, 3.0f, 10.0f, 4.0f, 90.0f, 100.0f, 0);
     world.SetAligmentWeight(11.0f);
     world.SetCohesionWeight(12.23f);
-    world.SetSeperationWeight(-13.3f);
+    world.SetSeparationWeight(-13.3f);
     ASSERT_FLOAT_EQ(11.0f, world.GetAligmentWeight());
     ASSERT_FLOAT_EQ(12.23f, world.GetCohesionWeight());
-    ASSERT_FLOAT_EQ(-13.3f, world.GetSeperationWeight());
+    ASSERT_FLOAT_EQ(-13.3f, world.GetSeparationWeight());
 }
 
 TEST(WorldTest, SetSpeed) {

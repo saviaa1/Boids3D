@@ -69,13 +69,13 @@ void Boids3DFrame::ViewAngleChanged( wxCommandEvent& event )
 
 void Boids3DFrame::AlignmentFocusChanged( wxFocusEvent& event )
 {
-    world_->SetViewAngle(std::stof(GetViewAngle()));
+    world_->SetAligmentWeight(std::stof(GetAlignment()));
     event.Skip();
 }
 
 void Boids3DFrame::AlignmentChanged( wxCommandEvent& event )
 {
-    world_->SetViewAngle(std::stof(GetViewAngle()));
+    world_->SetAligmentWeight(std::stof(GetAlignment()));
     event.Skip();
 }
 
@@ -93,13 +93,13 @@ void Boids3DFrame::CohesionChanged( wxCommandEvent& event )
 
 void Boids3DFrame::SeparationFocusChanged( wxFocusEvent& event )
 {
-    world_->SetSeperationWeight(std::stof(GetSeparation()));
+    world_->SetSeparationWeight(std::stof(GetSeparation()));
     event.Skip();
 }
 
 void Boids3DFrame::SeparationChanged( wxCommandEvent& event )
 {
-    world_->SetSeperationWeight(std::stof(GetSeparation()));
+    world_->SetSeparationWeight(std::stof(GetSeparation()));
     event.Skip();
 }
 
