@@ -20,7 +20,7 @@ BoidCanvas::~BoidCanvas() {
 	delete timer;
 }
 
-void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
+void BoidCanvas::Paintit(wxPaintEvent& event) {
 	int x, y;
     GetParent()->GetSize(&x, &y);
 	if (x != width_ || y != height_) {
@@ -45,6 +45,7 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 		InitGL();
 	}
     Render();
+	event.Skip();
 }
 
 void BoidCanvas::CanvasResize(wxSizeEvent& event) {
@@ -55,6 +56,7 @@ void BoidCanvas::CanvasResize(wxSizeEvent& event) {
 	aspect_ratio_ = (float) w / (float) h;
 	proj_ = glm::perspective(45.0f, aspect_ratio_, 1.0f, 1500.0f);
 	mvp_ = proj_ * view_ * model_;
+	event.Skip();
 }
 
 void BoidCanvas::Zoom(wxMouseEvent& event) {
@@ -74,12 +76,14 @@ void BoidCanvas::Zoom(wxMouseEvent& event) {
 		);
 		mvp_ = proj_ * view_ * model_;
 	}
+	event.Skip();
 }
 
 void BoidCanvas::MouseUp(wxMouseEvent& event) {
 	mouse_down_ = false;
 	rotate_x_ =+ moving_rotation_x_;
 	rotate_y_ =+ moving_rotation_y_;
+	event.Skip();
 }
 
 void BoidCanvas::MouseDown(wxMouseEvent& event) {
@@ -88,6 +92,7 @@ void BoidCanvas::MouseDown(wxMouseEvent& event) {
 	rotate_point_x_ = pos.x - this->GetScreenPosition().x;
 	rotate_point_y_ = pos.y - this->GetScreenPosition().y;
 	//std::cout << rotate_x_ << std::endl;
+	event.Skip();
 }
 
 void BoidCanvas::MoveCamera(wxMouseEvent& event) {
@@ -126,6 +131,7 @@ void BoidCanvas::MoveCamera(wxMouseEvent& event) {
 		);
 		mvp_ = proj_ * view_ * model_;
 	}
+	event.Skip();
 }
 
 void BoidCanvas::HandleArgs(Boids3DFrame *b3f) {

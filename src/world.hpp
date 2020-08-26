@@ -78,7 +78,7 @@ public:
 
         std::vector<std::thread> threads;
 
-        int nr = 50, start = 0, end = nr;
+        int nr = 100, start = 0, end = nr;
         while (end < boids_.size()) {
             threads.push_back(std::thread(&World<T>::SimulateBoids, this, start, end, speedfactor));
             start = start + nr;

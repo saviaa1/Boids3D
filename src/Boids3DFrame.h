@@ -46,7 +46,7 @@ class Boids3DFrame : public Frame
 			return std::string(m_boidsText->GetValue());
 		}
 		void SetBoids(wxString value) {
-			m_boidsText->SetValue(CheckArg(value, 1, 10000, 500, "Number of Boids"));
+			m_boidsText->SetValue(CheckArg(value, 1, 50000, 500, "Number of Boids"));
 		}
 
 		std::string GetSpeed() {
@@ -70,7 +70,7 @@ class Boids3DFrame : public Frame
 			return std::string(m_viewDistanceText->GetValue());
 		}
 		void SetViewDistance(wxString value) {
-			m_viewDistanceText->SetValue(CheckArg(value, 1, 10, 5, "View distance"));
+			m_viewDistanceText->SetValue(CheckArg(value, 1, 20, 5, "View distance"));
 		}
 
 		std::string GetViewAngle() {
