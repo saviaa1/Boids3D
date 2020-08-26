@@ -135,7 +135,7 @@ public:
 
         for (auto it = boids_.begin() + start; it != boids_.begin() + end; it++)
         {
-            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * 0.02 * 2 * speedfactor / viewDistance;
+            velocity = borderBehavior.compute(boidsHash_, *it, viewDistance, areaSize, 0, tick) * boidSpeed * (T) 0.02 * 2 * speedfactor / viewDistance;
             if (velocity.isZero()) {
                 //if predator pursue closest boid. Will be calculated if predator pointer defined, if pointer is nullptr no predator or avoidPredator behavior.
                 if (predator && *it == predator) {
