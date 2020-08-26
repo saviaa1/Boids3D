@@ -12,8 +12,11 @@ END_EVENT_TABLE()
 BoidCanvas::BoidCanvas(wxFrame *parent)
 :wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
 	boids3dframe_ = (Boids3DFrame *) parent;
-	timer = new RenderTimer(this);
-	timer->start();	
+	auto t1 = std::thread(&BoidCanvas::RenderLoop, this);
+	t1.detach();
+
+//	timer = new RenderTimer(this);
+//	timer->start();	
 }
 
 BoidCanvas::~BoidCanvas() {
@@ -43,8 +46,30 @@ void BoidCanvas::Paintit(wxPaintEvent& WXUNUSED(event)) {
 			std::stof(b3f->GetBoids()));
 		b3f->SetWorld(world_);
 		InitGL();
+		initialized_ = true;
+		auto t2 = std::thread(&BoidCanvas::SimulationLoop, this);
+		t2.detach();
 	}
     Render();
+}
+
+void BoidCanvas::RenderLoop() {
+	while (true) {
+		Refresh();
+		wxYield();
+	}
+}
+
+void BoidCanvas::SimulationLoop() {
+	std::chrono::nanoseconds simulationTime;
+	while (true) {
+		PerfTimer p;
+		world_->moveBoids();
+		simulationTime = p.GetNS();
+		if (simulationTime < std::chrono::microseconds(1666)) {
+			std::this_thread::sleep_for(std::chrono::microseconds(1666) - simulationTime);
+		}
+	}
 }
 
 void BoidCanvas::CanvasResize(wxSizeEvent& event) {
@@ -209,7 +234,6 @@ void BoidCanvas::InitGL() {
 
 		glBindVertexArray(0);
 		drawing_.SetCubeVertices(world_size_);
-		initialized_ = true;
 }
 
 glm::quat BoidCanvas::RotationBetweenVectors(vector3d<float> v) {
@@ -344,8 +368,6 @@ void BoidCanvas::Render()
 		glVertex3f(cubeVertices[i+3], cubeVertices[i+4], cubeVertices[i+5]);
 	}
     glEnd();
-
-	world_->moveBoids();
 
 	glFlush();
 	SwapBuffers();
