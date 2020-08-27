@@ -44,7 +44,7 @@ void BoidCanvas::Paintit(wxPaintEvent& event) {
 		InitGL();
 		initialized_ = true;
 		timer = new RenderTimer(this);
-		timer->Start(16);
+		timer->Start(10);
 		auto t2 = std::thread(&BoidCanvas::SimulationLoop, this);
 		t2.detach();
 	}
