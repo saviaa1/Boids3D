@@ -25,14 +25,14 @@ If the app runs, but only draws one white boid with a blue background, run this 
 `sudo apt install libglew-dev`  
 `sudo apt install libglm-dev` // opengl Math library
 
-### Windows build
+### Windows build (powershell.exe needs to be in path)
 1. Download and install git
 https://git-scm.com/download/win
 
 2. Download and install vcpkg (https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019)
 git clone https://github.com/Microsoft/vcpkg
 cd vcpkg
-bootstrap-vcpkg.bat
+.\bootstrap-vcpkg.bat
 
 3. Install glm, glew, freeglut and wxWidgets using vcpkg (stay in vcpkg directory)
 .\vcpkg install glm:x64-windows
