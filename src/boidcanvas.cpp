@@ -52,13 +52,6 @@ void BoidCanvas::Paintit(wxPaintEvent& event) {
 	event.Skip();
 }
 
-void BoidCanvas::RenderLoop() {
-	while (true) {
-		Refresh();
-		wxYield();
-	}
-}
-
 void BoidCanvas::SimulationLoop() {
 	std::chrono::nanoseconds simulationTime;
 	while (true) {
@@ -67,25 +60,6 @@ void BoidCanvas::SimulationLoop() {
 		simulationTime = p.GetNS();
 		if (simulationTime < std::chrono::microseconds(16666)) {
 			std::this_thread::sleep_for(std::chrono::microseconds(16666) - simulationTime);
-		}
-	}
-}
-
-void BoidCanvas::RenderLoop() {
-	while (true) {
-		Refresh();
-		wxYield();
-	}
-}
-
-void BoidCanvas::SimulationLoop() {
-	std::chrono::nanoseconds simulationTime;
-	while (true) {
-		PerfTimer p;
-		world_->moveBoids();
-		simulationTime = p.GetNS();
-		if (simulationTime < std::chrono::microseconds(1666)) {
-			std::this_thread::sleep_for(std::chrono::microseconds(1666) - simulationTime);
 		}
 	}
 }

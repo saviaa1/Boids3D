@@ -29,7 +29,6 @@
 #include "vector3d.hpp"
 
 class BoidCanvas: public wxGLCanvas {
-    void RenderLoop();
     void SimulationLoop();
 	void Render();
     bool initialized_ = false;
