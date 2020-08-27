@@ -71,6 +71,25 @@ void BoidCanvas::SimulationLoop() {
 	}
 }
 
+void BoidCanvas::RenderLoop() {
+	while (true) {
+		Refresh();
+		wxYield();
+	}
+}
+
+void BoidCanvas::SimulationLoop() {
+	std::chrono::nanoseconds simulationTime;
+	while (true) {
+		PerfTimer p;
+		world_->moveBoids();
+		simulationTime = p.GetNS();
+		if (simulationTime < std::chrono::microseconds(1666)) {
+			std::this_thread::sleep_for(std::chrono::microseconds(1666) - simulationTime);
+		}
+	}
+}
+
 void BoidCanvas::CanvasResize(wxSizeEvent& event) {
 	wxSize size = this->GetSize();
 	int h = size.GetHeight();
