@@ -26,7 +26,12 @@
 OpenGL Error: Install a newer version of OpenGL.  
 "The RandR library and headers were not found":  
 `sudo apt-get install xorg-dev libglu1-mesa-dev`  
-If the app runs, but only draws one white boid with a blue background, run this command:  
+If the app runs, but only draws one triangle and console shows message:
+`Failed to complie vertex
+0:1(10): error: GLSL 3.30 is not supported. Supported versions are: 1.10, 1.20, 1.30, 1.40, 1.00 ES, and 3.00 ES
+Failed to complie fragment
+0:1(10): error: GLSL 3.30 is not supported. Supported versions are: 1.10, 1.20, 1.30, 1.40, 1.00 ES, and 3.00 ES`
+run command:
 `export MESA_GL_VERSION_OVERRIDE=3.10`
 
 ### Windows build
