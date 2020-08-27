@@ -105,7 +105,7 @@ void Boids3DFrame::SeparationChanged( wxCommandEvent& event )
 
 void Boids3DFrame::WanderChanged( wxCommandEvent& event )
 {
-    world_->SwitchRandMov();
+    world_->SetRandMove(m_wanderCheck->IsChecked());
     event.Skip();
 }
 
@@ -117,5 +117,11 @@ void Boids3DFrame::PredatorChanged( wxCommandEvent& event )
     else {
         world_->SetPredator(false);
     }
+    event.Skip();
+}
+
+void Boids3DFrame::RealtimeChanged( wxCommandEvent& event )
+{
+    world_->SetRealtime(m_realtimeCheck->IsChecked());
     event.Skip();
 }

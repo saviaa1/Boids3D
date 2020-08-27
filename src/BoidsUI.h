@@ -52,6 +52,8 @@ class Frame : public wxFrame
 		wxCheckBox* m_wanderCheck;
 		wxStaticText* m_predatorLabel;
 		wxCheckBox* m_predatorCheck;
+		wxStaticText* m_realtimeLabel;
+		wxCheckBox* m_realtimeCheck;
 		wxPanel* m_boidsPanel;
 
 		// Virtual event handlers, overide them in your derived class
@@ -73,6 +75,7 @@ class Frame : public wxFrame
 		virtual void SeparationChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void WanderChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void PredatorChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void RealtimeChanged( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
