@@ -4,15 +4,21 @@
 
 ### Linux build
 
+#### Install glm, glew, freeglut and wxWidgets
+`sudo apt install libglew-dev`  
+`sudo apt install libglm-dev`
+
+#### Clone Boids3D repository
+`git clone git@github.com:saviaa1/Boids3D.git`  
+`cd Boids3D`
+
+#### Compile Boids3d
 `mkdir build`  
 `cd build`  
 `cmake ..`  
 `make`
 
-For the app to run, boid.shader need to be moved  
-from /src to /build.
-
-After this, run the application with:  
+#### Run Boids3D
 `./boid_app`
 
 #### Possible errors and fixes:
@@ -23,8 +29,6 @@ If the app runs, but only draws one white boid with a blue background, run this 
 `export MESA_GL_VERSION_OVERRIDE=3.10`
 
 #### 3D libs added
-`sudo apt install libglew-dev`  
-`sudo apt install libglm-dev` // opengl Math library
 
 ### Windows build
 #### Download and install git
@@ -33,7 +37,9 @@ https://git-scm.com/download/win
 #### Download and install cmake
 https://cmake.org/download/
 
-#### Download and install vcpkg (https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019)
+#### Download and install vcpkg
+https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019
+
 `cd C:\`  
 `git clone https://github.com/Microsoft/vcpkg`  
 `cd vcpkg`  
