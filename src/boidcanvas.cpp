@@ -12,8 +12,6 @@ END_EVENT_TABLE()
 BoidCanvas::BoidCanvas(wxFrame *parent)
 :wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize, 0, wxT("GLCanvas"), wxNullPalette){
 	boids3dframe_ = (Boids3DFrame *) parent;
-	timer = new RenderTimer(this);
-	timer->Start(16);
 }
 
 BoidCanvas::~BoidCanvas() {
@@ -46,7 +44,7 @@ void BoidCanvas::Paintit(wxPaintEvent& event) {
 		InitGL();
 		initialized_ = true;
 		timer = new RenderTimer(this);
-		timer->Start(16);
+		timer->Start(10);
 	}
     Render();
 	event.Skip();
