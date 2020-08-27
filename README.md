@@ -34,12 +34,14 @@ https://cmake.org/download/
 
 2. Download and install vcpkg
 (https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019)
+
 `cd C:\`
 `git clone https://github.com/Microsoft/vcpkg`
 `cd vcpkg`
 `.\bootstrap-vcpkg.bat`
 
 3. Install glm, glew, freeglut and wxWidgets using vcpkg
+
 `.\vcpkg install glm:x64-windows`
 `.\vcpkg install glew:x64-windows`
 `.\vcpkg install freeglut:x64-windows`
@@ -47,13 +49,16 @@ https://cmake.org/download/
 `set VCPKG=C:\vcpkg`
 
 4. Clone Boids3D repository
+
 `cd ..`
 `git clone git@github.com:saviaa1/Boids3D.git`
 
 5. Compile Boids3d
+
 `cd Boids3D`
 `buildboids.bat`
 
 6. Run Boids3D
+
 `cd ReleaseWin64Dynamic`
 `release\boid_app.exe`
