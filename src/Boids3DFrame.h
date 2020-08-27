@@ -35,6 +35,7 @@ class Boids3DFrame : public Frame
 		void SeparationChanged( wxCommandEvent& event );
 		void WanderChanged( wxCommandEvent& event );
 		void PredatorChanged( wxCommandEvent& event );
+		void RealtimeChanged( wxCommandEvent& event );
 	public:
 		/** Constructor */
 		Boids3DFrame( wxWindow* parent );

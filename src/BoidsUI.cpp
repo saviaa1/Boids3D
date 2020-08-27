@@ -96,6 +96,14 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_predatorCheck = new wxCheckBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	BoidsControlGrid->Add( m_predatorCheck, 0, wxALL, 5 );
 
+	m_realtimeLabel = new wxStaticText( this, wxID_ANY, wxT("Realtime"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_realtimeLabel->Wrap( -1 );
+	BoidsControlGrid->Add( m_realtimeLabel, 0, wxALL, 5 );
+
+	m_realtimeCheck = new wxCheckBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_realtimeCheck->SetValue(true);
+	BoidsControlGrid->Add( m_realtimeCheck, 0, wxALL, 5 );
+
 
 	BoidsHorizontalSizer->Add( BoidsControlGrid, 1, 0, 0 );
 
@@ -127,6 +135,7 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_separationText->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
 	m_wanderCheck->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( Frame::WanderChanged ), NULL, this );
 	m_predatorCheck->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( Frame::PredatorChanged ), NULL, this );
+	m_realtimeCheck->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( Frame::RealtimeChanged ), NULL, this );
 }
 
 Frame::~Frame()
@@ -150,5 +159,6 @@ Frame::~Frame()
 	m_separationText->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Frame::SeparationChanged ), NULL, this );
 	m_wanderCheck->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( Frame::WanderChanged ), NULL, this );
 	m_predatorCheck->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( Frame::PredatorChanged ), NULL, this );
+	m_realtimeCheck->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( Frame::RealtimeChanged ), NULL, this );
 
 }

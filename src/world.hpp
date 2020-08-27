@@ -120,7 +120,7 @@ public:
             collectMax = collect;
             //std::cout << "Collect: " << collect << " ms" << std::endl;
         }
-        if (total > 16.67) {
+        if (realtime && total > 16.67) {
             speedfactor = (T) (total / 16.67);
         }
 
@@ -223,15 +223,15 @@ public:
         }
     }
 
-    //randRand is the default and active on startup
-    //change randMov on and of and return bool value of the status.
-    bool SwitchRandMov() {
-        bool val = true;
-        if (flockingBehavior.getRandStatus()) { val = false; }
+    void SetRandMove(const bool val) {
         flockingBehavior.setRandStatus(val);
         PursueBoidsBeh.setRandStatus(val);
-        return val;
-    } 
+    }
+
+    void SetRealtime(const bool val) {
+        realtime = val;
+    }
+
     const bool GetWorldSizeChanged() const { return size_changed_; }
     void SetWorldSizeChanged(bool val) {
         size_changed_ = val;
@@ -249,6 +249,7 @@ private:
     std::vector<Boid<T>*> boids_;
     USEDMAP<int, std::vector<Boid<T>*>> boidsHash_;
     bool size_changed_ = false;
+    bool realtime = true;
     CombinedBehavior<T> flockingBehavior;
     AvoidBordersBehavior<T> borderBehavior;
     AvoidPredatorBehavior<T> AvoidPredatorBeh;
