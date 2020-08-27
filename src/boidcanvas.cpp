@@ -41,6 +41,7 @@ void BoidCanvas::Paintit(wxPaintEvent& event) {
 			std::stof(b3f->GetWorldSize()),
 			std::stof(b3f->GetBoids()));
 		b3f->SetWorld(world_);
+		cameraDistance_ = world_->GetWorldSize() * 2.0f;
 		InitGL();
 		initialized_ = true;
 		timer = new RenderTimer(this);
