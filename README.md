@@ -30,6 +30,9 @@ If the app runs, but only draws one white boid with a blue background, run this 
 `export MESA_GL_VERSION_OVERRIDE=3.10`
 
 ### Windows build
+#### Download and install Visual Studio 2019 Community
+https://visualstudio.microsoft.com/downloads/
+
 #### Download and install git
 https://git-scm.com/download/win
 
