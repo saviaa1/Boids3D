@@ -1,14 +1,27 @@
 # C++ 3D Boids
 
+This project implements a 3D version of steering behaviors for autonomous characters based on algorithms developed by Craig Reynolds. It contains a user interface for interacting with different parameters of the simulation, including the moving policies, number of Boids, view distance and so on. We have targeted the more advanced implementation by doing a 3D version, as well as real-time control of attributes, simulation speed and so on. Spatial hashing and threading has been used to improve performance of the simulation, and in addition to the three basic rules we also have implemented predator and its rule.
+
 ## Build instructions
 
 ### Linux build
 
+#### Install C++ build tools and compiler
+`sudo apt update`   
+`sudo apt-get install build-essential gdb`   
+`sudo apt install cmake`
+
 #### Install glm, glew, freeglut and wxWidgets
+   
 `sudo apt install libglew-dev`  
 `sudo apt install libglm-dev`  
-`sudo apt install freeglut3-dev`
+`sudo apt install freeglut3-dev`   
+`sudo apt install libwxgtk3.0-dev`   
+`sudo apt install libwxgtk3.0-gtk3-dev`
 
+Install all at once:   
+
+`sudo apt install libglew-dev libglm-dev freeglut3-dev libwxgtk3.0-dev libwxgtk3.0-gtk3-dev`  
 #### Clone Boids3D repository
 `git clone git@github.com:saviaa1/Boids3D.git`  
 `cd Boids3D`
