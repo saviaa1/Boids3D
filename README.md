@@ -28,8 +28,6 @@ OpenGL Error: Install a newer version of OpenGL.
 If the app runs, but only draws one white boid with a blue background, run this command:  
 `export MESA_GL_VERSION_OVERRIDE=3.10`
 
-#### 3D libs added
-
 ### Windows build
 #### Download and install git
 https://git-scm.com/download/win
