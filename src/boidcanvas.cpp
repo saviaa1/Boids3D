@@ -45,9 +45,30 @@ void BoidCanvas::Paintit(wxPaintEvent& event) {
 		initialized_ = true;
 		timer = new RenderTimer(this);
 		timer->Start(10);
+		auto t2 = std::thread(&BoidCanvas::SimulationLoop, this);
+		t2.detach();
 	}
     Render();
 	event.Skip();
+}
+
+void BoidCanvas::RenderLoop() {
+	while (true) {
+		Refresh();
+		wxYield();
+	}
+}
+
+void BoidCanvas::SimulationLoop() {
+	std::chrono::nanoseconds simulationTime;
+	while (true) {
+		PerfTimer p;
+		world_->moveBoids();
+		simulationTime = p.GetNS();
+		if (simulationTime < std::chrono::microseconds(16666)) {
+			std::this_thread::sleep_for(std::chrono::microseconds(16666) - simulationTime);
+		}
+	}
 }
 
 void BoidCanvas::CanvasResize(wxSizeEvent& event) {
@@ -351,8 +372,6 @@ void BoidCanvas::Render()
 		glVertex3f(cubeVertices[i+3], cubeVertices[i+4], cubeVertices[i+5]);
 	}
     glEnd();
-
-	world_->moveBoids();
 
 	glFlush();
 	SwapBuffers();
