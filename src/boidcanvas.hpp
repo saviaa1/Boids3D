@@ -34,7 +34,7 @@ class BoidCanvas: public wxGLCanvas {
     bool initialized_ = false;
     int width_ = -1;
     int height_ = -1;
-    float cameraDistance_ = 200.0f;
+    float cameraDistance_;
     RenderTimer* timer;
     World<float> *world_;
     Boids3DFrame *boids3dframe_;
