@@ -29,8 +29,7 @@ If the app runs, but only draws one white boid with a blue background, run this 
 1. Download and install git
 https://git-scm.com/download/win
 
-2. Download and install vcpkg
-https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019
+2. Download and install vcpkg (https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019)
 git clone https://github.com/Microsoft/vcpkg
 cd vcpkg
 bootstrap-vcpkg.bat
