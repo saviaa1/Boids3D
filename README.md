@@ -19,7 +19,7 @@ This project implements a 3D version of steering behaviors for autonomous charac
 `sudo apt install libwxgtk3.0-dev`   
 `sudo apt install libwxgtk3.0-gtk3-dev`
 
-Install all at once:   
+Or install all at once:   
 `sudo apt install libglew-dev libglm-dev freeglut3-dev libwxgtk3.0-dev libwxgtk3.0-gtk3-dev`  
 #### Clone Boids3D repository
 `git clone git@github.com:saviaa1/Boids3D.git`  
